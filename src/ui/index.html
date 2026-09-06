@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Fortuna Real — Slot de Demonstração</title>
+  <meta name="description" content="Slot 6x5 com pagamento por dispersão, cascatas, orbes multiplicadores, rodadas grátis e compra de bônus. Créditos de demonstração — não é jogo a dinheiro real." />
+  <!-- favicon embutido: evita uma requisicao extra (e um 404) sem adicionar arquivo -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">👑</span>
+        <div>
+          <h1>Fortuna Real</h1>
+          <p class="brand-sub">6×5 · paga em qualquer posição · RTP <span id="rtp-badge">96,47%</span></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="meter">
+          <span class="meter-label">Saldo</span>
+          <strong id="balance" class="meter-value">R$ 0,00</strong>
+        </div>
+        <button class="icon-btn" id="btn-paytable" title="Tabela de prêmios" aria-label="Tabela de prêmios">📜</button>
+        <button class="icon-btn" id="btn-fair" title="Verificação justa" aria-label="Verificação justa">🔐</button>
+        <button class="icon-btn" id="btn-stats" title="Estatísticas da sessão" aria-label="Estatísticas da sessão">📊</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="feature-bar" id="feature-bar" hidden>
+        <div class="feature-chip">
+          <span>Rodadas grátis</span>
+          <strong id="fs-remaining">0</strong>
+        </div>
+        <div class="feature-chip feature-chip--mult">
+          <span>Multiplicador global</span>
+          <strong id="fs-multiplier">×1</strong>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Grade do jogo"></div>
+        <div class="win-overlay" id="win-overlay" hidden>
+          <p class="win-overlay-label" id="win-overlay-label">Ganho</p>
+          <p class="win-overlay-value" id="win-overlay-value">R$ 0,00</p>
+        </div>
+        <div class="toast" id="toast" hidden></div>
+      </div>
+
+      <div class="winline" id="winline">Boa sorte!</div>
+    </main>
+
+    <footer class="controls">
+      <div class="control-group">
+        <span class="control-label">Aposta</span>
+        <div class="bet-stepper">
+          <button class="step-btn" id="bet-down" aria-label="Diminuir aposta">−</button>
+          <span class="bet-value" id="bet-value">R$ 1,00</span>
+          <button class="step-btn" id="bet-up" aria-label="Aumentar aposta">+</button>
+        </div>
+      </div>
+
+      <div class="control-group control-group--main">
+        <button class="spin-btn" id="btn-spin">
+          <span class="spin-btn-label">GIRAR</span>
+          <span class="spin-btn-cost" id="spin-cost">R$ 1,00</span>
+        </button>
+      </div>
+
+      <div class="control-group control-group--right">
+        <button class="ghost-btn" id="btn-ante" aria-pressed="false">
+          <span>Aposta Ante</span><small id="ante-cost">+50%</small>
+        </button>
+        <button class="ghost-btn ghost-btn--gold" id="btn-buy">
+          <span>Comprar Bônus</span><small>a partir de 99×</small>
+        </button>
+        <button class="ghost-btn" id="btn-turbo" aria-pressed="false"><span>Turbo</span><small>⚡</small></button>
+        <button class="ghost-btn" id="btn-auto" aria-pressed="false"><span>Auto</span><small id="auto-count">10×</small></button>
+      </div>
+    </footer>
+
+    <p class="disclaimer">
+      Jogo de <strong>demonstração</strong> com créditos fictícios. Não há aposta, depósito ou prêmio em
+      dinheiro real. Feito para estudo de matemática de slots.
+      <a href="https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/jogo-responsavel" target="_blank" rel="noopener noreferrer">Jogue com responsabilidade.</a>
+    </p>
+  </div>
+
+  <!-- ======================= modais ======================= -->
+  <div class="modal" id="modal-paytable" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Tabela de prêmios</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="paytable-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-buy" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Comprar bônus</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="buy-grid" id="buy-grid"></div>
+        <p class="note">
+          O preço de cada compra é derivado do valor esperado do recurso dividido pelo RTP do jogo —
+          comprar não é melhor nem pior do que esperar o gatilho natural.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-fair" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Verificação justa</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="fair-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Estatísticas da sessão</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="stats-body"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "fortuna-real",
+  "version": "1.0.0",
+  "description": "Motor de slot 6x5 com pagamento por dispersao, tumble, rodadas gratis, compra de bonus, teto de ganho maximo e verificacao de RTP por Monte Carlo.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "sim": "node src/sim/cli.js",
+    "sim:full": "node src/sim/cli.js --spins 2000000 --all",
+    "tune": "node tools/tune.js",
+    "serve": "node tools/serve.js",
+    "typecheck": "tsc -p jsconfig.json"
+  },
+  "license": "MIT"
+}

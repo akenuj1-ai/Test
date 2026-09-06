@@ -35,6 +35,16 @@ const ui = {
   autoSizeIndex: 0,
   /** @type {number[]} */
   lastGrid: new Array(CELLS).fill(Sym.BLUE),
+  /**
+   * Saldo a exibir enquanto a rodada é animada.
+   *
+   * `session.play()` debita e credita no mesmo instante, mas o jogador precisa
+   * ver o custo sair na hora do clique e o ganho entrar só no fim da animação —
+   * caso contrário o prêmio aparece no saldo antes de aparecer na tela.
+   * `null` significa "mostre o saldo real da sessão".
+   * @type {number|null}
+   */
+  displayBalance: null,
 };
 
 /** Duracoes base em ms; divididas pelo fator de turbo. */
@@ -246,6 +256,7 @@ function fallingColumns(removed) {
 async function finishRound(result) {
   const win = result.totalWinCents;
   const x = win / result.betCents;
+  ui.displayBalance = null; // a animação acabou: mostra o saldo real, já com o ganho
   refreshMeters();
 
   if (result.cappedAtMaxWin) {
@@ -310,13 +321,18 @@ async function playOnce(mode) {
 
   let ok = true;
   try {
-    await presentRound(session.play({ mode, trace: true }));
+    const play = session.play({ mode, trace: true });
+    // mostra o débito imediatamente; o ganho entra em finishRound()
+    ui.displayBalance = play.balanceBefore - play.result.costCents;
+    refreshMeters();
+    await presentRound(play);
   } catch (err) {
     console.error(err);
     await toast(`Erro na rodada: ${err instanceof Error ? err.message : String(err)}`, 3000);
     ok = false;
   } finally {
     ui.busy = false;
+    ui.displayBalance = null;
     el.btnSpin.classList.remove('is-spinning');
     refreshMeters();
     updateControls();
@@ -359,7 +375,7 @@ async function spin(mode) {
 const currentMode = () => (ui.ante ? Mode.ANTE : Mode.BASE);
 
 function refreshMeters() {
-  el.balance.textContent = formatCents(session.balanceCents);
+  el.balance.textContent = formatCents(ui.displayBalance ?? session.balanceCents);
   el.betValue.textContent = formatCents(session.betCents);
   el.spinCost.textContent = formatCents(costOf(session.betCents, currentMode()));
 }

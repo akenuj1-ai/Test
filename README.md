@@ -8,6 +8,8 @@ navegador, sem `npm install`, sem bundler.
 > sem prêmio em dinheiro real. O objetivo é servir de referência de como a
 > matemática de um slot moderno é construída, calibrada e auditada.
 
+![Rodadas grátis com multiplicador global acumulado](docs/captura-bonus.png)
+
 ```bash
 npm test        # 102 testes
 npm run serve   # abre a interface em http://localhost:8080
@@ -30,6 +32,8 @@ npm run tune    # verificação do RTP com intervalos de confiança
 | **Aposta ante** | +25% de custo, 1,51× mais gatilhos, mesmo RTP |
 | **Ganho máximo** | 5.000× a aposta |
 | **RTP** | 96,50% (alvo) — medido em todos os modos, ver `docs/MATH.md` |
+
+![Tabela de prêmios](docs/captura-tabela.png)
 
 Regras completas e a derivação de cada número: **[docs/MATH.md](docs/MATH.md)**.
 Registro da revisão de código, incluindo os bugs encontrados:

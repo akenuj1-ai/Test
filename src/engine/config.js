@@ -60,10 +60,10 @@ export const PAYING_LAST = Sym.CROWN;
 export const SYMBOLS = Object.freeze([
   { id: Sym.BLUE,      key: 'BLUE',      name: 'Safira',      kind: 'low',  glyph: '💎', color: '#3f8cff' },
   { id: Sym.GREEN,     key: 'GREEN',     name: 'Esmeralda',   kind: 'low',  glyph: '🟢', color: '#2fd06a' },
-  { id: Sym.YELLOW,    key: 'YELLOW',    name: 'Topazio',     kind: 'low',  glyph: '🟡', color: '#f5c518' },
+  { id: Sym.YELLOW,    key: 'YELLOW',    name: 'Topázio',     kind: 'low',  glyph: '🟡', color: '#f5c518' },
   { id: Sym.PURPLE,    key: 'PURPLE',    name: 'Ametista',    kind: 'low',  glyph: '🟣', color: '#a55bff' },
   { id: Sym.RED,       key: 'RED',       name: 'Rubi',        kind: 'low',  glyph: '🔴', color: '#ff4d5a' },
-  { id: Sym.CUP,       key: 'CUP',       name: 'Calice',      kind: 'high', glyph: '🏆', color: '#ffb347' },
+  { id: Sym.CUP,       key: 'CUP',       name: 'Cálice',      kind: 'high', glyph: '🏆', color: '#ffb347' },
   { id: Sym.RING,      key: 'RING',      name: 'Anel',        kind: 'high', glyph: '💍', color: '#7ce0ff' },
   { id: Sym.HOURGLASS, key: 'HOURGLASS', name: 'Ampulheta',   kind: 'high', glyph: '⏳', color: '#ff8ae0' },
   { id: Sym.CROWN,     key: 'CROWN',     name: 'Coroa',       kind: 'high', glyph: '👑', color: '#ffd700' },

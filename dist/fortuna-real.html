@@ -1,0 +1,2979 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="Slot 6x5 com pagamento por dispersão, cascatas, orbes multiplicadores, rodadas grátis e compra de bônus. Créditos de demonstração — não é jogo a dinheiro real." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" />
+<title>Fortuna Real</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" />
+
+<style>
+/* ============================================================
+   Fortuna Real — folha de estilo
+   Sem dependencias externas. Tudo em CSS moderno (grid, custom
+   properties, :has). Layout pensado para caber em uma tela de
+   celular em pe e crescer ate desktop sem media query por peca.
+   ============================================================ */
+
+:root {
+  --bg: #0a0713;
+  --bg-2: #150c26;
+  --panel: rgba(30, 18, 54, 0.72);
+  --panel-solid: #1a1030;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --text: #f1ecff;
+  --muted: #a396c4;
+  --gold: #ffcb45;
+  --gold-deep: #c8902a;
+  --win: #45e0a0;
+  --danger: #ff5d73;
+
+  /* Bricolage Grotesque para o que precisa de presença (marca, valor do
+     ganho, GIRAR); Archivo para a interface, escolhida pelos algarismos
+     tabulares — a tela é quase toda número que muda no lugar. */
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-ui: 'Archivo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --cell: clamp(38px, 12vw, 78px);
+  --gap: clamp(4px, 1.2vw, 8px);
+  --radius: 14px;
+  --speed: 1;
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+/* O atributo `hidden` vem do agente do usuario com `display: none`, mas
+   qualquer regra de autor que defina `display` (como `.modal { display: grid }`)
+   ganha dessa regra. Sem isto, um modal fechado continua ocupando a tela
+   inteira e engolindo os cliques dos botoes por baixo. */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  /* impede o "puxar para atualizar" de disparar no meio de um giro */
+  overscroll-behavior-y: none;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #2b1150 0%, transparent 60%),
+    radial-gradient(900px 500px at 80% 110%, #1b0e3a 0%, transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  /* 100dvh acompanha a barra de endereco do navegador movel, que 100vh ignora */
+  min-height: 100dvh;
+}
+
+.app {
+  width: min(880px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Toque: `manipulation` remove o atraso de 300 ms e o zoom por toque duplo;
+   sem isso, girar rapido no celular aumenta a pagina em vez de girar. */
+button, .tile, .board {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
+
+/* ---------------- barra superior ---------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark { font-size: 28px; filter: drop-shadow(0 0 10px rgba(255, 203, 69, 0.55)); }
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(15px, 4vw, 21px);
+  letter-spacing: -0.2px;
+  background: linear-gradient(180deg, #fff6d8, var(--gold) 55%, var(--gold-deep));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.brand-sub { margin: 1px 0 0; font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.topbar-right { display: flex; align-items: center; gap: 6px; }
+.meter { text-align: right; margin-right: 4px; }
+.meter-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.meter-value {
+  font-size: clamp(14px, 3.7vw, 18px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+}
+
+.icon-btn {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.icon-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.icon-btn:active { transform: scale(0.94); }
+
+/* ---------------- palco ---------------- */
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;              /* ocupa o espaco livre para o tabuleiro ficar centrado */
+  min-height: 0;
+}
+
+.feature-bar { display: flex; gap: 8px; width: 100%; justify-content: center; }
+.feature-chip {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 203, 69, 0.35);
+  background: linear-gradient(180deg, rgba(255, 203, 69, 0.16), rgba(255, 203, 69, 0.05));
+  font-size: 12px;
+}
+.feature-chip strong { font-size: 15px; color: var(--gold); font-variant-numeric: tabular-nums; }
+.feature-chip--mult strong { color: var(--win); }
+
+.board-wrap { position: relative; width: max-content; max-width: 100%; }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, var(--cell));
+  grid-auto-rows: var(--cell);
+  gap: var(--gap);
+  padding: var(--gap);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(12, 6, 26, 0.9), rgba(22, 11, 44, 0.9));
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-size: calc(var(--cell) * 0.5);
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  user-select: none;
+}
+
+/* A queda e aplicada por classe (e nao no .tile) para poder ser re-disparada
+   a cada cascata: o app remove e readiciona a classe forcando reflow. */
+.tile--fall {
+  animation: tile-drop calc(0.26s / var(--speed)) cubic-bezier(0.2, 0.9, 0.25, 1.15) both;
+}
+
+@keyframes tile-drop {
+  from { transform: translateY(-140%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+.tile--win {
+  animation: tile-pulse calc(0.4s / var(--speed)) ease-in-out infinite;
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15), 0 0 22px var(--glow, rgba(255, 255, 255, 0.5));
+  z-index: 2;
+}
+@keyframes tile-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.09); }
+}
+
+.tile--pop { animation: tile-pop calc(0.22s / var(--speed)) ease-in forwards; }
+@keyframes tile-pop {
+  to { transform: scale(0.2) rotate(12deg); opacity: 0; }
+}
+
+.tile--scatter {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 207, 64, 0.35), rgba(255, 207, 64, 0.08));
+  border-color: rgba(255, 207, 64, 0.55);
+}
+
+.tile--orb {
+  background: radial-gradient(circle at 50% 35%, rgba(192, 132, 252, 0.45), rgba(120, 60, 190, 0.15));
+  border-color: rgba(192, 132, 252, 0.6);
+  box-shadow: 0 0 18px rgba(192, 132, 252, 0.45);
+}
+.orb-value {
+  position: absolute;
+  inset: auto 0 6%;
+  text-align: center;
+  font-size: calc(var(--cell) * 0.24);
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 4px #000, 0 0 10px rgba(192, 132, 252, 0.9);
+  letter-spacing: -0.3px;
+}
+
+.win-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  border-radius: 18px;
+  background: radial-gradient(circle at 50% 50%, rgba(10, 5, 22, 0.86), rgba(10, 5, 22, 0.55));
+  backdrop-filter: blur(2px);
+  animation: fade-in calc(0.2s / var(--speed)) ease both;
+  pointer-events: none;
+  z-index: 5;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.win-overlay-label { margin: 0; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+.win-overlay-value {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 8.5vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  text-shadow: 0 0 26px rgba(255, 203, 69, 0.75);
+}
+
+.toast {
+  position: absolute;
+  left: 50%; top: 12px;
+  transform: translateX(-50%);
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(10, 5, 22, 0.92);
+  border: 1px solid var(--line-strong);
+  font-size: 13px;
+  white-space: nowrap;
+  z-index: 6;
+  animation: fade-in 0.2s ease both;
+}
+
+.winline {
+  min-height: 20px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.winline.is-win { color: var(--win); font-weight: 600; }
+.winline.is-big { color: var(--gold); font-weight: 700; }
+
+/* ---------------- controles ---------------- */
+.controls {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+}
+
+.control-group { display: flex; flex-direction: column; gap: 5px; }
+.control-group--main { align-items: center; }
+.control-group--right { flex-direction: row; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.control-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+
+.bet-stepper {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+}
+.step-btn {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-size: 17px;
+  cursor: pointer;
+}
+.step-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.18); }
+.step-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.bet-value { min-width: 72px; text-align: center; font-size: 13px; font-variant-numeric: tabular-nums; }
+
+.spin-btn {
+  width: clamp(96px, 26vw, 132px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  background:
+    radial-gradient(circle at 50% 28%, #ffe89a, var(--gold) 42%, var(--gold-deep) 78%, #7d5410);
+  color: #2a1a00;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  gap: 2px;
+  box-shadow: 0 10px 34px rgba(255, 203, 69, 0.32), inset 0 2px 0 rgba(255, 255, 255, 0.7);
+  transition: transform 0.1s, filter 0.15s;
+}
+.spin-btn:hover:not(:disabled) { filter: brightness(1.07); }
+.spin-btn:active:not(:disabled) { transform: scale(0.95); }
+.spin-btn:disabled { filter: grayscale(0.65) brightness(0.7); cursor: not-allowed; }
+.spin-btn.is-spinning { animation: spin-glow 1s ease-in-out infinite; }
+@keyframes spin-glow {
+  0%, 100% { box-shadow: 0 10px 34px rgba(255, 203, 69, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.7); }
+  50%      { box-shadow: 0 10px 48px rgba(255, 203, 69, 0.75), inset 0 2px 0 rgba(255, 255, 255, 0.7); }
+}
+.spin-btn-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(14px, 3.8vw, 18px);
+}
+.spin-btn-cost { font-size: 10px; font-weight: 700; opacity: 0.75; font-variant-numeric: tabular-nums; }
+
+.ghost-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 7px 11px;
+  min-width: 72px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.ghost-btn small { font-size: 9px; color: var(--muted); font-weight: 500; }
+.ghost-btn:hover:not(:disabled) { background: rgba(255, 255, 255, 0.11); }
+.ghost-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.ghost-btn[aria-pressed="true"] {
+  border-color: var(--gold);
+  background: rgba(255, 203, 69, 0.16);
+}
+.ghost-btn[aria-pressed="true"] small { color: var(--gold); }
+.ghost-btn--gold { border-color: rgba(255, 203, 69, 0.5); background: rgba(255, 203, 69, 0.1); }
+
+.disclaimer {
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.disclaimer a { color: var(--gold); }
+
+/* ---------------- modais ---------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(4, 2, 10, 0.78);
+  backdrop-filter: blur(6px);
+  z-index: 50;
+  animation: fade-in 0.15s ease both;
+}
+.modal-card {
+  width: min(560px, 100%);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-solid);
+  border: 1px solid var(--line-strong);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.modal-head h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 17px; }
+.modal-body { padding: 14px 16px 18px; overflow-y: auto; font-size: 13px; line-height: 1.55; }
+
+.pay-row {
+  display: grid;
+  grid-template-columns: 34px 1fr repeat(3, 56px);
+  align-items: center;
+  gap: 6px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.pay-row:last-child { border-bottom: 0; }
+.pay-row--head { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; }
+.pay-glyph { font-size: 20px; text-align: center; }
+.pay-name { font-size: 12px; }
+.pay-val { text-align: right; font-weight: 700; font-size: 12px; }
+
+.buy-grid { display: grid; gap: 10px; }
+.buy-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+}
+.buy-card h3 { margin: 0 0 2px; font-size: 14px; }
+.buy-card p { margin: 0; font-size: 11px; color: var(--muted); line-height: 1.45; }
+.buy-btn {
+  padding: 9px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 203, 69, 0.55);
+  background: linear-gradient(180deg, var(--gold), var(--gold-deep));
+  color: #2a1a00;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.buy-btn:disabled { filter: grayscale(0.7) brightness(0.75); cursor: not-allowed; }
+
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.kv:last-of-type { border-bottom: 0; }
+.kv span { color: var(--muted); font-size: 12px; }
+.kv strong { font-variant-numeric: tabular-nums; font-size: 12px; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 10px; word-break: break-all; color: var(--muted); }
+.note { margin: 12px 0 0; font-size: 11px; color: var(--muted); line-height: 1.55; }
+
+.field { display: flex; gap: 6px; margin-top: 10px; }
+.field input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  font-size: 12px;
+}
+.field button {
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ---------------- responsivo ---------------- */
+
+/* Celular em pe. Metas: caber sem rolagem, e nenhum alvo de toque abaixo de
+   44 px (o minimo das diretrizes de acessibilidade da Apple e do Google). */
+@media (max-width: 640px) {
+  :root {
+    --cell: clamp(42px, 14.2vw, 64px);
+    --gap: 5px;
+  }
+
+  body {
+    padding: 8px;
+    /* respeita o recorte da camera e a barra inferior de gestos */
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  .app { gap: 8px; }
+
+  .topbar { padding: 8px 10px; gap: 8px; }
+  .brand-mark { font-size: 26px; }
+  .brand-sub { display: none; }
+
+  /* Sem largura para "Fortuna Real" ao lado do saldo e dos tres botoes: no
+     celular a coroa vira o logo. O titulo continua no DOM para leitores de
+     tela e para o nome da aba. */
+  .brand h1 {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .topbar-right { gap: 5px; }
+  .meter { margin-right: 2px; }
+  .icon-btn { width: 44px; height: 44px; font-size: 17px; }
+
+  .board { border-radius: 14px; }
+  .winline { min-height: 18px; font-size: 12px; }
+
+  .controls {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "bet spin" "extra extra";
+    padding: 10px;
+    gap: 10px;
+  }
+  .control-group:first-child { grid-area: bet; }
+  .control-group--main { grid-area: spin; }
+  .control-group--right {
+    grid-area: extra;
+    justify-content: stretch;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .step-btn { width: 44px; height: 44px; font-size: 20px; }
+  .bet-value { min-width: 64px; }
+  .ghost-btn { flex: 1 1 0; min-width: 0; min-height: 46px; padding: 6px 2px; }
+  .ghost-btn span { white-space: nowrap; font-size: 10px; }
+
+  .disclaimer { font-size: 10px; line-height: 1.4; }
+  .disclaimer .long { display: none; }
+
+  .modal { padding: 8px; }
+  .modal-card { max-height: 90dvh; }
+  .pay-row { grid-template-columns: 28px 1fr repeat(3, 46px); }
+}
+
+/* Telas curtas em pe (iPhone SE e afins, 568 px de altura). A restricao aqui
+   e vertical, nao horizontal: o tabuleiro passa a ser limitado pela altura
+   para que o botao de girar continue visivel sem rolar a pagina. */
+@media (max-height: 620px) and (orientation: portrait) {
+  :root { --cell: clamp(36px, 12.4vw, 56px); }
+  .app { gap: 5px; }
+  .topbar { padding: 5px 10px; }
+  .brand h1 { font-size: 15px; }
+  .controls { padding: 8px; gap: 8px; }
+  .spin-btn { width: clamp(82px, 23vw, 104px); }
+  .ghost-btn { min-height: 44px; }
+  .disclaimer { font-size: 9px; }
+}
+
+/* Celular deitado: sobra largura e falta altura, entao o tabuleiro encolhe
+   pela altura da tela em vez de pela largura. */
+@media (max-height: 480px) and (orientation: landscape) {
+  :root { --cell: clamp(30px, 13vh, 56px); }
+  .disclaimer, .brand-sub { display: none; }
+  .app { gap: 6px; }
+  .spin-btn { width: clamp(72px, 18vh, 100px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
+
+</style>
+</head>
+<body>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">👑</span>
+        <div>
+          <h1>Fortuna Real</h1>
+          <p class="brand-sub">6×5 · paga em qualquer posição · RTP <span id="rtp-badge">96,47%</span></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="meter">
+          <span class="meter-label">Saldo</span>
+          <strong id="balance" class="meter-value">R$ 0,00</strong>
+        </div>
+        <button class="icon-btn" id="btn-paytable" title="Tabela de prêmios" aria-label="Tabela de prêmios">📜</button>
+        <button class="icon-btn" id="btn-fair" title="Verificação justa" aria-label="Verificação justa">🔐</button>
+        <button class="icon-btn" id="btn-stats" title="Estatísticas da sessão" aria-label="Estatísticas da sessão">📊</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="feature-bar" id="feature-bar" hidden>
+        <div class="feature-chip">
+          <span>Rodadas grátis</span>
+          <strong id="fs-remaining">0</strong>
+        </div>
+        <div class="feature-chip feature-chip--mult">
+          <span>Multiplicador global</span>
+          <strong id="fs-multiplier">×1</strong>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Grade do jogo"></div>
+        <div class="win-overlay" id="win-overlay" hidden>
+          <p class="win-overlay-label" id="win-overlay-label">Ganho</p>
+          <p class="win-overlay-value" id="win-overlay-value">R$ 0,00</p>
+        </div>
+        <div class="toast" id="toast" hidden></div>
+      </div>
+
+      <div class="winline" id="winline">Boa sorte!</div>
+    </main>
+
+    <footer class="controls">
+      <div class="control-group">
+        <span class="control-label">Aposta</span>
+        <div class="bet-stepper">
+          <button class="step-btn" id="bet-down" aria-label="Diminuir aposta">−</button>
+          <span class="bet-value" id="bet-value">R$ 1,00</span>
+          <button class="step-btn" id="bet-up" aria-label="Aumentar aposta">+</button>
+        </div>
+      </div>
+
+      <div class="control-group control-group--main">
+        <button class="spin-btn" id="btn-spin">
+          <span class="spin-btn-label">GIRAR</span>
+          <span class="spin-btn-cost" id="spin-cost">R$ 1,00</span>
+        </button>
+      </div>
+
+      <div class="control-group control-group--right">
+        <button class="ghost-btn" id="btn-ante" aria-pressed="false">
+          <span>Aposta Ante</span><small id="ante-cost">+50%</small>
+        </button>
+        <button class="ghost-btn ghost-btn--gold" id="btn-buy">
+          <span>Comprar Bônus</span><small>a partir de 99×</small>
+        </button>
+        <button class="ghost-btn" id="btn-turbo" aria-pressed="false"><span>Turbo</span><small>⚡</small></button>
+        <button class="ghost-btn" id="btn-auto" aria-pressed="false"><span>Auto</span><small id="auto-count">10×</small></button>
+      </div>
+    </footer>
+
+    <p class="disclaimer">
+      Jogo de <strong>demonstração</strong> com créditos fictícios. Não há aposta, depósito ou prêmio em
+      dinheiro real.<span class="long"> Feito para estudo de matemática de slots.</span>
+      <a href="https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/jogo-responsavel" target="_blank" rel="noopener noreferrer">Jogue com responsabilidade.</a>
+    </p>
+  </div>
+
+  <!-- ======================= modais ======================= -->
+  <div class="modal" id="modal-paytable" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Tabela de prêmios</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="paytable-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-buy" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Comprar bônus</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="buy-grid" id="buy-grid"></div>
+        <p class="note">
+          O preço de cada compra é derivado do valor esperado do recurso dividido pelo RTP do jogo —
+          comprar não é melhor nem pior do que esperar o gatilho natural.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-fair" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Verificação justa</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="fair-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Estatísticas da sessão</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="stats-body"></div>
+    </div>
+  </div>
+
+<script type="module">
+// ---------------------------------------------------------------------------
+// Gerado por tools/bundle.js — não edite. A fonte está em src/.
+// Cada módulo virou uma função que devolve seus exports; __mod resolve e
+// memoriza. Nenhum identificador foi renomeado.
+// ---------------------------------------------------------------------------
+const __reg = {};
+const __cache = new Map();
+function __mod(id) {
+  if (!__cache.has(id)) {
+    const fabrica = __reg[id];
+    if (!fabrica) throw new Error('Módulo ausente no pacote: ' + id);
+    __cache.set(id, fabrica());
+  }
+  return __cache.get(id);
+}
+
+__reg["ui/app.js"] = () => {
+/**
+ * Controlador da interface.
+ *
+ * Responsabilidade unica: transformar o resultado ja calculado de uma rodada
+ * em animacao e texto. Nenhuma regra de jogo mora aqui — a UI le o `trace`
+ * devolvido por round.js e reproduz passo a passo. Se um numero aparece na
+ * tela, ele veio do motor; a UI nunca recalcula premio.
+ *
+ * Consequencia pratica: mudar a animacao nao pode mudar o RTP.
+ */
+
+const { createSession } = __mod("engine/session.js");
+const { Mode, costOf } = __mod("engine/round.js");
+const { GRID, SYMBOLS, Sym, PAYTABLE, SCATTER_PAYS, BET_LEVELS_CENTS, BUY_PRICES_X100, ANTE_COST_X100, MAX_WIN_X100, TARGET_RTP, FREE_SPINS_AWARDED, SCATTER_TRIGGER, MIN_CLUSTER } = __mod("engine/config.js");
+const { formatCents, formatMultiplier } = __mod("engine/money.js");
+
+const { COLS, ROWS, CELLS } = GRID;
+
+/* ------------------------------------------------------------------ */
+/* estado da apresentacao                                              */
+/* ------------------------------------------------------------------ */
+
+const session = createSession();
+
+const ui = {
+  busy: false,
+  turbo: false,
+  ante: false,
+  autoRemaining: 0,
+  autoSizes: [10, 25, 50, 100, 0],
+  autoSizeIndex: 0,
+  /** @type {number[]} */
+  lastGrid: new Array(CELLS).fill(Sym.BLUE),
+  /**
+   * Saldo a exibir enquanto a rodada é animada.
+   *
+   * `session.play()` debita e credita no mesmo instante, mas o jogador precisa
+   * ver o custo sair na hora do clique e o ganho entrar só no fim da animação —
+   * caso contrário o prêmio aparece no saldo antes de aparecer na tela.
+   * `null` significa "mostre o saldo real da sessão".
+   * @type {number|null}
+   */
+  displayBalance: null,
+};
+
+/** Duracoes base em ms; divididas pelo fator de turbo. */
+const TIMING = { reveal: 330, highlight: 600, pop: 230, betweenSpins: 360, banner: 900 };
+
+const $ = (/** @type {string} */ id) => /** @type {HTMLElement} */ (document.getElementById(id));
+
+const el = {
+  board: $('board'),
+  balance: $('balance'),
+  betValue: $('bet-value'),
+  spinCost: $('spin-cost'),
+  winline: $('winline'),
+  winOverlay: $('win-overlay'),
+  winOverlayLabel: $('win-overlay-label'),
+  winOverlayValue: $('win-overlay-value'),
+  toast: $('toast'),
+  featureBar: $('feature-bar'),
+  fsRemaining: $('fs-remaining'),
+  fsMultiplier: $('fs-multiplier'),
+  btnSpin: /** @type {HTMLButtonElement} */ ($('btn-spin')),
+  btnBuy: /** @type {HTMLButtonElement} */ ($('btn-buy')),
+  btnAnte: /** @type {HTMLButtonElement} */ ($('btn-ante')),
+  btnTurbo: /** @type {HTMLButtonElement} */ ($('btn-turbo')),
+  btnAuto: /** @type {HTMLButtonElement} */ ($('btn-auto')),
+  autoCount: $('auto-count'),
+  anteCost: $('ante-cost'),
+  betDown: /** @type {HTMLButtonElement} */ ($('bet-down')),
+  betUp: /** @type {HTMLButtonElement} */ ($('bet-up')),
+  rtpBadge: $('rtp-badge'),
+};
+
+/** @type {HTMLElement[]} indexado por indice de grade (col * ROWS + row) */
+const tiles = new Array(CELLS);
+
+/** Todos os indices da grade — usado no primeiro sorteio de cada giro. */
+const ALL_CELLS = Array.from({ length: CELLS }, (_, i) => i);
+
+/* ------------------------------------------------------------------ */
+/* tabuleiro                                                           */
+/* ------------------------------------------------------------------ */
+
+function buildBoard() {
+  el.board.replaceChildren();
+  // o CSS grid preenche por linha, mas o indice do motor e por coluna
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.setAttribute('role', 'gridcell');
+      el.board.appendChild(tile);
+      tiles[col * ROWS + row] = tile;
+    }
+  }
+}
+
+/**
+ * Pinta uma celula.
+ * @param {number} i indice de grade
+ * @param {number} symbolId
+ * @param {number} orbValue
+ * @param {boolean} winning
+ */
+function paintTile(i, symbolId, orbValue, winning) {
+  const meta = SYMBOLS[symbolId];
+  const tile = tiles[i];
+  const classes = ['tile'];
+  if (symbolId === Sym.SCATTER) classes.push('tile--scatter');
+  if (symbolId === Sym.ORB) classes.push('tile--orb');
+  if (winning) classes.push('tile--win');
+  tile.className = classes.join(' ');
+  tile.style.setProperty('--glow', meta.color);
+  tile.setAttribute('aria-label', meta.name);
+
+  if (symbolId === Sym.ORB && orbValue > 0) {
+    tile.textContent = meta.glyph;
+    const badge = document.createElement('span');
+    badge.className = 'orb-value';
+    badge.textContent = `×${orbValue}`;
+    tile.appendChild(badge);
+  } else {
+    tile.textContent = meta.glyph;
+  }
+}
+
+/**
+ * Renderiza uma grade inteira.
+ * @param {number[]} grid
+ * @param {number[]} [orbValues]
+ * @param {Set<number>|null} [winning]
+ * @param {number[]|null} [fallIndices] celulas que devem animar a queda
+ */
+function renderGrid(grid, orbValues, winning = null, fallIndices = null) {
+  for (let i = 0; i < CELLS; i++) {
+    paintTile(i, grid[i], orbValues?.[i] ?? 0, winning?.has(i) ?? false);
+  }
+  if (fallIndices) {
+    for (const i of fallIndices) {
+      const tile = tiles[i];
+      tile.classList.remove('tile--fall');
+      void tile.offsetWidth; // forca reflow para reiniciar a animacao
+      tile.classList.add('tile--fall');
+    }
+  }
+  ui.lastGrid = grid;
+}
+
+/* ------------------------------------------------------------------ */
+/* utilidades de tempo                                                 */
+/* ------------------------------------------------------------------ */
+
+const speed = () => (ui.turbo ? 2.4 : 1);
+/** @param {number} ms */
+const wait = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms / speed())));
+
+/** @param {string} text @param {number} [ms] */
+async function toast(text, ms = 1400) {
+  el.toast.textContent = text;
+  el.toast.hidden = false;
+  await wait(ms);
+  el.toast.hidden = true;
+}
+
+/* ------------------------------------------------------------------ */
+/* apresentacao da rodada                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Reproduz visualmente uma rodada ja resolvida pelo motor.
+ * @param {ReturnType<typeof session.play>} play
+ */
+async function presentRound(play) {
+  const { result } = play;
+  const bet = result.betCents;
+  let running = 0;
+
+  for (const spin of result.spins) {
+    if (spin.kind === 'free') {
+      el.featureBar.hidden = false;
+      const played = result.spins.filter((s) => s.kind === 'free' && s.index <= spin.index).length;
+      el.fsRemaining.textContent = String(Math.max(0, result.freeSpinsAwarded - played));
+      el.fsMultiplier.textContent = `×${Math.max(1, spin.globalMultiplier)}`;
+    }
+
+    /** Celulas que devem animar a queda no proximo passo da cascata. */
+    let falling = ALL_CELLS;
+
+    for (let d = 0; d < spin.drops.length; d++) {
+      const drop = spin.drops[d];
+      const grid = /** @type {number[]} */ (drop.grid);
+      const orbs = /** @type {number[]} */ (drop.orbValues);
+      renderGrid(grid, orbs, null, falling);
+      await wait(TIMING.reveal);
+
+      if (drop.wins.length === 0) break;
+
+      const winning = new Set(/** @type {number[]} */ (drop.removed));
+      renderGrid(grid, orbs, winning);
+      running += drop.winCents;
+      el.winline.textContent = describeWins(drop.wins, running, bet);
+      el.winline.className = 'winline is-win';
+      await wait(TIMING.highlight);
+
+      for (const i of winning) tiles[i].classList.add('tile--pop');
+      await wait(TIMING.pop);
+
+      // so as colunas que perderam pecas se movem no proximo passo
+      falling = fallingColumns(winning);
+    }
+
+    if (spin.spinWinCents > 0) {
+      const mult = spin.multiplierApplied;
+      if (mult > 1) {
+        await showOverlay(`Multiplicador ×${mult}`, formatCents(spin.spinWinCents), TIMING.banner);
+      }
+    }
+    if (spin.retriggered) await toast(`🪙 ${spin.scatterCount} moedas — mais rodadas!`, 900);
+    if (spin.kind === 'base' && result.featureTriggered && result.mode !== Mode.BUY_FREE_SPINS
+        && result.mode !== Mode.BUY_SUPER_FREE_SPINS) {
+      await showOverlay(`${spin.scatterCount} moedas!`, `${FREE_SPINS_AWARDED} rodadas grátis`, TIMING.banner * 1.3);
+    }
+    await wait(TIMING.betweenSpins);
+  }
+
+  el.featureBar.hidden = true;
+  await finishRound(result);
+}
+
+/**
+ * Colunas que perderam pecas — todas as suas celulas se deslocam, entao
+ * animamos a coluna inteira. Colunas intactas ficam paradas, o que faz a
+ * cascata parecer local em vez de um re-sorteio geral.
+ *
+ * @param {Set<number>} removed indices que explodiram
+ * @returns {number[]}
+ */
+function fallingColumns(removed) {
+  const touched = new Set();
+  for (const i of removed) touched.add((i / ROWS) | 0);
+  /** @type {number[]} */
+  const out = [];
+  for (const col of touched) {
+    for (let row = 0; row < ROWS; row++) out.push(col * ROWS + row);
+  }
+  return out;
+}
+
+/** @param {import('../engine/round.js').RoundResult} result */
+async function finishRound(result) {
+  const win = result.totalWinCents;
+  const x = win / result.betCents;
+  ui.displayBalance = null; // a animação acabou: mostra o saldo real, já com o ganho
+  refreshMeters();
+
+  if (result.cappedAtMaxWin) {
+    await showOverlay('GANHO MÁXIMO!', `${MAX_WIN_X100 / 100}× · ${formatCents(win)}`, 2600);
+    el.winline.textContent = `Teto de ${MAX_WIN_X100 / 100}× atingido — ${formatCents(win)}`;
+    el.winline.className = 'winline is-big';
+    return;
+  }
+  if (win === 0) {
+    el.winline.textContent = 'Sem ganho. Tente novamente!';
+    el.winline.className = 'winline';
+    return;
+  }
+  if (x >= 20) {
+    const label = x >= 100 ? 'GANHO ÉPICO' : x >= 50 ? 'GANHO ENORME' : 'GANHO GRANDE';
+    await showOverlay(label, formatCents(win), 1800);
+  }
+  el.winline.textContent = `Ganho total ${formatCents(win)} (${formatMultiplier(win, result.betCents)})`;
+  el.winline.className = x >= 20 ? 'winline is-big' : 'winline is-win';
+}
+
+/** @param {string} label @param {string} value @param {number} ms */
+async function showOverlay(label, value, ms) {
+  el.winOverlayLabel.textContent = label;
+  el.winOverlayValue.textContent = value;
+  el.winOverlay.hidden = false;
+  await wait(ms);
+  el.winOverlay.hidden = true;
+}
+
+/**
+ * @param {import('../engine/evaluate.js').SymbolWin[]} wins
+ * @param {number} running
+ * @param {number} bet
+ */
+function describeWins(wins, running, bet) {
+  const parts = wins.map((w) => `${SYMBOLS[w.symbolId].glyph}×${w.count}`);
+  return `${parts.join('  ')}  →  ${formatCents(running)} (${formatMultiplier(running, bet)})`;
+}
+
+/* ------------------------------------------------------------------ */
+/* fluxo de jogo                                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Uma rodada, do débito à animação.
+ * @param {import('../engine/round.js').ModeName} mode
+ * @returns {Promise<boolean>} false quando a rodada nao aconteceu
+ */
+async function playOnce(mode) {
+  if (!session.canAfford(mode)) {
+    await toast('Saldo insuficiente. Use "Estatísticas" para recarregar créditos de demonstração.', 2400);
+    return false;
+  }
+
+  ui.busy = true;
+  el.btnSpin.classList.add('is-spinning');
+  el.winline.textContent = 'Girando…';
+  el.winline.className = 'winline';
+  el.winOverlay.hidden = true;
+  updateControls();
+
+  let ok = true;
+  try {
+    const play = session.play({ mode, trace: true });
+    // mostra o débito imediatamente; o ganho entra em finishRound()
+    ui.displayBalance = play.balanceBefore - play.result.costCents;
+    refreshMeters();
+    await presentRound(play);
+  } catch (err) {
+    console.error(err);
+    await toast(`Erro na rodada: ${err instanceof Error ? err.message : String(err)}`, 3000);
+    ok = false;
+  } finally {
+    ui.busy = false;
+    ui.displayBalance = null;
+    el.btnSpin.classList.remove('is-spinning');
+    refreshMeters();
+    updateControls();
+  }
+  return ok;
+}
+
+/**
+ * Ponto de entrada dos botões: uma rodada e, se o automático estiver ligado,
+ * as seguintes.
+ *
+ * O laço é iterativo de propósito. A versão recursiva ("gire, depois chame a si
+ * mesmo") empilha um quadro por rodada, e o automático infinito estoura a pilha
+ * depois de alguns milhares de giros — JavaScript não elimina chamada de cauda.
+ *
+ * @param {import('../engine/round.js').ModeName} mode
+ */
+async function spin(mode) {
+  if (ui.busy) return;
+
+  if (!(await playOnce(mode))) {
+    ui.autoRemaining = 0;
+    updateControls();
+    return;
+  }
+
+  while (ui.autoRemaining > 0) {
+    ui.autoRemaining -= 1;
+    updateControls();
+    await wait(260);
+    if (ui.busy) break;             // o jogador interveio
+    if (!(await playOnce(mode))) {
+      ui.autoRemaining = 0;
+      break;
+    }
+  }
+  updateControls();
+}
+
+const currentMode = () => (ui.ante ? Mode.ANTE : Mode.BASE);
+
+function refreshMeters() {
+  el.balance.textContent = formatCents(ui.displayBalance ?? session.balanceCents);
+  el.betValue.textContent = formatCents(session.betCents);
+  el.spinCost.textContent = formatCents(costOf(session.betCents, currentMode()));
+}
+
+function updateControls() {
+  const locked = ui.busy;
+  el.btnSpin.disabled = locked;
+  el.btnBuy.disabled = locked;
+  el.btnAnte.disabled = locked;
+  el.betDown.disabled = locked || BET_LEVELS_CENTS.indexOf(session.betCents) === 0;
+  el.betUp.disabled = locked || BET_LEVELS_CENTS.indexOf(session.betCents) === BET_LEVELS_CENTS.length - 1;
+  el.btnAnte.setAttribute('aria-pressed', String(ui.ante));
+  el.btnTurbo.setAttribute('aria-pressed', String(ui.turbo));
+  el.btnAuto.setAttribute('aria-pressed', String(ui.autoRemaining > 0));
+  el.autoCount.textContent = ui.autoRemaining > 0
+    ? `${ui.autoRemaining}×`
+    : (ui.autoSizes[ui.autoSizeIndex] === 0 ? '∞' : `${ui.autoSizes[ui.autoSizeIndex]}×`);
+}
+
+/** @param {number} direction */
+function stepBet(direction) {
+  const i = BET_LEVELS_CENTS.indexOf(session.betCents) + direction;
+  if (i < 0 || i >= BET_LEVELS_CENTS.length) return;
+  session.setBet(BET_LEVELS_CENTS[i]);
+  refreshMeters();
+  updateControls();
+}
+
+/* ------------------------------------------------------------------ */
+/* modais                                                              */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Liga o fechamento dos modais UMA vez, por delegação.
+ *
+ * Registrar o listener dentro de `openModal` acumularia um por abertura, e o
+ * `{ once: true }` que evitaria isso tinha o defeito oposto: um clique dentro
+ * do cartão já consumia o listener do fundo, e o modal parava de fechar ao
+ * clicar fora.
+ */
+function wireModals() {
+  for (const node of document.querySelectorAll('.modal')) {
+    const modal = /** @type {HTMLElement} */ (node);
+    modal.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target === modal || (target instanceof Element && target.closest('[data-close]'))) {
+        modal.hidden = true;
+      }
+    });
+  }
+}
+
+/** @param {string} id */
+function openModal(id) {
+  $(id).hidden = false;
+}
+
+function renderPaytable() {
+  const body = $('paytable-body');
+  const rows = [`
+    <div class="pay-row pay-row--head">
+      <span></span><span>Símbolo</span><span class="pay-val">8–9</span>
+      <span class="pay-val">10–11</span><span class="pay-val">12+</span>
+    </div>`];
+  for (let s = SYMBOLS.length - 1; s >= 0; s--) {
+    const meta = SYMBOLS[s];
+    if (meta.kind !== 'low' && meta.kind !== 'high') continue;
+    const t = PAYTABLE[s];
+    rows.push(`
+      <div class="pay-row">
+        <span class="pay-glyph">${meta.glyph}</span>
+        <span class="pay-name">${meta.name}</span>
+        ${t.map(([, , pay]) => `<span class="pay-val">${(pay / 100).toLocaleString('pt-BR')}×</span>`).join('')}
+      </div>`);
+  }
+  body.innerHTML = `
+    ${rows.join('')}
+    <p class="note">
+      <strong>Paga em qualquer posição:</strong> ${MIN_CLUSTER} ou mais símbolos iguais na grade pagam,
+      não importa onde estejam. Os prêmios são múltiplos da <em>aposta total</em>.
+    </p>
+    <div class="kv"><span>🪙 Moeda (scatter) — 4 / 5 / 6+</span>
+      <strong>${SCATTER_PAYS[4] / 100}× · ${SCATTER_PAYS[5] / 100}× · ${SCATTER_PAYS[6] / 100}×</strong></div>
+    <div class="kv"><span>🪙 ${SCATTER_TRIGGER}+ moedas</span><strong>${FREE_SPINS_AWARDED} rodadas grátis</strong></div>
+    <div class="kv"><span>🔮 Orbe multiplicador</span><strong>×2 até ×500</strong></div>
+    <div class="kv"><span>Ganho máximo por rodada</span><strong>${(MAX_WIN_X100 / 100).toLocaleString('pt-BR')}×</strong></div>
+    <div class="kv"><span>RTP teórico</span><strong>${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%</strong></div>
+    <p class="note">
+      <strong>Cascata:</strong> símbolos vencedores explodem e novos caem no lugar, na mesma rodada, até
+      não haver mais ganho. <strong>Orbes:</strong> no jogo base, a soma dos orbes multiplica o ganho da
+      sequência; nas rodadas grátis a soma é acumulada em um multiplicador global que nunca zera.
+    </p>`;
+}
+
+function renderBuyMenu() {
+  const grid = $('buy-grid');
+  const options = [
+    {
+      mode: Mode.BUY_FREE_SPINS,
+      title: `${FREE_SPINS_AWARDED} Rodadas Grátis`,
+      desc: 'Multiplicador global acumulativo. Idêntico ao bônus disparado naturalmente.',
+      priceX100: BUY_PRICES_X100.freeSpins,
+    },
+    {
+      mode: Mode.BUY_SUPER_FREE_SPINS,
+      title: `${FREE_SPINS_AWARDED} Super Rodadas Grátis`,
+      desc: 'Orbes mais frequentes e com valores maiores. Muito mais volátil.',
+      priceX100: BUY_PRICES_X100.superFreeSpins,
+    },
+  ];
+  grid.replaceChildren();
+  for (const opt of options) {
+    const cost = costOf(session.betCents, opt.mode);
+    const card = document.createElement('div');
+    card.className = 'buy-card';
+    card.innerHTML = `
+      <div>
+        <h3>${opt.title}</h3>
+        <p>${opt.desc}</p>
+      </div>
+      <button class="buy-btn" ${session.canAfford(opt.mode) ? '' : 'disabled'}>
+        ${opt.priceX100 / 100}× · ${formatCents(cost)}
+      </button>`;
+    card.querySelector('button')?.addEventListener('click', () => {
+      $('modal-buy').hidden = true;
+      void spin(opt.mode);
+    });
+    grid.appendChild(card);
+  }
+}
+
+function renderFair() {
+  const body = $('fair-body');
+  body.innerHTML = `
+    <p class="note" style="margin-top:0">
+      Antes de qualquer rodada o jogo publica o <em>hash</em> da semente do servidor. Cada rodada usa
+      <code>HMAC-SHA256(sementeServidor, sementeCliente:nonce:bloco)</code>. Ao revelar a semente, você
+      confere que ela bate com o hash publicado — o resultado não pôde ter sido alterado depois da aposta.
+    </p>
+    <p class="kv"><span>Hash da semente do servidor (compromisso)</span></p>
+    <p class="mono">${session.serverSeedHash()}</p>
+    <div class="kv"><span>Semente do cliente</span><strong>${escapeHtml(session.clientSeed)}</strong></div>
+    <div class="kv"><span>Próximo nonce</span><strong>${session.nonce}</strong></div>
+    <div class="field">
+      <input id="fair-input" type="text" maxlength="64" placeholder="nova semente do cliente"
+             value="${escapeHtml(session.clientSeed)}" />
+      <button id="fair-apply">Aplicar</button>
+    </div>
+    <div class="field">
+      <button id="fair-rotate" style="flex:1">Revelar semente e trocar</button>
+    </div>
+    <div id="fair-reveal"></div>`;
+
+  $('fair-apply').addEventListener('click', () => {
+    const input = /** @type {HTMLInputElement} */ ($('fair-input'));
+    try {
+      session.setClientSeed(input.value);
+      renderFair();
+    } catch (err) {
+      void toast(err instanceof Error ? err.message : String(err));
+    }
+  });
+  $('fair-rotate').addEventListener('click', () => {
+    const r = session.rotateServerSeed();
+    renderFair();
+    $('fair-reveal').innerHTML = `
+      <p class="note"><strong>Semente revelada</strong> (cobre ${r.roundsCovered} rodada(s)):</p>
+      <p class="mono">${r.revealedServerSeed}</p>
+      <p class="note">Confira que <code>sha256</code> dela é:</p>
+      <p class="mono">${r.revealedHash}</p>`;
+  });
+}
+
+function renderStats() {
+  const s = session.getStats();
+  const body = $('stats-body');
+  body.innerHTML = `
+    <div class="kv"><span>Rodadas jogadas</span><strong>${s.rounds}</strong></div>
+    <div class="kv"><span>Total apostado</span><strong>${formatCents(s.wageredCents)}</strong></div>
+    <div class="kv"><span>Total ganho</span><strong>${formatCents(s.wonCents)}</strong></div>
+    <div class="kv"><span>Resultado</span>
+      <strong style="color:${s.netCents >= 0 ? 'var(--win)' : 'var(--danger)'}">${formatCents(s.netCents)}</strong></div>
+    <div class="kv"><span>RTP da sessão</span><strong>${(s.rtp * 100).toFixed(2).replace('.', ',')}%</strong></div>
+    <div class="kv"><span>Maior ganho</span>
+      <strong>${formatCents(s.biggestWinCents)} (${s.biggestWinX.toFixed(2).replace('.', ',')}×)</strong></div>
+    <div class="kv"><span>Bônus disparados / comprados</span>
+      <strong>${s.featuresTriggered} / ${s.featuresBought}</strong></div>
+    <p class="note">
+      O RTP da sessão só converge para o teórico (${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%) na casa
+      dos milhões de rodadas — a variância deste jogo é alta. Use <code>npm run sim</code> para medir a sério.
+    </p>
+    <div class="field"><button id="stats-topup" style="flex:1">+ R$ 1.000,00 em créditos de demonstração</button></div>`;
+  $('stats-topup').addEventListener('click', () => {
+    session.deposit(100000);
+    refreshMeters();
+    renderStats();
+  });
+}
+
+/** @param {string} str */
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, (c) => (
+    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] ?? c);
+}
+
+/* ------------------------------------------------------------------ */
+/* inicializacao                                                       */
+/* ------------------------------------------------------------------ */
+
+function wireControls() {
+  el.btnSpin.addEventListener('click', () => void spin(currentMode()));
+  el.betDown.addEventListener('click', () => stepBet(-1));
+  el.betUp.addEventListener('click', () => stepBet(1));
+
+  el.btnAnte.addEventListener('click', () => {
+    ui.ante = !ui.ante;
+    refreshMeters();
+    updateControls();
+  });
+  el.btnTurbo.addEventListener('click', () => {
+    ui.turbo = !ui.turbo;
+    document.documentElement.style.setProperty('--speed', String(speed()));
+    updateControls();
+  });
+  el.btnAuto.addEventListener('click', () => {
+    if (ui.autoRemaining > 0) { ui.autoRemaining = 0; updateControls(); return; }
+    const size = ui.autoSizes[ui.autoSizeIndex];
+    ui.autoSizeIndex = (ui.autoSizeIndex + 1) % ui.autoSizes.length;
+    ui.autoRemaining = size === 0 ? Number.MAX_SAFE_INTEGER : size;
+    updateControls();
+    void spin(currentMode());
+  });
+
+  el.btnBuy.addEventListener('click', () => { renderBuyMenu(); openModal('modal-buy'); });
+  $('btn-paytable').addEventListener('click', () => { renderPaytable(); openModal('modal-paytable'); });
+  $('btn-fair').addEventListener('click', () => { renderFair(); openModal('modal-fair'); });
+  $('btn-stats').addEventListener('click', () => { renderStats(); openModal('modal-stats'); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !ui.busy) { e.preventDefault(); void spin(currentMode()); }
+    if (e.code === 'Escape') for (const m of document.querySelectorAll('.modal')) /** @type {HTMLElement} */ (m).hidden = true;
+  });
+}
+
+function init() {
+  buildBoard();
+  // grade inicial apenas decorativa, sem consumir aleatoriedade da sessao
+  const decorative = ALL_CELLS.map((i) => (i * 7 + (i % 5)) % 9);
+  renderGrid(decorative, new Array(CELLS).fill(0), null, ALL_CELLS);
+  el.anteCost.textContent = `+${ANTE_COST_X100 - 100}%`;
+  el.btnBuy.querySelector('small')?.replaceChildren(`a partir de ${BUY_PRICES_X100.freeSpins / 100}×`);
+  el.rtpBadge.textContent = `${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%`;
+  refreshMeters();
+  updateControls();
+  wireControls();
+  wireModals();
+}
+
+init();
+
+  return {};
+};
+
+__reg["engine/session.js"] = () => {
+/**
+ * Sessao de jogo: carteira, aposta, historico e o esquema "provably fair".
+ *
+ * Separado de round.js de proposito. round.js e uma funcao pura de
+ * (rng, aposta, modo) -> resultado; aqui mora o estado mutavel do jogador.
+ * Isso permite simular milhoes de rodadas sem tocar em carteira nenhuma, e
+ * testar a carteira sem depender do sorteio.
+ *
+ * Contabilidade: o custo e debitado ANTES do sorteio e o ganho creditado
+ * depois. A rodada nunca deixa o saldo negativo porque {@link play} recusa a
+ * aposta quando nao ha saldo. Todos os valores sao inteiros em centavos.
+ */
+
+const { createEngine, Mode, costOf } = __mod("engine/round.js");
+const { createSecureRng, createProvablyFairRng } = __mod("engine/rng.js");
+const { sha256, utf8, toHex } = __mod("engine/sha256.js");
+const { BET_LEVELS_CENTS, DEFAULT_BET_CENTS, DEFAULT_BALANCE_CENTS } = __mod("engine/config.js");
+const { assertInt } = __mod("engine/money.js");
+
+/**
+ * @typedef {object} RoundProof
+ * @property {'secure'|'provablyFair'} mode
+ * @property {string} clientSeed
+ * @property {number} nonce
+ * @property {string} serverSeedHash
+ */
+
+/**
+ * @typedef {object} SessionStats
+ * @property {number} rounds
+ * @property {number} wageredCents
+ * @property {number} wonCents
+ * @property {number} netCents
+ * @property {number} rtp
+ * @property {number} biggestWinCents
+ * @property {number} biggestWinX
+ * @property {number} featuresTriggered
+ * @property {number} featuresBought
+ */
+
+/** Gera uma semente de servidor aleatoria de 256 bits em hexadecimal. */
+function randomServerSeed() {
+  const bytes = new Uint32Array(8);
+  const g = /** @type {any} */ (globalThis);
+  if (!g.crypto?.getRandomValues) throw new Error('crypto.getRandomValues indisponivel.');
+  g.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (n) => n.toString(16).padStart(8, '0')).join('');
+}
+
+/**
+ * @param {object} [opts]
+ * @param {number} [opts.balanceCents]
+ * @param {number} [opts.betCents]
+ * @param {ReturnType<typeof createEngine>} [opts.engine]
+ * @param {'secure'|'provablyFair'} [opts.rngMode]
+ * @param {string} [opts.clientSeed]
+ * @param {string} [opts.serverSeed]  injetavel para testes; padrao aleatorio
+ */
+function createSession(opts = {}) {
+  const engine = opts.engine ?? createEngine();
+  let balanceCents = opts.balanceCents ?? DEFAULT_BALANCE_CENTS;
+  let betCents = opts.betCents ?? DEFAULT_BET_CENTS;
+  let rngMode = opts.rngMode ?? 'provablyFair';
+
+  let serverSeed = opts.serverSeed ?? randomServerSeed();
+  let clientSeed = opts.clientSeed ?? 'jogador';
+  let nonce = 0;
+
+  const secureRng = createSecureRng();
+
+  const stats = {
+    rounds: 0, wageredCents: 0, wonCents: 0,
+    biggestWinCents: 0, biggestWinX: 0,
+    featuresTriggered: 0, featuresBought: 0,
+  };
+
+  /** @type {import('./round.js').RoundResult[]} */
+  const history = [];
+  const HISTORY_LIMIT = 50;
+
+  assertInt(balanceCents, 'balanceCents');
+  assertBetLevel(betCents);
+
+  /** @param {number} value */
+  function assertBetLevel(value) {
+    if (!BET_LEVELS_CENTS.includes(value)) {
+      throw new RangeError(`Aposta ${value} nao esta entre os niveis permitidos.`);
+    }
+  }
+
+  /**
+   * Custo da proxima rodada no modo dado.
+   * @param {import('./round.js').ModeName} mode
+   */
+  function costFor(mode) {
+    return costOf(betCents, mode);
+  }
+
+  /**
+   * @param {import('./round.js').ModeName} mode
+   * @returns {boolean}
+   */
+  function canAfford(mode) {
+    return balanceCents >= costFor(mode);
+  }
+
+  /**
+   * Joga uma rodada. Lanca se o saldo for insuficiente — o chamador deve
+   * checar {@link canAfford} antes e desabilitar o botao.
+   *
+   * @param {object} [args]
+   * @param {import('./round.js').ModeName} [args.mode]
+   * @param {boolean} [args.trace]
+   * @returns {{ result: import('./round.js').RoundResult, balanceBefore: number, balanceAfter: number, proof: RoundProof }}
+   */
+  function play({ mode = Mode.BASE, trace = true } = {}) {
+    const cost = costFor(mode);
+    if (balanceCents < cost) {
+      throw new RangeError(`Saldo insuficiente: precisa de ${cost}, tem ${balanceCents}.`);
+    }
+
+    const balanceBefore = balanceCents;
+    const roundNonce = nonce;
+    const rng = rngMode === 'provablyFair'
+      ? createProvablyFairRng({ serverSeed, clientSeed, nonce: roundNonce })
+      : secureRng;
+
+    balanceCents -= cost;
+    const result = engine.playRound({ rng, betCents, mode, trace });
+    balanceCents += result.totalWinCents;
+    nonce += 1;
+
+    stats.rounds += 1;
+    stats.wageredCents += cost;
+    stats.wonCents += result.totalWinCents;
+    if (result.totalWinCents > stats.biggestWinCents) {
+      stats.biggestWinCents = result.totalWinCents;
+      stats.biggestWinX = result.totalWinCents / betCents;
+    }
+    if (result.featureTriggered) {
+      if (mode === Mode.BUY_FREE_SPINS || mode === Mode.BUY_SUPER_FREE_SPINS) stats.featuresBought += 1;
+      else stats.featuresTriggered += 1;
+    }
+
+    history.unshift(result);
+    if (history.length > HISTORY_LIMIT) history.pop();
+
+    return {
+      result,
+      balanceBefore,
+      balanceAfter: balanceCents,
+      proof: {
+        mode: rngMode,
+        clientSeed,
+        nonce: roundNonce,
+        serverSeedHash: serverSeedHash(),
+      },
+    };
+  }
+
+  function serverSeedHash() {
+    return toHex(sha256(utf8(serverSeed)));
+  }
+
+  /**
+   * Revela a semente atual e sorteia uma nova. O jogador pode entao conferir
+   * que sha256(sementeRevelada) bate com o compromisso publicado antes das
+   * rodadas ja jogadas.
+   * @returns {{ revealedServerSeed: string, revealedHash: string, roundsCovered: number, newServerSeedHash: string }}
+   */
+  function rotateServerSeed() {
+    const revealed = serverSeed;
+    const revealedHash = serverSeedHash();
+    const roundsCovered = nonce;
+    serverSeed = randomServerSeed();
+    nonce = 0;
+    return {
+      revealedServerSeed: revealed,
+      revealedHash,
+      roundsCovered,
+      newServerSeedHash: serverSeedHash(),
+    };
+  }
+
+  /** @returns {SessionStats} */
+  function getStats() {
+    return {
+      ...stats,
+      netCents: stats.wonCents - stats.wageredCents,
+      rtp: stats.wageredCents > 0 ? stats.wonCents / stats.wageredCents : 0,
+    };
+  }
+
+  return {
+    play,
+    canAfford,
+    costFor,
+    getStats,
+    rotateServerSeed,
+    serverSeedHash,
+    get history() { return history; },
+    get balanceCents() { return balanceCents; },
+    get betCents() { return betCents; },
+    get nonce() { return nonce; },
+    get clientSeed() { return clientSeed; },
+    get rngMode() { return rngMode; },
+    /** @param {number} value */
+    setBet(value) { assertBetLevel(value); betCents = value; },
+    /** @param {string} value */
+    setClientSeed(value) {
+      const trimmed = String(value).trim();
+      if (!trimmed) throw new RangeError('A semente do cliente nao pode ser vazia.');
+      clientSeed = trimmed.slice(0, 64);
+      nonce = 0;
+    },
+    /** @param {'secure'|'provablyFair'} value */
+    setRngMode(value) { rngMode = value; },
+    /** @param {number} cents Deposito de creditos de demonstracao. */
+    deposit(cents) { assertInt(cents, 'cents'); balanceCents += cents; },
+  };
+}
+
+
+
+  return { Mode, BET_LEVELS_CENTS, randomServerSeed, createSession };
+};
+
+__reg["engine/round.js"] = () => {
+/**
+ * Motor de rodada: maquina de estados que vai do clique em "girar" ate o
+ * credito final, incluindo cascatas, orbes multiplicadores, rodadas gratis,
+ * re-gatilhos, compra de bonus e teto de ganho maximo.
+ *
+ * Uma "rodada" (round) e tudo o que decorre de uma unica aposta paga: o giro
+ * base mais, se disparadas, todas as rodadas gratis. O jogador so paga uma vez.
+ *
+ * Regras de multiplicador (definidas aqui de forma explicita):
+ *  - Jogo base: os orbes de uma sequencia de cascatas so contam se a sequencia
+ *    produziu ganho. O multiplicador da sequencia e a SOMA dos orbes (min. 1).
+ *  - Rodadas gratis: os orbes sao sempre acumulados em um multiplicador GLOBAL
+ *    que persiste por toda a sessao de rodadas gratis. O ganho de cada
+ *    sequencia e multiplicado pelo global vigente apos a coleta daquela
+ *    sequencia.
+ *
+ * Regra do teto: assim que o acumulado da rodada atinge MAX_WIN_X100 vezes a
+ * aposta, o valor e travado no teto e a rodada termina imediatamente — rodadas
+ * gratis restantes sao descartadas. E o comportamento padrao do mercado e
+ * precisa ser visivel ao jogador (o resultado carrega `cappedAtMaxWin`).
+ */
+
+const { GRID, Sym, REEL_WEIGHTS, ORB_VALUES, ORB_WEIGHTS, ORB_FREQUENCY, ANTE_SCATTER_MULTIPLIER, ANTE_COST_X100, BUY_PRICES_X100, SCATTER_TRIGGER, SCATTER_RETRIGGER, FREE_SPINS_AWARDED, FREE_SPINS_RETRIGGER_AWARD, MAX_WIN_X100, MAX_TUMBLES_PER_SPIN, SYMBOL_COUNT, BUY_SCATTER_DISPLAY } = __mod("engine/config.js");
+const { createReelSampler, drawGrid, tumble } = __mod("engine/grid.js");
+const { evaluateGrid } = __mod("engine/evaluate.js");
+const { buildPayLookup, buildScatterLookup } = __mod("engine/paytable.js");
+const { payToCents, applyMultiplier, assertInt } = __mod("engine/money.js");
+const { weightedPicker } = __mod("engine/rng.js");
+
+const { CELLS } = GRID;
+
+/** Modos de aposta aceitos por {@link Engine.playRound}. */
+const Mode = Object.freeze({
+  BASE: 'base',
+  ANTE: 'ante',
+  BUY_FREE_SPINS: 'buyFreeSpins',
+  BUY_SUPER_FREE_SPINS: 'buySuperFreeSpins',
+});
+
+/** @typedef {typeof Mode[keyof typeof Mode]} ModeName */
+
+/**
+ * @typedef {object} Drop  Um passo da cascata.
+ * @property {number} step
+ * @property {number[]} [grid]       grade achatada, indice col*ROWS+row (com trace)
+ * @property {number[]} [orbValues]  valor do orbe por indice, 0 onde nao ha orbe (com trace)
+ * @property {import('./evaluate.js').SymbolWin[]} wins
+ * @property {number} winCents
+ * @property {number[]} [removed]     indices que explodiram (apenas com trace)
+ * @property {{ pos: number, value: number }[]} newOrbs
+ */
+
+/**
+ * @typedef {object} SpinResult
+ * @property {number} index
+ * @property {'base'|'free'} kind
+ * @property {Drop[]} drops
+ * @property {number} scatterCount
+ * @property {number} scatterPayCents
+ * @property {number} rawWinCents        ganho das cascatas antes do multiplicador
+ * @property {number} multiplierApplied
+ * @property {number} spinWinCents       ganho final do giro (com scatter)
+ * @property {number} globalMultiplier   multiplicador global apos este giro
+ * @property {boolean} retriggered
+ */
+
+/**
+ * @typedef {object} RoundResult
+ * @property {ModeName} mode
+ * @property {number} betCents           aposta usada no calculo dos premios
+ * @property {number} costCents          quanto foi debitado do jogador
+ * @property {SpinResult[]} spins
+ * @property {boolean} featureTriggered
+ * @property {number} freeSpinsPlayed
+ * @property {number} freeSpinsAwarded
+ * @property {number} retriggers
+ * @property {number} finalGlobalMultiplier
+ * @property {number} totalWinCents
+ * @property {boolean} cappedAtMaxWin
+ * @property {number} netCents           totalWinCents - costCents
+ */
+
+/**
+ * Cria um motor com todos os sorteadores pre-construidos.
+ *
+ * Os `weightedPicker` sao caros de montar (soma acumulada por rolo) e
+ * imutaveis, entao sao criados uma vez por motor e reutilizados em todas as
+ * rodadas. Um motor nao guarda estado de jogo: e seguro compartilha-lo.
+ *
+ * @param {object} [overrides] Substituicoes de configuracao (usado pelo calibrador).
+ * @param {readonly (readonly number[])[]} [overrides.reelWeights]
+ * @param {number} [overrides.maxWinX100]
+ * @param {any} [overrides.paytable]
+ * @param {readonly number[]} [overrides.scatterPays]
+ * @param {{ base: readonly number[], super: readonly number[] }} [overrides.orbWeights]
+ * @param {{ base: number, free: number, superFree: number }} [overrides.orbFrequency]
+ * @param {number} [overrides.anteScatterMultiplier]
+ */
+function createEngine(overrides = {}) {
+  const reelWeights = overrides.reelWeights ?? REEL_WEIGHTS;
+  const maxWinX100 = overrides.maxWinX100 ?? MAX_WIN_X100;
+  const orbWeights = overrides.orbWeights ?? ORB_WEIGHTS;
+  const orbFrequency = overrides.orbFrequency ?? ORB_FREQUENCY;
+  const anteScatterMultiplier = overrides.anteScatterMultiplier ?? ANTE_SCATTER_MULTIPLIER;
+  const payLookup = buildPayLookup(overrides.paytable);
+  const scatterLookup = buildScatterLookup(overrides.scatterPays);
+
+  const samplers = {
+    base: {
+      initial: createReelSampler({ reelWeights, orbFrequency: orbFrequency.base }),
+      refill: createReelSampler({ reelWeights, orbFrequency: orbFrequency.base, allowScatter: false }),
+    },
+    ante: {
+      initial: createReelSampler({
+        reelWeights, orbFrequency: orbFrequency.base,
+        scatterMultiplier: anteScatterMultiplier,
+      }),
+      refill: createReelSampler({ reelWeights, orbFrequency: orbFrequency.base, allowScatter: false }),
+    },
+    free: {
+      initial: createReelSampler({ reelWeights, orbFrequency: orbFrequency.free }),
+      refill: createReelSampler({ reelWeights, orbFrequency: orbFrequency.free, allowScatter: false }),
+    },
+    superFree: {
+      initial: createReelSampler({ reelWeights, orbFrequency: orbFrequency.superFree }),
+      refill: createReelSampler({ reelWeights, orbFrequency: orbFrequency.superFree, allowScatter: false }),
+    },
+  };
+
+  const orbPickers = {
+    base: weightedPicker(orbWeights.base),
+    super: weightedPicker(orbWeights.super),
+  };
+
+  // buffers reutilizados entre rodadas — o motor e single-threaded por design
+  const countBuffer = new Int32Array(SYMBOL_COUNT);
+  const orbValues = new Int32Array(CELLS);
+
+  /**
+   * @param {import('./rng.js').Rng} rng
+   * @param {'base'|'super'} table
+   */
+  const drawOrbValue = (rng, table) => ORB_VALUES[orbPickers[table].pick(rng)];
+
+  /**
+   * Executa uma sequencia completa de cascatas a partir de um sorteio inicial.
+   *
+   * @param {object} ctx
+   * @param {import('./rng.js').Rng} ctx.rng
+   * @param {number} ctx.betCents
+   * @param {{ initial: any, refill: any }} ctx.sampler
+   * @param {'base'|'super'} ctx.orbTable
+   * @param {boolean} ctx.payScatter
+   * @param {boolean} ctx.trace
+   * @returns {{ drops: Drop[], rawWinCents: number, orbSum: number, scatterCount: number, scatterPayCents: number }}
+   */
+  function playSpinSequence(ctx) {
+    const { rng, betCents, sampler, orbTable, payScatter, trace } = ctx;
+    const grid = drawGrid(rng, sampler.initial);
+    orbValues.fill(0);
+
+    /** @type {Drop[]} */
+    const drops = [];
+    let rawWinCents = 0;
+    let orbSum = 0;
+    let scatterCount = 0;
+    let scatterPayCents = 0;
+
+    // orbes presentes no sorteio inicial
+    /** @type {{pos:number,value:number}[]} */
+    let newOrbs = [];
+    for (let i = 0; i < CELLS; i++) {
+      if (grid[i] === Sym.ORB) {
+        const value = drawOrbValue(rng, orbTable);
+        orbValues[i] = value;
+        orbSum += value;
+        newOrbs.push({ pos: i, value });
+      }
+    }
+
+    for (let step = 0; step < MAX_TUMBLES_PER_SPIN; step++) {
+      const evaluation = evaluateGrid(grid, betCents, {
+        payScatter: payScatter && step === 0,
+        collectPositions: trace,
+        countBuffer,
+        payLookup,
+        scatterLookup,
+      });
+
+      if (step === 0) {
+        scatterCount = evaluation.scatterCount;
+        scatterPayCents = evaluation.scatterPayCents;
+      }
+
+      /** @type {Drop} */
+      const drop = {
+        step,
+        wins: evaluation.wins,
+        winCents: evaluation.winCents,
+        newOrbs,
+      };
+      if (trace) {
+        // grade achatada, mesmo indice usado por `positions` e `orbValues`
+        drop.grid = Array.from(grid);
+        drop.orbValues = Array.from(orbValues);
+        /** @type {number[]} */
+        const removed = [];
+        if (evaluation.removeMask) {
+          for (let i = 0; i < CELLS; i++) if (evaluation.removeMask[i]) removed.push(i);
+        }
+        drop.removed = removed;
+      }
+      drops.push(drop);
+
+      if (evaluation.removeMask === null) break; // sem ganho: a sequencia acaba
+      rawWinCents += evaluation.winCents;
+
+      const refilled = tumble(grid, evaluation.removeMask, rng, sampler.refill, orbValues);
+      newOrbs = [];
+      for (const i of refilled) {
+        if (grid[i] === Sym.ORB) {
+          const value = drawOrbValue(rng, orbTable);
+          orbValues[i] = value;
+          orbSum += value;
+          newOrbs.push({ pos: i, value });
+        }
+      }
+    }
+
+    return { drops, rawWinCents, orbSum, scatterCount, scatterPayCents };
+  }
+
+  /**
+   * Joga uma rodada completa.
+   *
+   * @param {object} args
+   * @param {import('./rng.js').Rng} args.rng
+   * @param {number} args.betCents  aposta base em centavos (inteiro > 0)
+   * @param {ModeName} [args.mode]
+   * @param {boolean} [args.trace]  true guarda grades e posicoes para a UI
+   * @returns {RoundResult}
+   */
+  function playRound({ rng, betCents, mode = Mode.BASE, trace = false }) {
+    assertInt(betCents, 'betCents');
+    if (betCents <= 0) throw new RangeError('betCents deve ser maior que zero.');
+
+    const costCents = costOf(betCents, mode);
+    const maxWinCents = payToCents(betCents, maxWinX100);
+
+    /** @type {SpinResult[]} */
+    const spins = [];
+    let totalWinCents = 0;
+    let cappedAtMaxWin = false;
+    let freeSpinsRemaining = 0;
+    let freeSpinsAwarded = 0;
+    let freeSpinsPlayed = 0;
+    let retriggers = 0;
+    let globalMultiplier = 0;
+    let featureTriggered = false;
+    let spinIndex = 0;
+
+    const bought = mode === Mode.BUY_FREE_SPINS || mode === Mode.BUY_SUPER_FREE_SPINS;
+    const isSuper = mode === Mode.BUY_SUPER_FREE_SPINS;
+    const freeSampler = isSuper ? samplers.superFree : samplers.free;
+    const orbTable = isSuper ? 'super' : 'base';
+
+    /** Soma um ganho ao acumulado aplicando o teto. @param {number} cents */
+    const credit = (cents) => {
+      totalWinCents += cents;
+      if (totalWinCents >= maxWinCents) {
+        totalWinCents = maxWinCents;
+        cappedAtMaxWin = true;
+      }
+    };
+
+    if (bought) {
+      featureTriggered = true;
+      freeSpinsRemaining = FREE_SPINS_AWARDED;
+      freeSpinsAwarded = FREE_SPINS_AWARDED;
+    } else {
+      // ---- giro base ----
+      const sampler = mode === Mode.ANTE ? samplers.ante : samplers.base;
+      const seq = playSpinSequence({
+        rng, betCents, sampler, orbTable: 'base', payScatter: true, trace,
+      });
+
+      const multiplier = seq.rawWinCents > 0 ? Math.max(1, seq.orbSum) : 1;
+      const spinWin = applyMultiplier(seq.rawWinCents, multiplier) + seq.scatterPayCents;
+
+      spins.push({
+        index: spinIndex++,
+        kind: 'base',
+        drops: seq.drops,
+        scatterCount: seq.scatterCount,
+        scatterPayCents: seq.scatterPayCents,
+        rawWinCents: seq.rawWinCents,
+        multiplierApplied: multiplier,
+        spinWinCents: spinWin,
+        globalMultiplier: 0,
+        retriggered: false,
+      });
+      credit(spinWin);
+
+      if (seq.scatterCount >= SCATTER_TRIGGER) {
+        featureTriggered = true;
+        freeSpinsRemaining = FREE_SPINS_AWARDED;
+        freeSpinsAwarded = FREE_SPINS_AWARDED;
+      }
+    }
+
+    // ---- rodadas gratis ----
+    while (freeSpinsRemaining > 0 && !cappedAtMaxWin) {
+      freeSpinsRemaining -= 1;
+      freeSpinsPlayed += 1;
+
+      const seq = playSpinSequence({
+        rng, betCents, sampler: freeSampler, orbTable, payScatter: false, trace,
+      });
+
+      // nas rodadas gratis os orbes sempre entram no multiplicador global
+      globalMultiplier += seq.orbSum;
+      const multiplier = Math.max(1, globalMultiplier);
+      const spinWin = applyMultiplier(seq.rawWinCents, multiplier);
+
+      let retriggered = false;
+      if (seq.scatterCount >= SCATTER_RETRIGGER) {
+        retriggered = true;
+        retriggers += 1;
+        freeSpinsRemaining += FREE_SPINS_RETRIGGER_AWARD;
+        freeSpinsAwarded += FREE_SPINS_RETRIGGER_AWARD;
+      }
+
+      spins.push({
+        index: spinIndex++,
+        kind: 'free',
+        drops: seq.drops,
+        scatterCount: seq.scatterCount,
+        scatterPayCents: 0,
+        rawWinCents: seq.rawWinCents,
+        multiplierApplied: multiplier,
+        spinWinCents: spinWin,
+        globalMultiplier,
+        retriggered,
+      });
+      credit(spinWin);
+    }
+
+    return {
+      mode,
+      betCents,
+      costCents,
+      spins,
+      featureTriggered,
+      freeSpinsPlayed,
+      freeSpinsAwarded,
+      retriggers,
+      finalGlobalMultiplier: globalMultiplier,
+      totalWinCents,
+      cappedAtMaxWin,
+      netCents: totalWinCents - costCents,
+    };
+  }
+
+  return { playRound, maxWinX100, reelWeights, payLookup, scatterLookup };
+}
+
+/** @typedef {ReturnType<typeof createEngine>} Engine */
+
+/**
+ * Custo em centavos de uma rodada, por modo.
+ * @param {number} betCents
+ * @param {ModeName} mode
+ * @returns {number}
+ */
+function costOf(betCents, mode) {
+  switch (mode) {
+    case Mode.BASE: return betCents;
+    case Mode.ANTE: return payToCents(betCents, ANTE_COST_X100);
+    case Mode.BUY_FREE_SPINS: return payToCents(betCents, BUY_PRICES_X100.freeSpins);
+    case Mode.BUY_SUPER_FREE_SPINS: return payToCents(betCents, BUY_PRICES_X100.superFreeSpins);
+    default: throw new RangeError(`Modo desconhecido: ${String(mode)}`);
+  }
+}
+
+/** Quantidade de scatters exibida quando o bonus e comprado. */
+
+
+  return { BUY_SCATTER_DISPLAY, Mode, createEngine, costOf };
+};
+
+__reg["engine/config.js"] = () => {
+/**
+ * Configuracao matematica de "Fortuna Real".
+ *
+ * TODO valor monetario neste projeto e um INTEIRO em centavos. Nada de ponto
+ * flutuante para dinheiro. Os valores da tabela de premios sao expressos em
+ * "centesimos da aposta total" (ex.: 250 = 2,50x a aposta), tambem inteiros.
+ *
+ * Formato do jogo
+ * ---------------
+ * Grade 6x5 (30 celulas), pagamento por dispersao ("scatter pays" / pay
+ * anywhere): 8 ou mais simbolos iguais em qualquer posicao pagam. Nao ha
+ * linhas de pagamento. Simbolos vencedores explodem e os de cima caem
+ * (mecanica de tumble/cascata) ate nao haver mais ganho.
+ *
+ * Modelo de sorteio
+ * -----------------
+ * Cada celula e sorteada de forma independente a partir da distribuicao de
+ * pesos do seu rolo (coluna). E um modelo de "rolo infinito": equivale a uma
+ * fita de rolo muito longa e e o que torna a matematica de cascata tratavel.
+ * Consequencia: a contagem de um simbolo na grade e uma soma de binomiais
+ * independentes por coluna.
+ *
+ * Regras de contorno assumidas (documentadas para evitar ambiguidade):
+ *  1. SCATTER so aparece no sorteio inicial de cada giro; refis de cascata
+ *     nunca trazem scatter. Isso impede gatilhos "gratis" durante a cascata.
+ *  2. SCATTER e ORBE nao participam de combinacoes e nao explodem: permanecem
+ *     na grade ate o fim da sequencia de cascatas.
+ *  3. ORBES podem cair em refis (e o que torna a cascata emocionante) e sao
+ *     coletados ao final da sequencia.
+ *  4. O pagamento de scatter e creditado uma unica vez, no sorteio inicial.
+ */
+
+const GRID = Object.freeze({ COLS: 6, ROWS: 5, CELLS: 30 });
+
+/** Identificadores de simbolo. A ordem e usada como indice em arrays de peso. */
+const Sym = Object.freeze({
+  BLUE: 0, GREEN: 1, YELLOW: 2, PURPLE: 3, RED: 4,   // baixos
+  CUP: 5, RING: 6, HOURGLASS: 7, CROWN: 8,           // altos
+  SCATTER: 9,
+  ORB: 10,
+});
+
+const SYMBOL_COUNT = 11;
+
+/** Primeiro e ultimo indice dos simbolos que formam combinacao. */
+const PAYING_FIRST = Sym.BLUE;
+const PAYING_LAST = Sym.CROWN;
+
+/**
+ * @typedef {object} SymbolMeta
+ * @property {number} id
+ * @property {string} key
+ * @property {string} name
+ * @property {'low'|'high'|'scatter'|'orb'} kind
+ * @property {string} glyph
+ * @property {string} color
+ */
+
+/** @type {readonly SymbolMeta[]} */
+const SYMBOLS = Object.freeze([
+  { id: Sym.BLUE,      key: 'BLUE',      name: 'Safira',      kind: 'low',  glyph: '💎', color: '#3f8cff' },
+  { id: Sym.GREEN,     key: 'GREEN',     name: 'Esmeralda',   kind: 'low',  glyph: '🟢', color: '#2fd06a' },
+  { id: Sym.YELLOW,    key: 'YELLOW',    name: 'Topázio',     kind: 'low',  glyph: '🟡', color: '#f5c518' },
+  { id: Sym.PURPLE,    key: 'PURPLE',    name: 'Ametista',    kind: 'low',  glyph: '🟣', color: '#a55bff' },
+  { id: Sym.RED,       key: 'RED',       name: 'Rubi',        kind: 'low',  glyph: '🔴', color: '#ff4d5a' },
+  { id: Sym.CUP,       key: 'CUP',       name: 'Cálice',      kind: 'high', glyph: '🏆', color: '#ffb347' },
+  { id: Sym.RING,      key: 'RING',      name: 'Anel',        kind: 'high', glyph: '💍', color: '#7ce0ff' },
+  { id: Sym.HOURGLASS, key: 'HOURGLASS', name: 'Ampulheta',   kind: 'high', glyph: '⏳', color: '#ff8ae0' },
+  { id: Sym.CROWN,     key: 'CROWN',     name: 'Coroa',       kind: 'high', glyph: '👑', color: '#ffd700' },
+  { id: Sym.SCATTER,   key: 'SCATTER',   name: 'Moeda',       kind: 'scatter', glyph: '🪙', color: '#ffcf40' },
+  { id: Sym.ORB,       key: 'ORB',       name: 'Orbe',        kind: 'orb',  glyph: '🔮', color: '#c084fc' },
+]);
+
+/**
+ * Tabela de premios por dispersao.
+ * Cada entrada e a tripla [minimo, maximo, premio em centesimos da aposta].
+ * A contiguidade das faixas e a cobertura ate a grade cheia sao garantidas
+ * por invariante em test/config.test.js — JavaScript nao tem tuplas para
+ * expressar isso no tipo.
+ * Os premios sao multiplos de 5 por construcao — ver nota de arredondamento
+ * em money.js.
+ * @type {readonly (readonly (readonly number[])[])[]}
+ */
+const PAYTABLE = Object.freeze([
+  /* BLUE      */ Object.freeze([[8, 9, 25], [10, 11, 75], [12, 30, 200]]),
+  /* GREEN     */ Object.freeze([[8, 9, 40], [10, 11, 90], [12, 30, 300]]),
+  /* YELLOW    */ Object.freeze([[8, 9, 50], [10, 11, 100], [12, 30, 400]]),
+  /* PURPLE    */ Object.freeze([[8, 9, 80], [10, 11, 120], [12, 30, 800]]),
+  /* RED       */ Object.freeze([[8, 9, 100], [10, 11, 150], [12, 30, 1000]]),
+  /* CUP       */ Object.freeze([[8, 9, 150], [10, 11, 200], [12, 30, 1200]]),
+  /* RING      */ Object.freeze([[8, 9, 200], [10, 11, 500], [12, 30, 1500]]),
+  /* HOURGLASS */ Object.freeze([[8, 9, 250], [10, 11, 1000], [12, 30, 2500]]),
+  /* CROWN     */ Object.freeze([[8, 9, 1000], [10, 11, 2500], [12, 30, 5000]]),
+]);
+
+/** Minimo de simbolos iguais para formar combinacao. */
+const MIN_CLUSTER = 8;
+
+/**
+ * Premio de scatter, em centesimos da aposta, indexado pela quantidade.
+ * Indices 0..3 nao pagam; 4 -> 3x, 5 -> 5x, 6 ou mais -> 100x.
+ * @type {readonly number[]}
+ */
+const SCATTER_PAYS = Object.freeze([0, 0, 0, 0, 300, 500, 10000]);
+
+/** Quantidade minima de scatters para disparar as rodadas gratis. */
+const SCATTER_TRIGGER = 4;
+/** Quantidade minima de scatters para re-disparar durante as rodadas gratis. */
+const SCATTER_RETRIGGER = 3;
+/** Rodadas concedidas no gatilho e em cada re-gatilho. */
+const FREE_SPINS_AWARDED = 15;
+const FREE_SPINS_RETRIGGER_AWARD = 5;
+
+/** Teto de ganho por rodada, em centesimos da aposta total (5.000x). */
+const MAX_WIN_X100 = 500000;
+
+/** Limite defensivo de cascatas por giro. Nunca deve ser atingido em jogo normal. */
+const MAX_TUMBLES_PER_SPIN = 40;
+
+/**
+ * Pesos por rolo. Linha = rolo (0..5), coluna = simbolo (Sym.*).
+ * Calibrados por Monte Carlo — ver docs/MATH.md. Nao edite sem rodar
+ * `npm run sim` novamente: qualquer alteracao aqui move o RTP.
+ * @type {readonly (readonly number[])[]}
+ */
+const REEL_WEIGHTS = Object.freeze([
+  //  BLU  GRN  YEL  PUR  RED  CUP  RNG  HRG  CRW   SC  ORB
+  Object.freeze([206, 196, 186, 172, 158, 118,  98,  76,  56, 30, 8]),
+  Object.freeze([200, 194, 188, 176, 160, 120, 100,  78,  58, 30, 8]),
+  Object.freeze([198, 192, 190, 178, 162, 122, 102,  80,  60, 30, 8]),
+  Object.freeze([198, 192, 190, 178, 162, 122, 102,  80,  60, 30, 8]),
+  Object.freeze([200, 194, 188, 176, 160, 120, 100,  78,  58, 30, 8]),
+  Object.freeze([206, 196, 186, 172, 158, 118,  98,  76,  56, 30, 8]),
+]);
+
+/**
+ * Valores possiveis de um orbe multiplicador e seus pesos.
+ * `base`   : giros normais e rodadas gratis padrao.
+ * `super`  : rodadas gratis compradas no modo "super" (orbes mais generosos).
+ * @type {readonly number[]}
+ */
+const ORB_VALUES = Object.freeze([2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 25, 50, 100, 250, 500]);
+
+const ORB_WEIGHTS = Object.freeze({
+  base:  Object.freeze([2400, 1750, 1300, 980, 760, 520, 360, 250, 170, 110, 62, 26, 9, 3, 1]),
+  super: Object.freeze([1200,  980,  880, 800, 700, 560, 430, 330, 250, 180, 120, 60, 24, 8, 3]),
+});
+
+/**
+ * Multiplicador aplicado ao peso do ORB conforme o modo de jogo.
+ *
+ * O orbe e o principal regulador de RTP e de volatilidade, e frequencia e
+ * valor sao parametros separados de proposito. Estes tres numeros sao as
+ * constantes de calibragem do jogo — cada um resolve um alvo:
+ *
+ *   base      -> fixa a divisao entre jogo base (49,6%) e bonus (44,9%)
+ *   free      -> fixa E[bonus] = 96,5x, o que faz a compra de 100x pagar 96,5%
+ *   superFree -> fixa E[super] = 289,5x, o que faz a compra de 300x pagar 96,5%
+ *
+ * Reproduza com `npm run tune`. Nao mexa em um sem re-rodar o outro.
+ */
+const ORB_FREQUENCY = Object.freeze({
+  base: 0.976,
+  free: 2.285,
+  superFree: 6.01,
+});
+
+/**
+ * Multiplicador do peso do SCATTER quando a aposta "ante" esta ativa.
+ *
+ * Nao e um numero redondo por um motivo: como sao necessarios 4+ scatters, a
+ * taxa de gatilho cresce aproximadamente com a QUARTA POTENCIA do peso. Dobrar
+ * o peso multiplicaria o gatilho por ~9 e faria o ante pagar ~400% de RTP.
+ * Este valor foi resolvido para que o ante custe 25% a mais, dispare ~1,5x
+ * mais e pague o MESMO RTP. A sensibilidade e brutal — cerca de 1,7 p.p. de
+ * RTP para cada 0,001 aqui — por isso as quatro casas decimais.
+ *
+ * Um detalhe que a bisseccao puramente analitica erra: com mais scatters na
+ * grade sobram menos celulas para simbolos que pagam, e o jogo base do ante
+ * rende 48,5% em vez de 49,6%. Esse termo so aparece medindo. O valor abaixo
+ * ja o inclui (ver docs/MATH.md).
+ */
+const ANTE_SCATTER_MULTIPLIER = 1.1335;
+/** Custo da aposta ante, em centesimos da aposta base (125 = 1,25x). */
+const ANTE_COST_X100 = 125;
+
+/**
+ * Precos de compra de bonus, em centesimos da aposta base.
+ * Calibrados para que o RTP da compra fique dentro de +-0,5 p.p. do RTP base
+ * (ver docs/MATH.md e `npm run sim -- --all`).
+ */
+const BUY_PRICES_X100 = Object.freeze({
+  freeSpins: 10000,      // 100x — E[bonus] = 96,5x  =>  96,5% de RTP
+  superFreeSpins: 30000, // 300x — E[super] = 289,5x =>  96,5% de RTP
+});
+
+/** Numero de scatters "virtuais" com que a compra inicia (afeta so a exibicao). */
+const BUY_SCATTER_DISPLAY = 4;
+
+/** RTP alvo do jogo. Usado pelos testes de regressao matematica. */
+const TARGET_RTP = 0.965;
+/** Tolerancia absoluta aceita nos testes de RTP (p.p. em fracao). */
+const RTP_TOLERANCE = 0.004;
+
+/** Niveis de aposta disponiveis, em centavos. Todos multiplos de 20. */
+const BET_LEVELS_CENTS = Object.freeze([
+  20, 40, 60, 100, 200, 400, 600, 1000, 2000, 4000, 10000, 20000,
+]);
+
+const DEFAULT_BET_CENTS = 100;
+const DEFAULT_BALANCE_CENTS = 100000; // 1.000,00 em creditos de demonstracao
+
+  return { GRID, Sym, SYMBOL_COUNT, PAYING_FIRST, PAYING_LAST, SYMBOLS, PAYTABLE, MIN_CLUSTER, SCATTER_PAYS, SCATTER_TRIGGER, SCATTER_RETRIGGER, FREE_SPINS_AWARDED, FREE_SPINS_RETRIGGER_AWARD, MAX_WIN_X100, MAX_TUMBLES_PER_SPIN, REEL_WEIGHTS, ORB_VALUES, ORB_WEIGHTS, ORB_FREQUENCY, ANTE_SCATTER_MULTIPLIER, ANTE_COST_X100, BUY_PRICES_X100, BUY_SCATTER_DISPLAY, TARGET_RTP, RTP_TOLERANCE, BET_LEVELS_CENTS, DEFAULT_BET_CENTS, DEFAULT_BALANCE_CENTS };
+};
+
+__reg["engine/grid.js"] = () => {
+/**
+ * Representacao e manipulacao da grade 6x5.
+ *
+ * A grade e um Int8Array de 30 posicoes. O indice e `col * ROWS + row`, com
+ * row 0 no topo. Layout por coluna (e nao por linha) porque toda a mecanica
+ * de cascata opera dentro de uma coluna: manter a coluna contigua na memoria
+ * torna a queda uma operacao local e barata.
+ *
+ *   indice = col * 5 + row
+ *   col    = (indice / 5) | 0
+ *   row    = indice % 5
+ */
+
+const { GRID, Sym, SYMBOL_COUNT } = __mod("engine/config.js");
+const { weightedPicker } = __mod("engine/rng.js");
+
+const { COLS, ROWS, CELLS } = GRID;
+
+/** @typedef {Int8Array} Grid */
+
+/**
+ * @param {number} col
+ * @param {number} row
+ * @returns {number}
+ */
+const idx = (col, row) => col * ROWS + row;
+
+/** @param {number} i */
+const colOf = (i) => (i / ROWS) | 0;
+/** @param {number} i */
+const rowOf = (i) => i % ROWS;
+
+/**
+ * Fabrica de sorteadores de coluna.
+ *
+ * Constroi um sorteador ponderado por rolo, aplicando as transformacoes do
+ * modo de jogo: multiplicador de frequencia do orbe, multiplicador de scatter
+ * da aposta ante, e supressao do scatter nos refis de cascata.
+ *
+ * Os pesos sao pre-calculados uma unica vez por modo, nao a cada giro.
+ *
+ * @param {object} opts
+ * @param {readonly (readonly number[])[]} opts.reelWeights
+ * @param {number} [opts.orbFrequency]     Multiplicador do peso do orbe.
+ * @param {number} [opts.scatterMultiplier] Multiplicador do peso do scatter.
+ * @param {boolean} [opts.allowScatter]    false zera o peso do scatter.
+ * @returns {{ pick: (rng: import('./rng.js').Rng, col: number) => number }}
+ */
+function createReelSampler({
+  reelWeights,
+  orbFrequency = 1,
+  scatterMultiplier = 1,
+  allowScatter = true,
+}) {
+  if (reelWeights.length !== COLS) {
+    throw new RangeError(`reelWeights precisa ter ${COLS} rolos, recebeu ${reelWeights.length}.`);
+  }
+  const pickers = reelWeights.map((weights, col) => {
+    if (weights.length !== SYMBOL_COUNT) {
+      throw new RangeError(`Rolo ${col} precisa de ${SYMBOL_COUNT} pesos, recebeu ${weights.length}.`);
+    }
+    const adjusted = weights.slice();
+    adjusted[Sym.ORB] = weights[Sym.ORB] * orbFrequency;
+    adjusted[Sym.SCATTER] = allowScatter ? weights[Sym.SCATTER] * scatterMultiplier : 0;
+    return weightedPicker(adjusted);
+  });
+  return {
+    pick: (rng, col) => pickers[col].pick(rng),
+  };
+}
+
+/**
+ * Sorteia uma grade completa.
+ * @param {import('./rng.js').Rng} rng
+ * @param {ReturnType<typeof createReelSampler>} sampler
+ * @returns {Grid}
+ */
+function drawGrid(rng, sampler) {
+  const grid = new Int8Array(CELLS);
+  for (let col = 0; col < COLS; col++) {
+    for (let row = 0; row < ROWS; row++) {
+      grid[idx(col, row)] = sampler.pick(rng, col);
+    }
+  }
+  return grid;
+}
+
+/**
+ * Aplica a cascata: remove as posicoes marcadas, faz os simbolos restantes
+ * cairem para o fundo da coluna e preenche o topo com novos sorteios.
+ *
+ * Muta `grid` no lugar — o chamador guarda copias quando precisa do historico.
+ *
+ * `payload` (opcional) e um array paralelo movido em sincronia com a grade —
+ * usado para carregar o valor de cada orbe junto com a peca quando ela cai.
+ * As celulas repreenchidas recebem 0 no payload.
+ *
+ * @param {Grid} grid
+ * @param {Uint8Array} removeMask  1 = remover, 0 = manter. Tamanho CELLS.
+ * @param {import('./rng.js').Rng} rng
+ * @param {ReturnType<typeof createReelSampler>} refillSampler
+ * @param {Int32Array} [payload]
+ * @returns {number[]} indices das celulas recem-preenchidas
+ */
+function tumble(grid, removeMask, rng, refillSampler, payload) {
+  /** @type {number[]} */
+  const refilled = [];
+  for (let col = 0; col < COLS; col++) {
+    let write = ROWS - 1; // escreve de baixo para cima
+    for (let row = ROWS - 1; row >= 0; row--) {
+      const i = idx(col, row);
+      if (!removeMask[i]) {
+        const dst = idx(col, write);
+        grid[dst] = grid[i];
+        if (payload) payload[dst] = payload[i];
+        write -= 1;
+      }
+    }
+    // as posicoes que sobraram no topo recebem novos simbolos
+    for (let row = write; row >= 0; row--) {
+      const i = idx(col, row);
+      grid[i] = refillSampler.pick(rng, col);
+      if (payload) payload[i] = 0;
+      refilled.push(i);
+    }
+  }
+  return refilled;
+}
+
+/**
+ * Conta cada simbolo da grade.
+ * @param {Grid} grid
+ * @param {Int32Array} [into] buffer reutilizavel (evita alocacao no laco quente)
+ * @returns {Int32Array} contagens indexadas por Sym
+ */
+function countSymbols(grid, into) {
+  const counts = into ?? new Int32Array(SYMBOL_COUNT);
+  counts.fill(0);
+  for (let i = 0; i < CELLS; i++) counts[grid[i]] += 1;
+  return counts;
+}
+
+/**
+ * @param {Grid} grid
+ * @returns {number[][]} matriz [row][col] de ids de simbolo, para depuracao/UI
+ */
+function toMatrix(grid) {
+  const out = [];
+  for (let row = 0; row < ROWS; row++) {
+    const line = [];
+    for (let col = 0; col < COLS; col++) line.push(grid[idx(col, row)]);
+    out.push(line);
+  }
+  return out;
+}
+
+  return { idx, colOf, rowOf, createReelSampler, drawGrid, tumble, countSymbols, toMatrix };
+};
+
+__reg["engine/rng.js"] = () => {
+/**
+ * Fontes de aleatoriedade do jogo.
+ *
+ * Tres implementacoes, todas expondo a mesma interface {@link Rng}:
+ *
+ *  - createSeededRng   : xoshiro128** — deterministico, rapido. Uso: simulacao
+ *                        de RTP e testes. NAO usar para dinheiro real.
+ *  - createSecureRng   : CSPRNG do ambiente (node:crypto / WebCrypto).
+ *  - createProvablyFairRng : HMAC-SHA256(serverSeed, clientSeed:nonce:cursor),
+ *                        deterministico e auditavel pelo jogador. Uso: producao.
+ *
+ * Todos os consumidores do motor recebem um Rng por injecao de dependencia;
+ * nenhum modulo chama Math.random diretamente. Isso e o que torna cada rodada
+ * reproduzivel a partir de uma semente.
+ *
+ * @typedef {object} Rng
+ * @property {() => number} float      Retorna um numero em [0, 1).
+ * @property {(n: number) => number} int Inteiro uniforme em [0, n).
+ * @property {string} kind
+ */
+
+const { hmacSha256, utf8 } = __mod("engine/sha256.js");
+
+/**
+ * Mistura uma string em quatro palavras de 32 bits (variante de splitmix32).
+ * @param {string} seed
+ * @returns {Uint32Array}
+ */
+function seedState(seed) {
+  let h = 1779033703 ^ seed.length;
+  const state = new Uint32Array(4);
+  for (let i = 0; i < seed.length; i++) {
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  for (let i = 0; i < 4; i++) {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    state[i] = (h ^= h >>> 16) >>> 0;
+  }
+  // xoshiro nao pode partir do estado zero
+  if (!(state[0] | state[1] | state[2] | state[3])) state[0] = 0x9e3779b9;
+  return state;
+}
+
+/**
+ * PRNG xoshiro128** — periodo 2^128-1, passa em BigCrush. Deterministico.
+ * @param {string|number} seed
+ * @returns {Rng}
+ */
+function createSeededRng(seed) {
+  const s = seedState(String(seed));
+  const next = () => {
+    const r = (Math.imul((Math.imul(s[1], 5) >>> 0) << 7 | (Math.imul(s[1], 5) >>> 25), 9)) >>> 0;
+    const t = (s[1] << 9) >>> 0;
+    s[2] ^= s[0]; s[3] ^= s[1]; s[1] ^= s[2]; s[0] ^= s[3]; s[2] ^= t;
+    s[3] = ((s[3] << 11) | (s[3] >>> 21)) >>> 0;
+    return r;
+  };
+  return {
+    kind: 'seeded',
+    // 2^-32 mantem o resultado estritamente < 1
+    float: () => next() * 2.3283064365386963e-10,
+    int: (n) => Math.floor(next() * 2.3283064365386963e-10 * n),
+  };
+}
+
+/**
+ * CSPRNG do ambiente, com buffer para amortizar o custo por chamada.
+ * @param {number} [bufferWords]
+ * @returns {Rng}
+ */
+function createSecureRng(bufferWords = 1024) {
+  const getRandomValues = resolveCryptoSource();
+  const buf = new Uint32Array(bufferWords);
+  let i = buf.length;
+  const next = () => {
+    if (i >= buf.length) { getRandomValues(buf); i = 0; }
+    return buf[i++];
+  };
+  return {
+    kind: 'secure',
+    float: () => next() * 2.3283064365386963e-10,
+    int: (n) => Math.floor(next() * 2.3283064365386963e-10 * n),
+  };
+}
+
+/** @returns {(a: Uint32Array) => void} */
+function resolveCryptoSource() {
+  const g = /** @type {any} */ (globalThis);
+  if (g.crypto?.getRandomValues) return (a) => g.crypto.getRandomValues(a);
+  throw new Error('Nenhuma fonte criptografica disponivel (globalThis.crypto ausente).');
+}
+
+/**
+ * RNG "provably fair": o cassino publica sha256(serverSeed) antes da rodada,
+ * o jogador escolhe o clientSeed, e o serverSeed e revelado depois. Com os
+ * tres valores qualquer pessoa reconstroi a rodada bit a bit.
+ *
+ * Cada bloco HMAC rende 8 floats de 32 bits; o cursor avanca conforme o consumo.
+ *
+ * @param {object} opts
+ * @param {string} opts.serverSeed
+ * @param {string} opts.clientSeed
+ * @param {number} opts.nonce  Indice da rodada; deve ser unico por serverSeed.
+ * @returns {Rng & { cursor: () => number }}
+ */
+function createProvablyFairRng({ serverSeed, clientSeed, nonce }) {
+  const key = utf8(serverSeed);
+  let block = -1;
+  let word = 8;
+  let consumed = 0;
+  /** @type {DataView} */
+  let view = new DataView(new ArrayBuffer(32));
+
+  const next = () => {
+    if (word >= 8) {
+      block += 1;
+      word = 0;
+      const digest = hmacSha256(key, utf8(`${clientSeed}:${nonce}:${block}`));
+      view = new DataView(digest.buffer, digest.byteOffset, digest.byteLength);
+    }
+    consumed += 1;
+    return view.getUint32(word++ * 4, false);
+  };
+  return {
+    kind: 'provably-fair',
+    float: () => next() * 2.3283064365386963e-10,
+    int: (n) => Math.floor(next() * 2.3283064365386963e-10 * n),
+    cursor: () => consumed,
+  };
+}
+
+/**
+ * Sorteio ponderado por busca binaria sobre a soma acumulada.
+ * A tabela acumulada e pre-calculada uma unica vez por conjunto de pesos.
+ *
+ * @param {readonly number[]} weights
+ * @returns {{ total: number, pick: (rng: Rng) => number }}
+ */
+function weightedPicker(weights) {
+  const cum = new Float64Array(weights.length);
+  let total = 0;
+  for (let i = 0; i < weights.length; i++) {
+    if (weights[i] < 0 || !Number.isFinite(weights[i])) {
+      throw new RangeError(`Peso invalido no indice ${i}: ${weights[i]}`);
+    }
+    total += weights[i];
+    cum[i] = total;
+  }
+  if (total <= 0) throw new RangeError('A soma dos pesos deve ser positiva.');
+
+  return {
+    total,
+    pick(rng) {
+      const target = rng.float() * total;
+      let lo = 0;
+      let hi = cum.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (target < cum[mid]) hi = mid; else lo = mid + 1;
+      }
+      return lo;
+    },
+  };
+}
+
+  return { createSeededRng, createSecureRng, createProvablyFairRng, weightedPicker };
+};
+
+__reg["engine/sha256.js"] = () => {
+/**
+ * SHA-256 e HMAC-SHA256 sincronos em JS puro.
+ *
+ * Motivo de existir: o esquema "provably fair" precisa produzir exatamente o
+ * mesmo resultado no Node (servidor / simulador) e no navegador (cliente).
+ * A WebCrypto do navegador so expoe API assincrona, o que impediria usar o
+ * hash dentro do laco sincrono do motor. Esta implementacao e pequena,
+ * auditavel e testada contra vetores conhecidos (ver test/sha256.test.js).
+ *
+ * Nao use este modulo para criptografia de producao: ele nao e resistente a
+ * ataques de canal lateral (timing). Aqui serve apenas para verificacao de
+ * integridade das rodadas, onde a chave e revelada ao final de qualquer forma.
+ */
+
+const K = new Uint32Array([
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
+  0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+  0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
+  0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
+  0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+  0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+  0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
+  0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+  0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+]);
+
+const BLOCK_BYTES = 64;
+
+/** @param {number} x @param {number} n */
+const rotr = (x, n) => ((x >>> n) | (x << (32 - n))) >>> 0;
+
+/**
+ * Digest SHA-256.
+ * @param {Uint8Array} message
+ * @returns {Uint8Array} 32 bytes
+ */
+function sha256(message) {
+  const bitLen = message.length * 8;
+  // Padding: byte 0x80, zeros, e 8 bytes com o comprimento em bits (big-endian).
+  // Sao necessarios len + 1 + 8 bytes arredondados para cima ao proximo bloco.
+  // O arredondamento tem de ser `ceil`: usar `floor + 1` acrescenta um bloco
+  // inteiro de zeros quando len + 9 ja e multiplo de 64 (len = 55, 119, ...),
+  // o que muda o digest.
+  const paddedLen = Math.ceil((message.length + 9) / BLOCK_BYTES) * BLOCK_BYTES;
+  const buf = new Uint8Array(paddedLen);
+  buf.set(message);
+  buf[message.length] = 0x80;
+  const view = new DataView(buf.buffer);
+  // comprimento cabe em 53 bits com seguranca; escrevemos os 64 bits em duas metades
+  view.setUint32(paddedLen - 8, Math.floor(bitLen / 0x100000000), false);
+  view.setUint32(paddedLen - 4, bitLen >>> 0, false);
+
+  const h = new Uint32Array([
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+  ]);
+  const w = new Uint32Array(64);
+
+  for (let off = 0; off < paddedLen; off += BLOCK_BYTES) {
+    for (let i = 0; i < 16; i++) w[i] = view.getUint32(off + i * 4, false);
+    for (let i = 16; i < 64; i++) {
+      const s0 = (rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3)) >>> 0;
+      const s1 = (rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10)) >>> 0;
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let [a, b, c, d, e, f, g, hh] = h;
+    for (let i = 0; i < 64; i++) {
+      const S1 = (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) >>> 0;
+      const ch = ((e & f) ^ (~e & g)) >>> 0;
+      const t1 = (hh + S1 + ch + K[i] + w[i]) >>> 0;
+      const S0 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) >>> 0;
+      const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
+      const t2 = (S0 + maj) >>> 0;
+      hh = g; g = f; f = e;
+      e = (d + t1) >>> 0;
+      d = c; c = b; b = a;
+      a = (t1 + t2) >>> 0;
+    }
+    h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0;
+    h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+    h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0;
+    h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+  }
+
+  const out = new Uint8Array(32);
+  const outView = new DataView(out.buffer);
+  for (let i = 0; i < 8; i++) outView.setUint32(i * 4, h[i], false);
+  return out;
+}
+
+/**
+ * HMAC-SHA256 (RFC 2104).
+ * @param {Uint8Array} key
+ * @param {Uint8Array} message
+ * @returns {Uint8Array} 32 bytes
+ */
+function hmacSha256(key, message) {
+  let k = key;
+  if (k.length > BLOCK_BYTES) k = sha256(k);
+  const pad = new Uint8Array(BLOCK_BYTES);
+  pad.set(k);
+
+  const inner = new Uint8Array(BLOCK_BYTES + message.length);
+  const outer = new Uint8Array(BLOCK_BYTES + 32);
+  for (let i = 0; i < BLOCK_BYTES; i++) {
+    inner[i] = pad[i] ^ 0x36;
+    outer[i] = pad[i] ^ 0x5c;
+  }
+  inner.set(message, BLOCK_BYTES);
+  outer.set(sha256(inner), BLOCK_BYTES);
+  return sha256(outer);
+}
+
+/** @param {string} str @returns {Uint8Array} */
+function utf8(str) {
+  return new TextEncoder().encode(str);
+}
+
+/** @param {Uint8Array} bytes @returns {string} */
+function toHex(bytes) {
+  let s = '';
+  for (const b of bytes) s += b.toString(16).padStart(2, '0');
+  return s;
+}
+
+  return { sha256, hmacSha256, utf8, toHex };
+};
+
+__reg["engine/evaluate.js"] = () => {
+/**
+ * Avaliacao de uma grade: quais simbolos formam combinacao, quanto pagam e
+ * quais celulas devem explodir.
+ *
+ * Este modulo e puro: nao sorteia nada, nao muta a grade e nao conhece o
+ * estado da rodada. Toda a aleatoriedade vive em rng.js/grid.js. Essa
+ * separacao e o que permite testar o pagamento com grades montadas a mao.
+ */
+
+const { GRID, Sym, PAYING_FIRST, PAYING_LAST, MIN_CLUSTER, SYMBOL_COUNT } = __mod("engine/config.js");
+const { buildPayLookup, buildScatterLookup, COUNT_SLOTS } = __mod("engine/paytable.js");
+const { payToCents } = __mod("engine/money.js");
+const { countSymbols } = __mod("engine/grid.js");
+
+const { CELLS } = GRID;
+
+/** Tabelas padrao, construidas uma unica vez no carregamento do modulo. */
+const DEFAULT_PAY_LOOKUP = buildPayLookup();
+const DEFAULT_SCATTER_LOOKUP = buildScatterLookup();
+
+/**
+ * @typedef {object} SymbolWin
+ * @property {number} symbolId
+ * @property {number} count
+ * @property {number} payX100  premio em centesimos da aposta
+ * @property {number} payCents
+ * @property {number[]} [positions] indices na grade (so quando solicitado)
+ */
+
+/**
+ * @typedef {object} Evaluation
+ * @property {SymbolWin[]} wins
+ * @property {number} winCents        soma das combinacoes (sem scatter)
+ * @property {number} scatterCount
+ * @property {number} scatterPayCents
+ * @property {Uint8Array|null} removeMask  null quando nao ha combinacao
+ */
+
+/**
+ * Premio de um simbolo para uma dada contagem, em centesimos da aposta.
+ * @param {number} symbolId
+ * @param {number} count
+ * @param {Int32Array} [payLookup]
+ * @returns {number}
+ */
+function payoutX100(symbolId, count, payLookup = DEFAULT_PAY_LOOKUP) {
+  if (symbolId < PAYING_FIRST || symbolId > PAYING_LAST) return 0;
+  if (count < MIN_CLUSTER || count >= COUNT_SLOTS) return 0;
+  return payLookup[symbolId * COUNT_SLOTS + count];
+}
+
+/**
+ * @param {number} scatterCount
+ * @param {Int32Array} [scatterLookup]
+ * @returns {number} premio em centesimos da aposta
+ */
+function scatterPayX100(scatterCount, scatterLookup = DEFAULT_SCATTER_LOOKUP) {
+  if (scatterCount <= 0) return 0;
+  return scatterLookup[Math.min(scatterCount, COUNT_SLOTS - 1)];
+}
+
+/**
+ * Avalia uma grade.
+ *
+ * @param {Int8Array} grid
+ * @param {number} betCents
+ * @param {object} [opts]
+ * @param {boolean} [opts.payScatter=false]  true apenas no sorteio inicial do giro.
+ * @param {boolean} [opts.collectPositions=false] true na UI, false na simulacao.
+ * @param {Int32Array} [opts.countBuffer] buffer reutilizavel de contagens.
+ * @param {Int32Array} [opts.payLookup]
+ * @param {Int32Array} [opts.scatterLookup]
+ * @returns {Evaluation}
+ */
+function evaluateGrid(grid, betCents, opts = {}) {
+  const {
+    payScatter = false,
+    collectPositions = false,
+    countBuffer,
+    payLookup = DEFAULT_PAY_LOOKUP,
+    scatterLookup = DEFAULT_SCATTER_LOOKUP,
+  } = opts;
+
+  const counts = countSymbols(grid, countBuffer ?? new Int32Array(SYMBOL_COUNT));
+
+  /** @type {SymbolWin[]} */
+  const wins = [];
+  let winCents = 0;
+  /** @type {Uint8Array|null} */
+  let removeMask = null;
+
+  for (let s = PAYING_FIRST; s <= PAYING_LAST; s++) {
+    const count = counts[s];
+    if (count < MIN_CLUSTER) continue;
+    const payX100 = payLookup[s * COUNT_SLOTS + count];
+    if (payX100 <= 0) continue;
+
+    const payCents = payToCents(betCents, payX100);
+    winCents += payCents;
+
+    if (removeMask === null) removeMask = new Uint8Array(CELLS);
+    /** @type {number[]|undefined} */
+    let positions;
+    if (collectPositions) positions = [];
+    for (let i = 0; i < CELLS; i++) {
+      if (grid[i] === s) {
+        removeMask[i] = 1;
+        positions?.push(i);
+      }
+    }
+    wins.push(positions ? { symbolId: s, count, payX100, payCents, positions }
+                        : { symbolId: s, count, payX100, payCents });
+  }
+
+  const scatterCount = counts[Sym.SCATTER];
+  const scatterPayCents = payScatter
+    ? payToCents(betCents, scatterPayX100(scatterCount, scatterLookup))
+    : 0;
+
+  return { wins, winCents, scatterCount, scatterPayCents, removeMask };
+}
+
+  return { DEFAULT_PAY_LOOKUP, DEFAULT_SCATTER_LOOKUP, payoutX100, scatterPayX100, evaluateGrid };
+};
+
+__reg["engine/paytable.js"] = () => {
+/**
+ * Pre-calculo das tabelas de premio.
+ *
+ * O laco de avaliacao roda dezenas de milhoes de vezes na simulacao, entao
+ * varrer as faixas [min, max, premio] a cada simbolo e desperdicio. Aqui a
+ * tabela e "achatada" uma unica vez em um Int32Array indexado por
+ * `simbolo * (CELLS + 1) + contagem`, transformando a consulta em um acesso
+ * direto.
+ *
+ * Como efeito colateral util, a tabela vira um parametro do motor: o
+ * calibrador (tools/tune.js) escala a tabela sem tocar em config.js.
+ */
+
+const { GRID, PAYTABLE, SCATTER_PAYS, SYMBOL_COUNT, PAYING_FIRST, PAYING_LAST, MIN_CLUSTER } = __mod("engine/config.js");
+
+/** Numero de contagens possiveis: 0..CELLS. */
+const COUNT_SLOTS = GRID.CELLS + 1;
+
+/**
+ * @param {readonly (readonly (readonly number[])[])[]} [paytable]
+ * @returns {Int32Array} indexado por simbolo * COUNT_SLOTS + contagem
+ */
+function buildPayLookup(paytable = PAYTABLE) {
+  const table = new Int32Array(SYMBOL_COUNT * COUNT_SLOTS);
+  for (let s = PAYING_FIRST; s <= PAYING_LAST; s++) {
+    const tiers = paytable[s];
+    if (!tiers || tiers.length === 0) {
+      throw new RangeError(`Tabela de premios sem faixas para o simbolo ${s}.`);
+    }
+    for (let count = MIN_CLUSTER; count < COUNT_SLOTS; count++) {
+      let pay = 0;
+      for (const [min, max, value] of tiers) {
+        if (count >= min && count <= max) { pay = value; break; }
+      }
+      // contagem acima do ultimo teto paga a faixa mais alta
+      if (pay === 0 && count > tiers[tiers.length - 1][1]) pay = tiers[tiers.length - 1][2];
+      table[s * COUNT_SLOTS + count] = pay;
+    }
+  }
+  return table;
+}
+
+/**
+ * @param {readonly number[]} [scatterPays]
+ * @returns {Int32Array} indexado pela quantidade de scatters (0..CELLS)
+ */
+function buildScatterLookup(scatterPays = SCATTER_PAYS) {
+  const table = new Int32Array(COUNT_SLOTS);
+  const last = scatterPays.length - 1;
+  for (let n = 0; n < COUNT_SLOTS; n++) table[n] = scatterPays[Math.min(n, last)];
+  return table;
+}
+
+/**
+ * Multiplica todos os premios por um fator e arredonda para o multiplo de 5
+ * mais proximo (mantendo a invariante de divisibilidade de money.js).
+ * Usado apenas pelo calibrador.
+ *
+ * @param {readonly (readonly (readonly number[])[])[]} paytable
+ * @param {number} scale
+ * @returns {number[][][]}
+ */
+function scalePaytable(paytable, scale) {
+  return paytable.map((tiers) => tiers.map(([min, max, pay]) => {
+    const scaled = Math.max(5, Math.round((pay * scale) / 5) * 5);
+    return [min, max, scaled];
+  }));
+}
+
+/**
+ * @param {readonly number[]} scatterPays
+ * @param {number} scale
+ * @returns {number[]}
+ */
+function scaleScatterPays(scatterPays, scale) {
+  return scatterPays.map((p) => (p === 0 ? 0 : Math.max(5, Math.round((p * scale) / 5) * 5)));
+}
+
+  return { COUNT_SLOTS, buildPayLookup, buildScatterLookup, scalePaytable, scaleScatterPays };
+};
+
+__reg["engine/money.js"] = () => {
+/**
+ * Aritmetica monetaria em inteiros.
+ *
+ * Regra do projeto: dinheiro e SEMPRE um inteiro em centavos. Ponto flutuante
+ * so aparece na formatacao para a tela. Isso elimina toda uma classe de bugs
+ * de "0,1 + 0,2" que, em um jogo de aposta, viram divergencia de caixa.
+ *
+ * Premios sao expressos em centesimos da aposta (x100). A conversao para
+ * centavos e uma multiplicacao seguida de divisao por 100 com arredondamento
+ * meio-para-cima deterministico.
+ */
+
+/** Maior inteiro seguro para dinheiro; acima disso a soma deixa de ser exata. */
+const MAX_SAFE_CENTS = Number.MAX_SAFE_INTEGER;
+
+/**
+ * Converte um premio expresso em centesimos da aposta para centavos.
+ *
+ * Com apostas multiplas de 20 centavos e premios multiplos de 5 (invariantes
+ * garantidas por config.js e checadas em teste), o produto e sempre multiplo
+ * de 100 e a divisao e exata. O arredondamento existe apenas como rede de
+ * seguranca para multiplicadores de orbe arbitrarios.
+ *
+ * @param {number} betCents  Aposta total em centavos (inteiro > 0).
+ * @param {number} payX100   Premio em centesimos da aposta (inteiro >= 0).
+ * @returns {number} centavos (inteiro >= 0)
+ */
+function payToCents(betCents, payX100) {
+  assertInt(betCents, 'betCents');
+  assertInt(payX100, 'payX100');
+  const product = betCents * payX100;
+  if (product > MAX_SAFE_CENTS) {
+    throw new RangeError(`Overflow monetario: ${betCents} x ${payX100} excede o inteiro seguro.`);
+  }
+  return Math.round(product / 100);
+}
+
+/**
+ * Multiplica um valor em centavos por um multiplicador inteiro (orbe, global).
+ * @param {number} cents
+ * @param {number} multiplier inteiro >= 1
+ * @returns {number}
+ */
+function applyMultiplier(cents, multiplier) {
+  assertInt(cents, 'cents');
+  assertInt(multiplier, 'multiplier');
+  if (multiplier < 1) throw new RangeError(`Multiplicador deve ser >= 1, recebido ${multiplier}.`);
+  const product = cents * multiplier;
+  if (product > MAX_SAFE_CENTS) {
+    throw new RangeError(`Overflow monetario ao aplicar multiplicador ${multiplier}.`);
+  }
+  return product;
+}
+
+/**
+ * @param {number} value
+ * @param {string} name
+ */
+function assertInt(value, name) {
+  if (!Number.isInteger(value)) {
+    throw new TypeError(`${name} deve ser um inteiro, recebido ${value}.`);
+  }
+  if (value < 0) {
+    throw new RangeError(`${name} nao pode ser negativo, recebido ${value}.`);
+  }
+}
+
+/**
+ * Formata centavos para exibicao (pt-BR).
+ * @param {number} cents
+ * @param {string} [locale]
+ * @param {string} [currency]
+ */
+function formatCents(cents, locale = 'pt-BR', currency = 'BRL') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency', currency, minimumFractionDigits: 2,
+  }).format(cents / 100);
+}
+
+/**
+ * Formata um ganho como multiplo da aposta ("12,50x").
+ * @param {number} winCents
+ * @param {number} betCents
+ */
+function formatMultiplier(winCents, betCents) {
+  if (betCents <= 0) return '0x';
+  const x = winCents / betCents;
+  return `${x.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x`;
+}
+
+  return { payToCents, applyMultiplier, assertInt, formatCents, formatMultiplier };
+};
+
+__mod("ui/app.js");
+</script>
+</body>
+</html>

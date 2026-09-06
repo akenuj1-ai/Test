@@ -13,6 +13,7 @@
     "sim:full": "node src/sim/cli.js --spins 2000000 --all",
     "tune": "node tools/tune.js",
     "serve": "node tools/serve.js",
+    "bundle": "node tools/bundle.js",
     "typecheck": "tsc -p jsconfig.json"
   },
   "license": "MIT"

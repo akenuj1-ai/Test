@@ -19,6 +19,12 @@
   --win: #45e0a0;
   --danger: #ff5d73;
 
+  /* Bricolage Grotesque para o que precisa de presença (marca, valor do
+     ganho, GIRAR); Archivo para a interface, escolhida pelos algarismos
+     tabulares — a tela é quase toda número que muda no lugar. */
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-ui: 'Archivo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
   --cell: clamp(38px, 12vw, 78px);
   --gap: clamp(4px, 1.2vw, 8px);
   --radius: 14px;
@@ -38,16 +44,24 @@
 html, body {
   margin: 0;
   min-height: 100%;
+  /* impede o "puxar para atualizar" de disparar no meio de um giro */
+  overscroll-behavior-y: none;
   background:
     radial-gradient(1200px 600px at 50% -10%, #2b1150 0%, transparent 60%),
     radial-gradient(900px 500px at 80% 110%, #1b0e3a 0%, transparent 55%),
     var(--bg);
   color: var(--text);
-  font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
 }
 
-body { display: flex; justify-content: center; padding: 12px; }
+body {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+  /* 100dvh acompanha a barra de endereco do navegador movel, que 100vh ignora */
+  min-height: 100dvh;
+}
 
 .app {
   width: min(880px, 100%);
@@ -55,6 +69,14 @@ body { display: flex; justify-content: center; padding: 12px; }
   flex-direction: column;
   gap: 12px;
 }
+
+/* Toque: `manipulation` remove o atraso de 300 ms e o zoom por toque duplo;
+   sem isso, girar rapido no celular aumenta a pagina em vez de girar. */
+button, .tile, .board {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
 
 /* ---------------- barra superior ---------------- */
 .topbar {
@@ -73,8 +95,10 @@ body { display: flex; justify-content: center; padding: 12px; }
 .brand-mark { font-size: 28px; filter: drop-shadow(0 0 10px rgba(255, 203, 69, 0.55)); }
 .brand h1 {
   margin: 0;
-  font-size: clamp(15px, 4vw, 20px);
-  letter-spacing: 0.5px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(15px, 4vw, 21px);
+  letter-spacing: -0.2px;
   background: linear-gradient(180deg, #fff6d8, var(--gold) 55%, var(--gold-deep));
   -webkit-background-clip: text;
   background-clip: text;
@@ -85,7 +109,12 @@ body { display: flex; justify-content: center; padding: 12px; }
 .topbar-right { display: flex; align-items: center; gap: 6px; }
 .meter { text-align: right; margin-right: 4px; }
 .meter-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
-.meter-value { font-size: clamp(13px, 3.6vw, 17px); font-variant-numeric: tabular-nums; }
+.meter-value {
+  font-size: clamp(14px, 3.7vw, 18px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+}
 
 .icon-btn {
   width: 34px; height: 34px;
@@ -102,7 +131,15 @@ body { display: flex; justify-content: center; padding: 12px; }
 .icon-btn:active { transform: scale(0.94); }
 
 /* ---------------- palco ---------------- */
-.stage { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.stage {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex: 1;              /* ocupa o espaco livre para o tabuleiro ficar centrado */
+  min-height: 0;
+}
 
 .feature-bar { display: flex; gap: 8px; width: 100%; justify-content: center; }
 .feature-chip {
@@ -208,8 +245,10 @@ body { display: flex; justify-content: center; padding: 12px; }
 .win-overlay-label { margin: 0; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
 .win-overlay-value {
   margin: 4px 0 0;
-  font-size: clamp(26px, 8vw, 48px);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 8.5vw, 52px);
   font-weight: 800;
+  letter-spacing: -0.5px;
   font-variant-numeric: tabular-nums;
   color: #fff;
   text-shadow: 0 0 26px rgba(255, 203, 69, 0.75);
@@ -302,7 +341,11 @@ body { display: flex; justify-content: center; padding: 12px; }
   0%, 100% { box-shadow: 0 10px 34px rgba(255, 203, 69, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.7); }
   50%      { box-shadow: 0 10px 48px rgba(255, 203, 69, 0.75), inset 0 2px 0 rgba(255, 255, 255, 0.7); }
 }
-.spin-btn-label { font-size: clamp(13px, 3.6vw, 17px); }
+.spin-btn-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(14px, 3.8vw, 18px);
+}
 .spin-btn-cost { font-size: 10px; font-weight: 700; opacity: 0.75; font-variant-numeric: tabular-nums; }
 
 .ghost-btn {
@@ -364,7 +407,7 @@ body { display: flex; justify-content: center; padding: 12px; }
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
 }
-.modal-head h2 { margin: 0; font-size: 16px; }
+.modal-head h2 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 17px; }
 .modal-body { padding: 14px 16px 18px; overflow-y: auto; font-size: 13px; line-height: 1.55; }
 
 .pay-row {
@@ -437,12 +480,94 @@ body { display: flex; justify-content: center; padding: 12px; }
 }
 
 /* ---------------- responsivo ---------------- */
-@media (max-width: 620px) {
-  .controls { grid-template-columns: 1fr auto; grid-template-areas: "bet spin" "extra extra"; }
+
+/* Celular em pe. Metas: caber sem rolagem, e nenhum alvo de toque abaixo de
+   44 px (o minimo das diretrizes de acessibilidade da Apple e do Google). */
+@media (max-width: 640px) {
+  :root {
+    --cell: clamp(42px, 14.2vw, 64px);
+    --gap: 5px;
+  }
+
+  body {
+    padding: 8px;
+    /* respeita o recorte da camera e a barra inferior de gestos */
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  .app { gap: 8px; }
+
+  .topbar { padding: 8px 10px; gap: 8px; }
+  .brand-mark { font-size: 26px; }
+  .brand-sub { display: none; }
+
+  /* Sem largura para "Fortuna Real" ao lado do saldo e dos tres botoes: no
+     celular a coroa vira o logo. O titulo continua no DOM para leitores de
+     tela e para o nome da aba. */
+  .brand h1 {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .topbar-right { gap: 5px; }
+  .meter { margin-right: 2px; }
+  .icon-btn { width: 44px; height: 44px; font-size: 17px; }
+
+  .board { border-radius: 14px; }
+  .winline { min-height: 18px; font-size: 12px; }
+
+  .controls {
+    grid-template-columns: 1fr auto;
+    grid-template-areas: "bet spin" "extra extra";
+    padding: 10px;
+    gap: 10px;
+  }
   .control-group:first-child { grid-area: bet; }
   .control-group--main { grid-area: spin; }
-  .control-group--right { grid-area: extra; justify-content: center; }
-  .brand-sub { display: none; }
+  .control-group--right {
+    grid-area: extra;
+    justify-content: stretch;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .step-btn { width: 44px; height: 44px; font-size: 20px; }
+  .bet-value { min-width: 64px; }
+  .ghost-btn { flex: 1 1 0; min-width: 0; min-height: 46px; padding: 6px 2px; }
+  .ghost-btn span { white-space: nowrap; font-size: 10px; }
+
+  .disclaimer { font-size: 10px; line-height: 1.4; }
+  .disclaimer .long { display: none; }
+
+  .modal { padding: 8px; }
+  .modal-card { max-height: 90dvh; }
+  .pay-row { grid-template-columns: 28px 1fr repeat(3, 46px); }
+}
+
+/* Telas curtas em pe (iPhone SE e afins, 568 px de altura). A restricao aqui
+   e vertical, nao horizontal: o tabuleiro passa a ser limitado pela altura
+   para que o botao de girar continue visivel sem rolar a pagina. */
+@media (max-height: 620px) and (orientation: portrait) {
+  :root { --cell: clamp(36px, 12.4vw, 56px); }
+  .app { gap: 5px; }
+  .topbar { padding: 5px 10px; }
+  .brand h1 { font-size: 15px; }
+  .controls { padding: 8px; gap: 8px; }
+  .spin-btn { width: clamp(82px, 23vw, 104px); }
+  .ghost-btn { min-height: 44px; }
+  .disclaimer { font-size: 9px; }
+}
+
+/* Celular deitado: sobra largura e falta altura, entao o tabuleiro encolhe
+   pela altura da tela em vez de pela largura. */
+@media (max-height: 480px) and (orientation: landscape) {
+  :root { --cell: clamp(30px, 13vh, 56px); }
+  .disclaimer, .brand-sub { display: none; }
+  .app { gap: 6px; }
+  .spin-btn { width: clamp(72px, 18vh, 100px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

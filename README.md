@@ -13,9 +13,21 @@ navegador, sem `npm install`, sem bundler.
 ```bash
 npm test        # 102 testes
 npm run serve   # abre a interface em http://localhost:8080
+npm run bundle  # gera dist/fortuna-real.html — arquivo único, roda no celular
 npm run sim     # simulação de Monte Carlo com relatório
 npm run tune    # verificação do RTP com intervalos de confiança
 ```
+
+### Rodando no celular
+
+`npm run bundle` empacota os dez módulos ESM em um HTML de ~104 KB sem
+dependência nenhuma. O arquivo abre por `file://`, sobe em qualquer hospedagem
+estática e funciona offline (só as fontes vêm da rede, com fallback declarado).
+
+A interface é feita para toque: cabe sem rolagem de 320 px (iPhone SE) para
+cima, nenhum alvo abaixo de 44 px, `100dvh` para acompanhar a barra de endereço,
+áreas seguras de recorte e barra de gestos respeitadas, e layout próprio para
+tela deitada.
 
 ---
 
@@ -103,6 +115,7 @@ pedir a revelação a qualquer momento.
 |---|---|
 | `npm test` | suíte completa (~22 s) |
 | `npm run serve` | servidor estático da interface |
+| `npm run bundle` | gera `dist/fortuna-real.html`, arquivo único que abre com duplo clique |
 | `npm run sim` | 200.000 rodadas, com histograma de ganhos |
 | `npm run sim -- --spins 2000000 --all` | todos os modos |
 | `npm run sim -- --json` | saída legível por máquina |

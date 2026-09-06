@@ -13,7 +13,8 @@ teste que falha sem a correção.
 | Checagem cruzada exato × Monte Carlo | `src/sim/analytic.js` vs `src/sim/simulate.js` |
 | Invariantes de contabilidade | saldo fecha; todo valor inteiro e não negativo |
 | Teste de propriedade | ganho escala linearmente com a aposta; teto nunca ultrapassado |
-| Teste de ponta a ponta em navegador | Chromium headless: giros, modais, compra de bônus |
+| Teste de ponta a ponta em navegador | Chromium headless: giros, modais, automático, compra de bônus |
+| Checagem de tipos | `tsc --strict` sobre o JSDoc (`checkJs`) |
 
 ## Achados corrigidos
 
@@ -104,7 +105,28 @@ Ignorar isso deixou o ante 0,85 p.p. abaixo do alvo na primeira medição precis
 Correção: o multiplicador foi re-resolvido sobre pontos **medidos**, não sobre o
 modelo analítico puro.
 
-### 8. `var` em escopo de bloco na animação de cascata — baixo
+### 8. Automático infinito estouraria a pilha — médio
+
+O laço do automático era recursivo: cada rodada terminava chamando `spin()` de
+novo. JavaScript não elimina chamada de cauda, então cada giro empilhava um
+quadro. Com o automático em "∞", a pilha estoura depois de alguns milhares de
+rodadas — longe o bastante para não aparecer em teste manual, perto o bastante
+para acontecer com um jogador real.
+
+Correção: `playOnce()` separado do laço, e o laço virou `while`. O comentário no
+código explica por que não pode voltar a ser recursivo.
+
+### 9. Modal parava de fechar ao clicar fora — baixo
+
+`openModal` registrava o listener de fechamento a cada abertura, com
+`{ once: true }` para não acumular. O `once` resolvia o acúmulo e criava um
+defeito pior: um clique **dentro** do cartão já borbulhava até o modal e
+consumia o listener, então o clique seguinte no fundo não fechava mais nada.
+
+Correção: um único listener por modal, registrado na inicialização, que decide
+pelo alvo do evento (`e.target === modal` ou `.closest('[data-close]')`).
+
+### 10. `var` em escopo de bloco na animação de cascata — baixo
 
 O índice das células que caem vinha de um `var` declarado dentro do laço e lido
 na iteração seguinte. Funcionava por *hoisting*, mas a dependência entre
@@ -130,6 +152,9 @@ função nomeada `fallingColumns`.
   contra a raiz antes de qualquer acesso ao disco.
 - **Injeção de HTML** na UI: a semente do cliente é o único texto controlado
   pelo usuário que entra em `innerHTML`, e passa por `escapeHtml`.
+- **Tipos**: `src/` e `tools/` passam limpos em `tsc --strict` com `checkJs`
+  (os testes acusam apenas a ausência de `@types/node`, que não é dependência
+  do projeto).
 
 ## Riscos residuais
 

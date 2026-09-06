@@ -290,14 +290,15 @@ function describeWins(wins, running, bet) {
 /* fluxo de jogo                                                       */
 /* ------------------------------------------------------------------ */
 
-/** @param {import('../engine/round.js').ModeName} mode */
-async function spin(mode) {
-  if (ui.busy) return;
+/**
+ * Uma rodada, do débito à animação.
+ * @param {import('../engine/round.js').ModeName} mode
+ * @returns {Promise<boolean>} false quando a rodada nao aconteceu
+ */
+async function playOnce(mode) {
   if (!session.canAfford(mode)) {
     await toast('Saldo insuficiente. Use "Estatísticas" para recarregar créditos de demonstração.', 2400);
-    ui.autoRemaining = 0;
-    updateControls();
-    return;
+    return false;
   }
 
   ui.busy = true;
@@ -307,26 +308,52 @@ async function spin(mode) {
   el.winOverlay.hidden = true;
   updateControls();
 
+  let ok = true;
   try {
-    const play = session.play({ mode, trace: true });
-    await presentRound(play);
+    await presentRound(session.play({ mode, trace: true }));
   } catch (err) {
     console.error(err);
     await toast(`Erro na rodada: ${err instanceof Error ? err.message : String(err)}`, 3000);
-    ui.autoRemaining = 0;
+    ok = false;
   } finally {
     ui.busy = false;
     el.btnSpin.classList.remove('is-spinning');
     refreshMeters();
     updateControls();
   }
+  return ok;
+}
 
-  if (ui.autoRemaining > 0) {
+/**
+ * Ponto de entrada dos botões: uma rodada e, se o automático estiver ligado,
+ * as seguintes.
+ *
+ * O laço é iterativo de propósito. A versão recursiva ("gire, depois chame a si
+ * mesmo") empilha um quadro por rodada, e o automático infinito estoura a pilha
+ * depois de alguns milhares de giros — JavaScript não elimina chamada de cauda.
+ *
+ * @param {import('../engine/round.js').ModeName} mode
+ */
+async function spin(mode) {
+  if (ui.busy) return;
+
+  if (!(await playOnce(mode))) {
+    ui.autoRemaining = 0;
+    updateControls();
+    return;
+  }
+
+  while (ui.autoRemaining > 0) {
     ui.autoRemaining -= 1;
     updateControls();
     await wait(260);
-    if (ui.autoRemaining >= 0 && !ui.busy) await spin(mode);
+    if (ui.busy) break;             // o jogador interveio
+    if (!(await playOnce(mode))) {
+      ui.autoRemaining = 0;
+      break;
+    }
   }
+  updateControls();
 }
 
 const currentMode = () => (ui.ante ? Mode.ANTE : Mode.BASE);
@@ -365,12 +392,29 @@ function stepBet(direction) {
 /* modais                                                              */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Liga o fechamento dos modais UMA vez, por delegação.
+ *
+ * Registrar o listener dentro de `openModal` acumularia um por abertura, e o
+ * `{ once: true }` que evitaria isso tinha o defeito oposto: um clique dentro
+ * do cartão já consumia o listener do fundo, e o modal parava de fechar ao
+ * clicar fora.
+ */
+function wireModals() {
+  for (const node of document.querySelectorAll('.modal')) {
+    const modal = /** @type {HTMLElement} */ (node);
+    modal.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target === modal || (target instanceof Element && target.closest('[data-close]'))) {
+        modal.hidden = true;
+      }
+    });
+  }
+}
+
 /** @param {string} id */
 function openModal(id) {
-  const m = $(id);
-  m.hidden = false;
-  m.querySelector('[data-close]')?.addEventListener('click', () => { m.hidden = true; }, { once: true });
-  m.addEventListener('click', (e) => { if (e.target === m) m.hidden = true; }, { once: true });
+  $(id).hidden = false;
 }
 
 function renderPaytable() {
@@ -571,6 +615,7 @@ function init() {
   refreshMeters();
   updateControls();
   wireControls();
+  wireModals();
 }
 
 init();

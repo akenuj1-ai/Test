@@ -1,7 +1,8 @@
 # Fortuna Real
 
 Slot 6×5 completo — motor matemático, interface jogável e ferramentas de
-verificação de RTP. **Zero dependências**: só Node 20+ e um navegador.
+verificação de RTP. **Zero dependências de runtime**: só Node 20+ e um
+navegador, sem `npm install`, sem bundler.
 
 > ⚠️ **Jogo de demonstração.** Créditos fictícios, sem depósito, sem aposta e
 > sem prêmio em dinheiro real. O objetivo é servir de referência de como a
@@ -104,7 +105,7 @@ pedir a revelação a qualquer momento.
 | `npm run tune` | RTP decomposto com IC 95% (~30 s) |
 | `npm run tune -- --precise` | mesma medição com 10× mais amostras |
 | `npm run tune -- --solve` | sugere o próximo valor das constantes de calibragem |
-| `npm run typecheck` | checagem de tipos via JSDoc (requer `typescript`) |
+| `npm run typecheck` | checagem de tipos via JSDoc (requer `typescript`; os testes também pedem `@types/node`) |
 
 ---
 

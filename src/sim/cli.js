@@ -15,7 +15,7 @@ import { TARGET_RTP, BUY_PRICES_X100, ANTE_COST_X100 } from '../engine/config.js
 
 const args = parseArgs(process.argv.slice(2));
 const spins = Number(args.spins ?? 200000);
-const seed = args.seed ?? 'fortuna-real';
+const seed = String(args.seed ?? 'fortuna-real');
 const json = Boolean(args.json);
 
 const modes = args.all
@@ -34,6 +34,7 @@ for (const mode of modes) {
 if (!json && args.all) {
   const fs = results[Mode.BUY_FREE_SPINS];
   const sfs = results[Mode.BUY_SUPER_FREE_SPINS];
+  /** @param {string} label @param {import('./simulate.js').SimResult} r @param {number} priceX100 */
   const line = (label, r, priceX100) => {
     const price = priceX100 / 100;
     const fair = fairBuyPrice(r.rtp * price, TARGET_RTP);
@@ -53,7 +54,7 @@ if (json) console.log(JSON.stringify(results, null, 2));
 
 /** @param {import('./simulate.js').SimResult} r @param {number} ms */
 function report(r, ms) {
-  const pct = (x) => `${(x * 100).toFixed(2)}%`;
+  const pct = (/** @type {number} */ x) => `${(x * 100).toFixed(2)}%`;
   console.log(`\n=== ${r.mode} — ${r.spins.toLocaleString('pt-BR')} rodadas (${(ms / 1000).toFixed(1)}s) ===`);
   console.log(`  RTP total          ${pct(r.rtp)}  (+-${(r.rtpCi95 * 100).toFixed(2)} p.p. IC95%)`);
   console.log(`    giro base        ${pct(r.baseRtp)}`);
@@ -73,7 +74,7 @@ function report(r, ms) {
 }
 
 /** @param {number} x */
-function fmt(x) {
+function fmt(/** @type {number} */ x) {
   return Number.isFinite(x) ? x.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) : 'nunca';
 }
 

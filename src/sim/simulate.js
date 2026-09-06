@@ -22,7 +22,7 @@ const WIN_BUCKETS = [0, 0.5, 1, 2, 5, 10, 20, 50, 100, 250, 500, 1000, 2500, 500
 
 /**
  * @typedef {object} SimResult
- * @property {string} mode
+ * @property {import('../engine/round.js').ModeName} mode
  * @property {number} spins
  * @property {number} rtp
  * @property {number} rtpStdError
@@ -47,7 +47,7 @@ const WIN_BUCKETS = [0, 0.5, 1, 2, 5, 10, 20, 50, 100, 250, 500, 1000, 2500, 500
 /**
  * @param {object} opts
  * @param {number} opts.spins
- * @param {string} [opts.mode]
+ * @param {import('../engine/round.js').ModeName} [opts.mode]
  * @param {number} [opts.betCents]
  * @param {string|number} [opts.seed]
  * @param {ReturnType<typeof createEngine>} [opts.engine]

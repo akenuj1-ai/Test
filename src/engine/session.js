@@ -18,6 +18,14 @@ import { BET_LEVELS_CENTS, DEFAULT_BET_CENTS, DEFAULT_BALANCE_CENTS } from './co
 import { assertInt } from './money.js';
 
 /**
+ * @typedef {object} RoundProof
+ * @property {'secure'|'provablyFair'} mode
+ * @property {string} clientSeed
+ * @property {number} nonce
+ * @property {string} serverSeedHash
+ */
+
+/**
  * @typedef {object} SessionStats
  * @property {number} rounds
  * @property {number} wageredCents
@@ -103,7 +111,7 @@ export function createSession(opts = {}) {
    * @param {object} [args]
    * @param {import('./round.js').ModeName} [args.mode]
    * @param {boolean} [args.trace]
-   * @returns {{ result: import('./round.js').RoundResult, balanceBefore: number, balanceAfter: number, proof: object }}
+   * @returns {{ result: import('./round.js').RoundResult, balanceBefore: number, balanceAfter: number, proof: RoundProof }}
    */
   function play({ mode = Mode.BASE, trace = true } = {}) {
     const cost = costFor(mode);

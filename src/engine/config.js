@@ -73,10 +73,13 @@ export const SYMBOLS = Object.freeze([
 
 /**
  * Tabela de premios por dispersao.
- * Cada entrada e [minimo, maximo, premio em centesimos da aposta total].
+ * Cada entrada e a tripla [minimo, maximo, premio em centesimos da aposta].
+ * A contiguidade das faixas e a cobertura ate a grade cheia sao garantidas
+ * por invariante em test/config.test.js — JavaScript nao tem tuplas para
+ * expressar isso no tipo.
  * Os premios sao multiplos de 5 por construcao — ver nota de arredondamento
  * em money.js.
- * @type {readonly (readonly (readonly [number, number, number])[])[]}
+ * @type {readonly (readonly (readonly number[])[])[]}
  */
 export const PAYTABLE = Object.freeze([
   /* BLUE      */ Object.freeze([[8, 9, 25], [10, 11, 75], [12, 30, 200]]),
@@ -88,7 +91,7 @@ export const PAYTABLE = Object.freeze([
   /* RING      */ Object.freeze([[8, 9, 200], [10, 11, 500], [12, 30, 1500]]),
   /* HOURGLASS */ Object.freeze([[8, 9, 250], [10, 11, 1000], [12, 30, 2500]]),
   /* CROWN     */ Object.freeze([[8, 9, 1000], [10, 11, 2500], [12, 30, 5000]]),
-].map(Object.freeze));
+]);
 
 /** Minimo de simbolos iguais para formar combinacao. */
 export const MIN_CLUSTER = 8;

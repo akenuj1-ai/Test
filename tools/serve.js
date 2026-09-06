@@ -9,11 +9,13 @@
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ROOT = resolve(import.meta.dirname, '..');
+const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const PORT = Number(process.env.PORT ?? 8080);
 const INDEX = '/src/ui/index.html';
 
+/** @type {Record<string, string>} */
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -23,29 +25,35 @@ const TYPES = {
   '.ico': 'image/x-icon',
 };
 
-const server = createServer(async (req, res) => {
-  try {
-    const url = new URL(req.url ?? '/', 'http://localhost');
-    const path = url.pathname === '/' ? INDEX : url.pathname;
+const server = createServer(
+  /**
+   * @param {import('node:http').IncomingMessage} req
+   * @param {import('node:http').ServerResponse} res
+   */
+  async (req, res) => {
+    try {
+      const url = new URL(req.url ?? '/', 'http://localhost');
+      const path = url.pathname === '/' ? INDEX : url.pathname;
 
-    // impede escapar da raiz via ".." antes de qualquer acesso ao disco
-    const target = resolve(ROOT, `.${normalize(path)}`);
-    if (target !== ROOT && !target.startsWith(ROOT + sep)) {
-      res.writeHead(403).end('403 — fora da raiz servida');
-      return;
+      // impede escapar da raiz via ".." antes de qualquer acesso ao disco
+      const target = resolve(ROOT, `.${normalize(path)}`);
+      if (target !== ROOT && !target.startsWith(ROOT + sep)) {
+        res.writeHead(403).end('403 — fora da raiz servida');
+        return;
+      }
+
+      const info = await stat(target);
+      const file = info.isDirectory() ? join(target, 'index.html') : target;
+      const body = await readFile(file);
+      res.writeHead(200, {
+        'content-type': TYPES[extname(file)] ?? 'application/octet-stream',
+        'cache-control': 'no-cache',
+      }).end(body);
+    } catch {
+      res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' }).end('404');
     }
-
-    const info = await stat(target);
-    const file = info.isDirectory() ? join(target, 'index.html') : target;
-    const body = await readFile(file);
-    res.writeHead(200, {
-      'content-type': TYPES[extname(file)] ?? 'application/octet-stream',
-      'cache-control': 'no-cache',
-    }).end(body);
-  } catch {
-    res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' }).end('404');
-  }
-});
+  },
+);
 
 server.listen(PORT, () => {
   console.log(`Fortuna Real em http://localhost:${PORT}${INDEX}`);

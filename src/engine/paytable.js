@@ -17,7 +17,7 @@ import { GRID, PAYTABLE, SCATTER_PAYS, SYMBOL_COUNT, PAYING_FIRST, PAYING_LAST, 
 export const COUNT_SLOTS = GRID.CELLS + 1;
 
 /**
- * @param {readonly (readonly (readonly [number, number, number])[])[]} [paytable]
+ * @param {readonly (readonly (readonly number[])[])[]} [paytable]
  * @returns {Int32Array} indexado por simbolo * COUNT_SLOTS + contagem
  */
 export function buildPayLookup(paytable = PAYTABLE) {
@@ -56,14 +56,14 @@ export function buildScatterLookup(scatterPays = SCATTER_PAYS) {
  * mais proximo (mantendo a invariante de divisibilidade de money.js).
  * Usado apenas pelo calibrador.
  *
- * @param {readonly (readonly (readonly [number, number, number])[])[]} paytable
+ * @param {readonly (readonly (readonly number[])[])[]} paytable
  * @param {number} scale
- * @returns {[number, number, number][][]}
+ * @returns {number[][][]}
  */
 export function scalePaytable(paytable, scale) {
   return paytable.map((tiers) => tiers.map(([min, max, pay]) => {
     const scaled = Math.max(5, Math.round((pay * scale) / 5) * 5);
-    return /** @type {[number, number, number]} */ ([min, max, scaled]);
+    return [min, max, scaled];
   }));
 }
 

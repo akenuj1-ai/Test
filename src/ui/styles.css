@@ -6,8 +6,12 @@
    ============================================================ */
 
 :root {
+  /* Os tokens abaixo sao sobrescritos em tempo de execucao por themes.js.
+     Os valores aqui sao os do tema padrao e servem de fallback caso o
+     JavaScript nao rode. */
   --bg: #0a0713;
-  --bg-2: #150c26;
+  --bg-glow-1: #2b1150;
+  --bg-glow-2: #1b0e3a;
   --panel: rgba(30, 18, 54, 0.72);
   --panel-solid: #1a1030;
   --line: rgba(255, 255, 255, 0.09);
@@ -16,6 +20,7 @@
   --muted: #a396c4;
   --gold: #ffcb45;
   --gold-deep: #c8902a;
+  --gold-ink: #2a1a00;
   --win: #45e0a0;
   --danger: #ff5d73;
 
@@ -47,8 +52,8 @@ html, body {
   /* impede o "puxar para atualizar" de disparar no meio de um giro */
   overscroll-behavior-y: none;
   background:
-    radial-gradient(1200px 600px at 50% -10%, #2b1150 0%, transparent 60%),
-    radial-gradient(900px 500px at 80% 110%, #1b0e3a 0%, transparent 55%),
+    radial-gradient(1200px 600px at 50% -10%, var(--bg-glow-1) 0%, transparent 60%),
+    radial-gradient(900px 500px at 80% 110%, var(--bg-glow-2) 0%, transparent 55%),
     var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
@@ -131,6 +136,28 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
 .icon-btn:active { transform: scale(0.94); }
 
 /* ---------------- palco ---------------- */
+
+/* Imagem de simbolo, usada quando o tema traz arte no lugar do emoji. */
+.tile-art, .pay-art {
+  display: block;
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.pay-art { width: 24px; height: 24px; margin: 0 auto; }
+
+/* Estilhacos das pecas que explodem. Fica sobre o tabuleiro e nunca recebe
+   toque — e decoracao, e um dedo no meio dela nao pode roubar o clique. */
+.fx-layer {
+  position: absolute;
+  inset: var(--gap);
+  width: calc(100% - var(--gap) * 2);
+  height: calc(100% - var(--gap) * 2);
+  pointer-events: none;
+  z-index: 4;
+}
 .stage {
   display: flex;
   flex-direction: column;
@@ -278,6 +305,66 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
 .winline.is-win { color: var(--win); font-weight: 600; }
 .winline.is-big { color: var(--gold); font-weight: 700; }
 
+/* Antecipacao: as moedas visiveis ja chegaram a uma do gatilho e as colunas
+   restantes estao demorando de proposito. O tabuleiro avisa. */
+.board--espera {
+  animation: espera calc(0.9s / var(--speed)) ease-in-out infinite;
+}
+@keyframes espera {
+  0%, 100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--line-strong); }
+  50%      { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 2px var(--gold), 0 0 34px rgba(255, 203, 69, 0.45); }
+}
+.board--espera .tile--scatter { animation: tile-pulse calc(0.5s / var(--speed)) ease-in-out infinite; }
+
+/* Ganho grande: um tranco curto, com deslocamento pequeno para nao embrulhar
+   o estomago de ninguem no celular. */
+.board--tremor { animation: tremor calc(0.5s / var(--speed)) cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@keyframes tremor {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(3px, -1px, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 1px, 0); }
+  40%, 60% { transform: translate3d(4px, -1px, 0); }
+}
+
+/* ---------------- seletor de tema ---------------- */
+.tema-linha {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.tema-rotulo {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.tema-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.tema-chip {
+  flex: 1 1 160px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tema-chip:hover { background: rgba(255, 255, 255, 0.09); }
+.tema-chip[aria-pressed="true"] {
+  border-color: var(--gold);
+  background: rgba(255, 203, 69, 0.14);
+}
+.tema-badge { font-size: 22px; line-height: 1; }
+.tema-chip strong { display: block; font-size: 13px; }
+.tema-chip small { display: block; font-size: 10px; color: var(--muted); }
+
 /* ---------------- controles ---------------- */
 .controls {
   display: grid;
@@ -323,7 +410,7 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
   border: 2px solid rgba(255, 255, 255, 0.25);
   background:
     radial-gradient(circle at 50% 28%, #ffe89a, var(--gold) 42%, var(--gold-deep) 78%, #7d5410);
-  color: #2a1a00;
+  color: var(--gold-ink);
   font-weight: 900;
   letter-spacing: 1px;
   cursor: pointer;
@@ -443,7 +530,7 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
   border-radius: 10px;
   border: 1px solid rgba(255, 203, 69, 0.55);
   background: linear-gradient(180deg, var(--gold), var(--gold-deep));
-  color: #2a1a00;
+  color: var(--gold-ink);
   font-weight: 800;
   font-size: 13px;
   cursor: pointer;

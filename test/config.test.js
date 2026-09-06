@@ -11,11 +11,22 @@ test('todo simbolo tem metadado e o indice bate com a posicao', () => {
   assert.equal(cfg.SYMBOLS.length, cfg.SYMBOL_COUNT);
   cfg.SYMBOLS.forEach((meta, i) => {
     assert.equal(meta.id, i, `simbolo ${meta.key} com id fora de ordem`);
-    assert.ok(meta.name && meta.glyph && meta.color, `simbolo ${meta.key} incompleto`);
+    assert.ok(meta.key, `simbolo ${i} sem chave`);
     assert.ok(['low', 'high', 'scatter', 'orb'].includes(meta.kind));
   });
   assert.equal(cfg.SYMBOLS[cfg.Sym.SCATTER].kind, 'scatter');
   assert.equal(cfg.SYMBOLS[cfg.Sym.ORB].kind, 'orb');
+});
+
+test('a configuracao do motor nao carrega nada de aparencia', () => {
+  // Se um destes campos voltar para config.js, a aparencia deixou de ser
+  // separavel da matematica e um tema novo passa a poder mover o RTP.
+  for (const meta of cfg.SYMBOLS) {
+    for (const campo of ['name', 'glyph', 'color', 'art']) {
+      assert.equal(campo in meta, false,
+        `"${campo}" e aparencia e pertence a src/ui/themes.js, nao a config.js`);
+    }
+  }
 });
 
 test('cada rolo tem um peso por simbolo, todos positivos', () => {

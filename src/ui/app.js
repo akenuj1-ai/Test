@@ -17,6 +17,8 @@ import {
   FREE_SPINS_AWARDED, SCATTER_TRIGGER, MIN_CLUSTER,
 } from '../engine/config.js';
 import { formatCents, formatMultiplier } from '../engine/money.js';
+import { THEMES, themeById, applyTheme, loadThemeId, saveThemeId } from './themes.js';
+import { revealSchedule } from './reveal.js';
 
 const { COLS, ROWS, CELLS } = GRID;
 
@@ -35,6 +37,8 @@ const ui = {
   autoSizeIndex: 0,
   /** @type {number[]} */
   lastGrid: new Array(CELLS).fill(Sym.BLUE),
+  /** @type {number[]} */
+  lastOrbs: new Array(CELLS).fill(0),
   /**
    * Saldo a exibir enquanto a rodada é animada.
    *
@@ -48,7 +52,29 @@ const ui = {
 };
 
 /** Duracoes base em ms; divididas pelo fator de turbo. */
-const TIMING = { reveal: 330, highlight: 600, pop: 230, betweenSpins: 360, banner: 900 };
+const TIMING = {
+  tile: 260,          // duracao da queda de uma peca
+  revealStep: 52,     // atraso entre uma coluna e a seguinte
+  anticipation: 430,  // atraso quando falta UMA moeda para o gatilho
+  cascadeRow: 26,     // escalonamento vertical dentro de uma coluna
+  highlight: 600,
+  pop: 230,
+  betweenSpins: 360,
+  banner: 900,
+  rollUp: 620,        // contagem crescente do ganho
+};
+
+/** O jogador pediu menos movimento: nada de particulas nem contagem animada. */
+const semMovimento = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+let tema = themeById(loadThemeId());
+
+/**
+ * Aparencia de um simbolo no tema vigente.
+ * @param {number} symbolId
+ * @returns {import('./themes.js').SymbolSkin}
+ */
+const peleDe = (symbolId) => tema.symbols[SYMBOLS[symbolId].key];
 
 const $ = (/** @type {string} */ id) => /** @type {HTMLElement} */ (document.getElementById(id));
 
@@ -75,6 +101,9 @@ const el = {
   betDown: /** @type {HTMLButtonElement} */ ($('bet-down')),
   betUp: /** @type {HTMLButtonElement} */ ($('bet-up')),
   rtpBadge: $('rtp-badge'),
+  brandMark: $('brand-mark'),
+  brandName: $('brand-name'),
+  fxLayer: /** @type {HTMLCanvasElement} */ ($('fx-layer')),
 };
 
 /** @type {HTMLElement[]} indexado por indice de grade (col * ROWS + row) */
@@ -102,54 +131,250 @@ function buildBoard() {
 }
 
 /**
- * Pinta uma celula.
+ * Pinta uma celula com a aparencia do tema vigente.
  * @param {number} i indice de grade
  * @param {number} symbolId
  * @param {number} orbValue
  * @param {boolean} winning
  */
 function paintTile(i, symbolId, orbValue, winning) {
-  const meta = SYMBOLS[symbolId];
+  const pele = peleDe(symbolId);
   const tile = tiles[i];
   const classes = ['tile'];
   if (symbolId === Sym.SCATTER) classes.push('tile--scatter');
   if (symbolId === Sym.ORB) classes.push('tile--orb');
   if (winning) classes.push('tile--win');
   tile.className = classes.join(' ');
-  tile.style.setProperty('--glow', meta.color);
-  tile.setAttribute('aria-label', meta.name);
+  tile.style.setProperty('--glow', pele.color);
+  tile.setAttribute('aria-label', pele.name);
 
+  /** @type {(Node|string)[]} */
+  const filhos = [];
+  if (pele.art) {
+    const img = document.createElement('img');
+    img.className = 'tile-art';
+    img.src = pele.art;
+    img.alt = '';
+    img.draggable = false;
+    filhos.push(img);
+  } else {
+    filhos.push(pele.glyph ?? '?');
+  }
   if (symbolId === Sym.ORB && orbValue > 0) {
-    tile.textContent = meta.glyph;
     const badge = document.createElement('span');
     badge.className = 'orb-value';
     badge.textContent = `×${orbValue}`;
-    tile.appendChild(badge);
-  } else {
-    tile.textContent = meta.glyph;
+    filhos.push(badge);
   }
+  tile.replaceChildren(...filhos);
 }
+
+/**
+ * @typedef {object} Queda
+ * @property {number[]} indices  celulas que devem animar
+ * @property {number[]} [atrasos] atraso em ms por indice de grade
+ */
 
 /**
  * Renderiza uma grade inteira.
  * @param {number[]} grid
  * @param {number[]} [orbValues]
  * @param {Set<number>|null} [winning]
- * @param {number[]|null} [fallIndices] celulas que devem animar a queda
+ * @param {Queda|null} [queda]
  */
-function renderGrid(grid, orbValues, winning = null, fallIndices = null) {
+function renderGrid(grid, orbValues, winning = null, queda = null) {
   for (let i = 0; i < CELLS; i++) {
     paintTile(i, grid[i], orbValues?.[i] ?? 0, winning?.has(i) ?? false);
   }
-  if (fallIndices) {
-    for (const i of fallIndices) {
+  if (queda) {
+    for (const i of queda.indices) {
       const tile = tiles[i];
+      tile.style.setProperty('--fall-delay', `${queda.atrasos?.[i] ?? 0}ms`);
       tile.classList.remove('tile--fall');
       void tile.offsetWidth; // forca reflow para reiniciar a animacao
       tile.classList.add('tile--fall');
     }
   }
   ui.lastGrid = grid;
+  ui.lastOrbs = orbValues ?? new Array(CELLS).fill(0);
+}
+
+/**
+ * Atrasos do sorteio inicial, incluindo a antecipação.
+ * A regra mora em reveal.js, testada sem navegador; aqui só se traduz o
+ * resultado para o formato que renderGrid consome.
+ * @param {number[]} grid
+ * @returns {{ queda: Queda, esperou: boolean, total: number }}
+ */
+function atrasosDeRevelacao(grid) {
+  const r = revealSchedule(grid, {
+    cols: COLS, rows: ROWS,
+    scatterId: Sym.SCATTER, trigger: SCATTER_TRIGGER,
+    step: TIMING.revealStep,
+    anticipation: TIMING.anticipation,
+    rowStep: TIMING.cascadeRow,
+    tile: TIMING.tile,
+  });
+  return {
+    queda: { indices: ALL_CELLS, atrasos: r.delays },
+    esperou: r.anticipated,
+    total: r.total,
+  };
+}
+
+/**
+ * Atrasos de uma cascata: so as colunas que perderam pecas se movem, e as de
+ * baixo assentam antes das de cima.
+ * @param {Set<number>} removidas
+ * @returns {Queda}
+ */
+function quedaDaCascata(removidas) {
+  const colunas = new Set();
+  for (const i of removidas) colunas.add((i / ROWS) | 0);
+  /** @type {number[]} */
+  const indices = [];
+  const atrasos = new Array(CELLS).fill(0);
+  for (const col of colunas) {
+    for (let row = 0; row < ROWS; row++) {
+      const i = col * ROWS + row;
+      indices.push(i);
+      atrasos[i] = (ROWS - 1 - row) * TIMING.cascadeRow;
+    }
+  }
+  return { indices, atrasos };
+}
+
+/* ------------------------------------------------------------------ */
+/* efeitos: particulas, contagem e tremor                              */
+/* ------------------------------------------------------------------ */
+
+const fx = {
+  /** @type {HTMLCanvasElement|null} */ canvas: null,
+  /** @type {CanvasRenderingContext2D|null} */ ctx: null,
+  /** @type {{x:number,y:number,vx:number,vy:number,vida:number,cor:string,r:number}[]} */
+  particulas: [],
+  raf: 0,
+  ultimo: 0,
+};
+
+/** Ajusta o canvas ao tabuleiro, respeitando a densidade de pixels da tela. */
+function ajustarFx() {
+  if (!fx.canvas) return null;
+  const r = el.board.getBoundingClientRect();
+  const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+  const largura = Math.round(r.width * dpr);
+  const altura = Math.round(r.height * dpr);
+  if (fx.canvas.width !== largura || fx.canvas.height !== altura) {
+    fx.canvas.width = largura;
+    fx.canvas.height = altura;
+  }
+  fx.ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return r;
+}
+
+/**
+ * Estilhaça as celulas que explodiram, cada uma na cor do proprio simbolo.
+ * @param {number[]} indices
+ * @param {number[]} grid
+ */
+function estilhacar(indices, grid) {
+  if (semMovimento || !fx.ctx) return;
+  const base = ajustarFx();
+  if (!base) return;
+
+  for (const i of indices) {
+    const r = tiles[i].getBoundingClientRect();
+    const cx = r.left - base.left + r.width / 2;
+    const cy = r.top - base.top + r.height / 2;
+    const cor = peleDe(grid[i]).color;
+    const quantidade = 10;
+    for (let k = 0; k < quantidade; k++) {
+      const ang = (Math.PI * 2 * k) / quantidade + Math.random() * 0.6;
+      const vel = 40 + Math.random() * 130;
+      fx.particulas.push({
+        x: cx, y: cy,
+        vx: Math.cos(ang) * vel,
+        vy: Math.sin(ang) * vel - 60,
+        vida: 0.5 + Math.random() * 0.35,
+        cor,
+        r: 1.5 + Math.random() * 2.5,
+      });
+    }
+  }
+  if (!fx.raf) {
+    fx.ultimo = performance.now();
+    fx.raf = requestAnimationFrame(passoFx);
+  }
+}
+
+/** @param {number} agora */
+function passoFx(agora) {
+  const ctx = fx.ctx;
+  if (!ctx || !fx.canvas) { fx.raf = 0; return; }
+  const dt = Math.min((agora - fx.ultimo) / 1000, 0.05) * speed();
+  fx.ultimo = agora;
+
+  const larguraCss = fx.canvas.width / Math.min(globalThis.devicePixelRatio || 1, 2);
+  const alturaCss = fx.canvas.height / Math.min(globalThis.devicePixelRatio || 1, 2);
+  ctx.clearRect(0, 0, larguraCss, alturaCss);
+
+  let vivas = 0;
+  for (const p of fx.particulas) {
+    if (p.vida <= 0) continue;
+    p.vida -= dt;
+    p.vx *= 0.98;
+    p.vy = p.vy * 0.98 + 620 * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    if (p.vida <= 0) continue;
+    vivas += 1;
+    ctx.globalAlpha = Math.min(1, p.vida * 2.4);
+    ctx.fillStyle = p.cor;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  if (vivas === 0) {
+    fx.particulas.length = 0;
+    fx.raf = 0;
+    return;
+  }
+  if (fx.particulas.length > 900) fx.particulas = fx.particulas.filter((p) => p.vida > 0);
+  fx.raf = requestAnimationFrame(passoFx);
+}
+
+/**
+ * Conta o valor subindo em vez de piscar o numero final.
+ * @param {HTMLElement} node
+ * @param {number} paraCents
+ * @param {number} ms
+ */
+function contarAte(node, paraCents, ms) {
+  if (semMovimento || ms <= 0) {
+    node.textContent = formatCents(paraCents);
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    const inicio = performance.now();
+    const duracao = ms / speed();
+    const passo = (/** @type {number} */ agora) => {
+      const t = Math.min(1, (agora - inicio) / duracao);
+      const suave = 1 - (1 - t) ** 3;
+      node.textContent = formatCents(Math.round(paraCents * suave));
+      if (t < 1) requestAnimationFrame(passo);
+      else resolve(undefined);
+    };
+    requestAnimationFrame(passo);
+  });
+}
+
+/** @param {string} classe @param {number} ms */
+async function pulsarTabuleiro(classe, ms) {
+  el.board.classList.add(classe);
+  await wait(ms);
+  el.board.classList.remove(classe);
 }
 
 /* ------------------------------------------------------------------ */
@@ -189,15 +414,25 @@ async function presentRound(play) {
       el.fsMultiplier.textContent = `×${Math.max(1, spin.globalMultiplier)}`;
     }
 
-    /** Celulas que devem animar a queda no proximo passo da cascata. */
-    let falling = ALL_CELLS;
+    /** Queda a aplicar no proximo passo; o primeiro sorteio revela por coluna. */
+    /** @type {Queda|null} */
+    let queda = null;
 
     for (let d = 0; d < spin.drops.length; d++) {
       const drop = spin.drops[d];
       const grid = /** @type {number[]} */ (drop.grid);
       const orbs = /** @type {number[]} */ (drop.orbValues);
-      renderGrid(grid, orbs, null, falling);
-      await wait(TIMING.reveal);
+
+      if (d === 0) {
+        const revelacao = atrasosDeRevelacao(grid);
+        renderGrid(grid, orbs, null, revelacao.queda);
+        if (revelacao.esperou) el.board.classList.add('board--espera');
+        await wait(revelacao.total);
+        el.board.classList.remove('board--espera');
+      } else {
+        renderGrid(grid, orbs, null, queda);
+        await wait(TIMING.tile + (ROWS - 1) * TIMING.cascadeRow);
+      }
 
       if (drop.wins.length === 0) break;
 
@@ -209,47 +444,32 @@ async function presentRound(play) {
       await wait(TIMING.highlight);
 
       for (const i of winning) tiles[i].classList.add('tile--pop');
+      estilhacar([...winning], grid);
       await wait(TIMING.pop);
 
-      // so as colunas que perderam pecas se movem no proximo passo
-      falling = fallingColumns(winning);
+      queda = quedaDaCascata(winning);
     }
 
     if (spin.spinWinCents > 0) {
       const mult = spin.multiplierApplied;
       if (mult > 1) {
-        await showOverlay(`Multiplicador ×${mult}`, formatCents(spin.spinWinCents), TIMING.banner);
+        await showOverlay(`Multiplicador ×${mult}`, spin.spinWinCents, TIMING.banner);
       }
     }
-    if (spin.retriggered) await toast(`🪙 ${spin.scatterCount} moedas — mais rodadas!`, 900);
+    if (spin.retriggered) {
+      const moeda = peleDe(Sym.SCATTER);
+      await toast(`${moeda.glyph ?? ''} ${spin.scatterCount} ${moeda.name.toLowerCase()} — mais rodadas!`, 900);
+    }
     if (spin.kind === 'base' && result.featureTriggered && result.mode !== Mode.BUY_FREE_SPINS
         && result.mode !== Mode.BUY_SUPER_FREE_SPINS) {
-      await showOverlay(`${spin.scatterCount} moedas!`, `${FREE_SPINS_AWARDED} rodadas grátis`, TIMING.banner * 1.3);
+      await showOverlay(`${spin.scatterCount} ${peleDe(Sym.SCATTER).name.toLowerCase()}!`,
+        `${FREE_SPINS_AWARDED} rodadas grátis`, TIMING.banner * 1.3);
     }
     await wait(TIMING.betweenSpins);
   }
 
   el.featureBar.hidden = true;
   await finishRound(result);
-}
-
-/**
- * Colunas que perderam pecas — todas as suas celulas se deslocam, entao
- * animamos a coluna inteira. Colunas intactas ficam paradas, o que faz a
- * cascata parecer local em vez de um re-sorteio geral.
- *
- * @param {Set<number>} removed indices que explodiram
- * @returns {number[]}
- */
-function fallingColumns(removed) {
-  const touched = new Set();
-  for (const i of removed) touched.add((i / ROWS) | 0);
-  /** @type {number[]} */
-  const out = [];
-  for (const col of touched) {
-    for (let row = 0; row < ROWS; row++) out.push(col * ROWS + row);
-  }
-  return out;
 }
 
 /** @param {import('../engine/round.js').RoundResult} result */
@@ -260,7 +480,8 @@ async function finishRound(result) {
   refreshMeters();
 
   if (result.cappedAtMaxWin) {
-    await showOverlay('GANHO MÁXIMO!', `${MAX_WIN_X100 / 100}× · ${formatCents(win)}`, 2600);
+    void pulsarTabuleiro('board--tremor', 900);
+    await showOverlay(`GANHO MÁXIMO ${MAX_WIN_X100 / 100}×`, win, 2600);
     el.winline.textContent = `Teto de ${MAX_WIN_X100 / 100}× atingido — ${formatCents(win)}`;
     el.winline.className = 'winline is-big';
     return;
@@ -272,18 +493,29 @@ async function finishRound(result) {
   }
   if (x >= 20) {
     const label = x >= 100 ? 'GANHO ÉPICO' : x >= 50 ? 'GANHO ENORME' : 'GANHO GRANDE';
-    await showOverlay(label, formatCents(win), 1800);
+    void pulsarTabuleiro('board--tremor', 520);
+    await showOverlay(label, win, 1800);
   }
   el.winline.textContent = `Ganho total ${formatCents(win)} (${formatMultiplier(win, result.betCents)})`;
   el.winline.className = x >= 20 ? 'winline is-big' : 'winline is-win';
 }
 
-/** @param {string} label @param {string} value @param {number} ms */
+/**
+ * @param {string} label
+ * @param {number|string} value  número em centavos conta subindo; texto aparece direto
+ * @param {number} ms
+ */
 async function showOverlay(label, value, ms) {
   el.winOverlayLabel.textContent = label;
-  el.winOverlayValue.textContent = value;
   el.winOverlay.hidden = false;
-  await wait(ms);
+  if (typeof value === 'number') {
+    el.winOverlayValue.textContent = formatCents(0);
+    await contarAte(el.winOverlayValue, value, Math.min(TIMING.rollUp, ms * 0.7));
+    await wait(ms - TIMING.rollUp > 0 ? ms - TIMING.rollUp : ms * 0.3);
+  } else {
+    el.winOverlayValue.textContent = value;
+    await wait(ms);
+  }
   el.winOverlay.hidden = true;
 }
 
@@ -293,7 +525,10 @@ async function showOverlay(label, value, ms) {
  * @param {number} bet
  */
 function describeWins(wins, running, bet) {
-  const parts = wins.map((w) => `${SYMBOLS[w.symbolId].glyph}×${w.count}`);
+  const parts = wins.map((w) => {
+    const pele = peleDe(w.symbolId);
+    return `${pele.glyph ?? pele.name}×${w.count}`;
+  });
   return `${parts.join('  ')}  →  ${formatCents(running)} (${formatMultiplier(running, bet)})`;
 }
 
@@ -443,31 +678,84 @@ function renderPaytable() {
   for (let s = SYMBOLS.length - 1; s >= 0; s--) {
     const meta = SYMBOLS[s];
     if (meta.kind !== 'low' && meta.kind !== 'high') continue;
+    const pele = peleDe(s);
     const t = PAYTABLE[s];
     rows.push(`
       <div class="pay-row">
-        <span class="pay-glyph">${meta.glyph}</span>
-        <span class="pay-name">${meta.name}</span>
+        <span class="pay-glyph">${arteHtml(pele)}</span>
+        <span class="pay-name">${escapeHtml(pele.name)}</span>
         ${t.map(([, , pay]) => `<span class="pay-val">${(pay / 100).toLocaleString('pt-BR')}×</span>`).join('')}
       </div>`);
   }
+
+  const moeda = peleDe(Sym.SCATTER);
+  const orbe = peleDe(Sym.ORB);
+
   body.innerHTML = `
+    <div class="tema-linha" role="group" aria-label="Tema visual">
+      <span class="tema-rotulo">Tema</span>
+      <div class="tema-chips">
+        ${THEMES.map((t) => `
+          <button class="tema-chip" data-tema="${t.id}" aria-pressed="${t.id === tema.id}">
+            <span class="tema-badge">${t.badge}</span>
+            <span>
+              <strong>${escapeHtml(t.name)}</strong>
+              <small>${escapeHtml(t.tagline)}</small>
+            </span>
+          </button>`).join('')}
+      </div>
+    </div>
     ${rows.join('')}
     <p class="note">
       <strong>Paga em qualquer posição:</strong> ${MIN_CLUSTER} ou mais símbolos iguais na grade pagam,
       não importa onde estejam. Os prêmios são múltiplos da <em>aposta total</em>.
     </p>
-    <div class="kv"><span>🪙 Moeda (scatter) — 4 / 5 / 6+</span>
+    <div class="kv"><span>${arteHtml(moeda)} ${escapeHtml(moeda.name)} — 4 / 5 / 6+</span>
       <strong>${SCATTER_PAYS[4] / 100}× · ${SCATTER_PAYS[5] / 100}× · ${SCATTER_PAYS[6] / 100}×</strong></div>
-    <div class="kv"><span>🪙 ${SCATTER_TRIGGER}+ moedas</span><strong>${FREE_SPINS_AWARDED} rodadas grátis</strong></div>
-    <div class="kv"><span>🔮 Orbe multiplicador</span><strong>×2 até ×500</strong></div>
+    <div class="kv"><span>${arteHtml(moeda)} ${SCATTER_TRIGGER}+ ${escapeHtml(moeda.name.toLowerCase())}</span>
+      <strong>${FREE_SPINS_AWARDED} rodadas grátis</strong></div>
+    <div class="kv"><span>${arteHtml(orbe)} ${escapeHtml(orbe.name)} (multiplicador)</span><strong>×2 até ×500</strong></div>
     <div class="kv"><span>Ganho máximo por rodada</span><strong>${(MAX_WIN_X100 / 100).toLocaleString('pt-BR')}×</strong></div>
     <div class="kv"><span>RTP teórico</span><strong>${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%</strong></div>
     <p class="note">
       <strong>Cascata:</strong> símbolos vencedores explodem e novos caem no lugar, na mesma rodada, até
-      não haver mais ganho. <strong>Orbes:</strong> no jogo base, a soma dos orbes multiplica o ganho da
-      sequência; nas rodadas grátis a soma é acumulada em um multiplicador global que nunca zera.
+      não haver mais ganho. <strong>Multiplicador:</strong> no jogo base, a soma dos multiplicadores
+      da sequência multiplica o ganho; nas rodadas grátis a soma vai para um total global que nunca zera.
     </p>`;
+
+  for (const node of body.querySelectorAll('.tema-chip')) {
+    node.addEventListener('click', () => {
+      const id = /** @type {HTMLElement} */ (node).dataset.tema;
+      if (!id || id === tema.id) return;
+      trocarTema(id);
+      renderPaytable();
+    });
+  }
+}
+
+/**
+ * HTML do símbolo: imagem quando o tema traz arte, emoji enquanto não traz.
+ * @param {import('./themes.js').SymbolSkin} pele
+ */
+function arteHtml(pele) {
+  return pele.art
+    ? `<img class="pay-art" src="${escapeHtml(pele.art)}" alt="" />`
+    : (pele.glyph ?? '');
+}
+
+/**
+ * Troca o tema em uso e repinta a grade que está na tela.
+ * Só mexe em aparência: nenhuma rodada é re-sorteada e nada de dinheiro muda.
+ * @param {string} id
+ */
+function trocarTema(id) {
+  tema = themeById(id);
+  applyTheme(tema);
+  saveThemeId(tema.id);
+  el.brandMark.textContent = tema.badge;
+  el.brandName.textContent = tema.name;
+  document.title = tema.name;
+  if (!ui.busy) renderGrid(ui.lastGrid, ui.lastOrbs);
 }
 
 function renderBuyMenu() {
@@ -621,10 +909,18 @@ function wireControls() {
 }
 
 function init() {
+  applyTheme(tema);
+  el.brandMark.textContent = tema.badge;
+  el.brandName.textContent = tema.name;
+  document.title = tema.name;
+
+  fx.canvas = el.fxLayer;
+  fx.ctx = el.fxLayer.getContext('2d');
+
   buildBoard();
   // grade inicial apenas decorativa, sem consumir aleatoriedade da sessao
   const decorative = ALL_CELLS.map((i) => (i * 7 + (i % 5)) % 9);
-  renderGrid(decorative, new Array(CELLS).fill(0), null, ALL_CELLS);
+  renderGrid(decorative, new Array(CELLS).fill(0), null, { indices: ALL_CELLS });
   el.anteCost.textContent = `+${ANTE_COST_X100 - 100}%`;
   el.btnBuy.querySelector('small')?.replaceChildren(`a partir de ${BUY_PRICES_X100.freeSpins / 100}×`);
   el.rtpBadge.textContent = `${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%`;

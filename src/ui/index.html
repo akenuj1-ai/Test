@@ -16,9 +16,9 @@
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-mark">👑</span>
+        <span class="brand-mark" id="brand-mark">👑</span>
         <div>
-          <h1>Fortuna Real</h1>
+          <h1 id="brand-name">Fortuna Real</h1>
           <p class="brand-sub">6×5 · paga em qualquer posição · RTP <span id="rtp-badge">96,47%</span></p>
         </div>
       </div>
@@ -47,6 +47,8 @@
 
       <div class="board-wrap">
         <div class="board" id="board" role="grid" aria-label="Grade do jogo"></div>
+        <!-- estilhaços das peças que explodem; puramente decorativo -->
+        <canvas class="fx-layer" id="fx-layer" aria-hidden="true"></canvas>
         <div class="win-overlay" id="win-overlay" hidden>
           <p class="win-overlay-label" id="win-overlay-label">Ganho</p>
           <p class="win-overlay-value" id="win-overlay-value">R$ 0,00</p>

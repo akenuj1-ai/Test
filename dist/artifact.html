@@ -13,8 +13,12 @@
    ============================================================ */
 
 :root {
+  /* Os tokens abaixo sao sobrescritos em tempo de execucao por themes.js.
+     Os valores aqui sao os do tema padrao e servem de fallback caso o
+     JavaScript nao rode. */
   --bg: #0a0713;
-  --bg-2: #150c26;
+  --bg-glow-1: #2b1150;
+  --bg-glow-2: #1b0e3a;
   --panel: rgba(30, 18, 54, 0.72);
   --panel-solid: #1a1030;
   --line: rgba(255, 255, 255, 0.09);
@@ -23,6 +27,7 @@
   --muted: #a396c4;
   --gold: #ffcb45;
   --gold-deep: #c8902a;
+  --gold-ink: #2a1a00;
   --win: #45e0a0;
   --danger: #ff5d73;
 
@@ -54,8 +59,8 @@ html, body {
   /* impede o "puxar para atualizar" de disparar no meio de um giro */
   overscroll-behavior-y: none;
   background:
-    radial-gradient(1200px 600px at 50% -10%, #2b1150 0%, transparent 60%),
-    radial-gradient(900px 500px at 80% 110%, #1b0e3a 0%, transparent 55%),
+    radial-gradient(1200px 600px at 50% -10%, var(--bg-glow-1) 0%, transparent 60%),
+    radial-gradient(900px 500px at 80% 110%, var(--bg-glow-2) 0%, transparent 55%),
     var(--bg);
   color: var(--text);
   font-family: var(--font-ui);
@@ -138,6 +143,28 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
 .icon-btn:active { transform: scale(0.94); }
 
 /* ---------------- palco ---------------- */
+
+/* Imagem de simbolo, usada quando o tema traz arte no lugar do emoji. */
+.tile-art, .pay-art {
+  display: block;
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+.pay-art { width: 24px; height: 24px; margin: 0 auto; }
+
+/* Estilhacos das pecas que explodem. Fica sobre o tabuleiro e nunca recebe
+   toque — e decoracao, e um dedo no meio dela nao pode roubar o clique. */
+.fx-layer {
+  position: absolute;
+  inset: var(--gap);
+  width: calc(100% - var(--gap) * 2);
+  height: calc(100% - var(--gap) * 2);
+  pointer-events: none;
+  z-index: 4;
+}
 .stage {
   display: flex;
   flex-direction: column;
@@ -285,6 +312,66 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
 .winline.is-win { color: var(--win); font-weight: 600; }
 .winline.is-big { color: var(--gold); font-weight: 700; }
 
+/* Antecipacao: as moedas visiveis ja chegaram a uma do gatilho e as colunas
+   restantes estao demorando de proposito. O tabuleiro avisa. */
+.board--espera {
+  animation: espera calc(0.9s / var(--speed)) ease-in-out infinite;
+}
+@keyframes espera {
+  0%, 100% { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px var(--line-strong); }
+  50%      { box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 0 2px var(--gold), 0 0 34px rgba(255, 203, 69, 0.45); }
+}
+.board--espera .tile--scatter { animation: tile-pulse calc(0.5s / var(--speed)) ease-in-out infinite; }
+
+/* Ganho grande: um tranco curto, com deslocamento pequeno para nao embrulhar
+   o estomago de ninguem no celular. */
+.board--tremor { animation: tremor calc(0.5s / var(--speed)) cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+@keyframes tremor {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(3px, -1px, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 1px, 0); }
+  40%, 60% { transform: translate3d(4px, -1px, 0); }
+}
+
+/* ---------------- seletor de tema ---------------- */
+.tema-linha {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.tema-rotulo {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.tema-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.tema-chip {
+  flex: 1 1 160px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tema-chip:hover { background: rgba(255, 255, 255, 0.09); }
+.tema-chip[aria-pressed="true"] {
+  border-color: var(--gold);
+  background: rgba(255, 203, 69, 0.14);
+}
+.tema-badge { font-size: 22px; line-height: 1; }
+.tema-chip strong { display: block; font-size: 13px; }
+.tema-chip small { display: block; font-size: 10px; color: var(--muted); }
+
 /* ---------------- controles ---------------- */
 .controls {
   display: grid;
@@ -330,7 +417,7 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
   border: 2px solid rgba(255, 255, 255, 0.25);
   background:
     radial-gradient(circle at 50% 28%, #ffe89a, var(--gold) 42%, var(--gold-deep) 78%, #7d5410);
-  color: #2a1a00;
+  color: var(--gold-ink);
   font-weight: 900;
   letter-spacing: 1px;
   cursor: pointer;
@@ -450,7 +537,7 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
   border-radius: 10px;
   border: 1px solid rgba(255, 203, 69, 0.55);
   background: linear-gradient(180deg, var(--gold), var(--gold-deep));
-  color: #2a1a00;
+  color: var(--gold-ink);
   font-weight: 800;
   font-size: 13px;
   cursor: pointer;
@@ -587,9 +674,9 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
   <div class="app">
     <header class="topbar">
       <div class="brand">
-        <span class="brand-mark">👑</span>
+        <span class="brand-mark" id="brand-mark">👑</span>
         <div>
-          <h1>Fortuna Real</h1>
+          <h1 id="brand-name">Fortuna Real</h1>
           <p class="brand-sub">6×5 · paga em qualquer posição · RTP <span id="rtp-badge">96,47%</span></p>
         </div>
       </div>
@@ -618,6 +705,8 @@ button, .meter, .bet-value, .winline, .feature-chip { user-select: none; }
 
       <div class="board-wrap">
         <div class="board" id="board" role="grid" aria-label="Grade do jogo"></div>
+        <!-- estilhaços das peças que explodem; puramente decorativo -->
+        <canvas class="fx-layer" id="fx-layer" aria-hidden="true"></canvas>
         <div class="win-overlay" id="win-overlay" hidden>
           <p class="win-overlay-label" id="win-overlay-label">Ganho</p>
           <p class="win-overlay-value" id="win-overlay-value">R$ 0,00</p>
@@ -744,6 +833,8 @@ const { createSession } = __mod("engine/session.js");
 const { Mode, costOf } = __mod("engine/round.js");
 const { GRID, SYMBOLS, Sym, PAYTABLE, SCATTER_PAYS, BET_LEVELS_CENTS, BUY_PRICES_X100, ANTE_COST_X100, MAX_WIN_X100, TARGET_RTP, FREE_SPINS_AWARDED, SCATTER_TRIGGER, MIN_CLUSTER } = __mod("engine/config.js");
 const { formatCents, formatMultiplier } = __mod("engine/money.js");
+const { THEMES, themeById, applyTheme, loadThemeId, saveThemeId } = __mod("ui/themes.js");
+const { revealSchedule } = __mod("ui/reveal.js");
 
 const { COLS, ROWS, CELLS } = GRID;
 
@@ -762,6 +853,8 @@ const ui = {
   autoSizeIndex: 0,
   /** @type {number[]} */
   lastGrid: new Array(CELLS).fill(Sym.BLUE),
+  /** @type {number[]} */
+  lastOrbs: new Array(CELLS).fill(0),
   /**
    * Saldo a exibir enquanto a rodada é animada.
    *
@@ -775,7 +868,29 @@ const ui = {
 };
 
 /** Duracoes base em ms; divididas pelo fator de turbo. */
-const TIMING = { reveal: 330, highlight: 600, pop: 230, betweenSpins: 360, banner: 900 };
+const TIMING = {
+  tile: 260,          // duracao da queda de uma peca
+  revealStep: 52,     // atraso entre uma coluna e a seguinte
+  anticipation: 430,  // atraso quando falta UMA moeda para o gatilho
+  cascadeRow: 26,     // escalonamento vertical dentro de uma coluna
+  highlight: 600,
+  pop: 230,
+  betweenSpins: 360,
+  banner: 900,
+  rollUp: 620,        // contagem crescente do ganho
+};
+
+/** O jogador pediu menos movimento: nada de particulas nem contagem animada. */
+const semMovimento = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+let tema = themeById(loadThemeId());
+
+/**
+ * Aparencia de um simbolo no tema vigente.
+ * @param {number} symbolId
+ * @returns {import('./themes.js').SymbolSkin}
+ */
+const peleDe = (symbolId) => tema.symbols[SYMBOLS[symbolId].key];
 
 const $ = (/** @type {string} */ id) => /** @type {HTMLElement} */ (document.getElementById(id));
 
@@ -802,6 +917,9 @@ const el = {
   betDown: /** @type {HTMLButtonElement} */ ($('bet-down')),
   betUp: /** @type {HTMLButtonElement} */ ($('bet-up')),
   rtpBadge: $('rtp-badge'),
+  brandMark: $('brand-mark'),
+  brandName: $('brand-name'),
+  fxLayer: /** @type {HTMLCanvasElement} */ ($('fx-layer')),
 };
 
 /** @type {HTMLElement[]} indexado por indice de grade (col * ROWS + row) */
@@ -829,54 +947,250 @@ function buildBoard() {
 }
 
 /**
- * Pinta uma celula.
+ * Pinta uma celula com a aparencia do tema vigente.
  * @param {number} i indice de grade
  * @param {number} symbolId
  * @param {number} orbValue
  * @param {boolean} winning
  */
 function paintTile(i, symbolId, orbValue, winning) {
-  const meta = SYMBOLS[symbolId];
+  const pele = peleDe(symbolId);
   const tile = tiles[i];
   const classes = ['tile'];
   if (symbolId === Sym.SCATTER) classes.push('tile--scatter');
   if (symbolId === Sym.ORB) classes.push('tile--orb');
   if (winning) classes.push('tile--win');
   tile.className = classes.join(' ');
-  tile.style.setProperty('--glow', meta.color);
-  tile.setAttribute('aria-label', meta.name);
+  tile.style.setProperty('--glow', pele.color);
+  tile.setAttribute('aria-label', pele.name);
 
+  /** @type {(Node|string)[]} */
+  const filhos = [];
+  if (pele.art) {
+    const img = document.createElement('img');
+    img.className = 'tile-art';
+    img.src = pele.art;
+    img.alt = '';
+    img.draggable = false;
+    filhos.push(img);
+  } else {
+    filhos.push(pele.glyph ?? '?');
+  }
   if (symbolId === Sym.ORB && orbValue > 0) {
-    tile.textContent = meta.glyph;
     const badge = document.createElement('span');
     badge.className = 'orb-value';
     badge.textContent = `×${orbValue}`;
-    tile.appendChild(badge);
-  } else {
-    tile.textContent = meta.glyph;
+    filhos.push(badge);
   }
+  tile.replaceChildren(...filhos);
 }
+
+/**
+ * @typedef {object} Queda
+ * @property {number[]} indices  celulas que devem animar
+ * @property {number[]} [atrasos] atraso em ms por indice de grade
+ */
 
 /**
  * Renderiza uma grade inteira.
  * @param {number[]} grid
  * @param {number[]} [orbValues]
  * @param {Set<number>|null} [winning]
- * @param {number[]|null} [fallIndices] celulas que devem animar a queda
+ * @param {Queda|null} [queda]
  */
-function renderGrid(grid, orbValues, winning = null, fallIndices = null) {
+function renderGrid(grid, orbValues, winning = null, queda = null) {
   for (let i = 0; i < CELLS; i++) {
     paintTile(i, grid[i], orbValues?.[i] ?? 0, winning?.has(i) ?? false);
   }
-  if (fallIndices) {
-    for (const i of fallIndices) {
+  if (queda) {
+    for (const i of queda.indices) {
       const tile = tiles[i];
+      tile.style.setProperty('--fall-delay', `${queda.atrasos?.[i] ?? 0}ms`);
       tile.classList.remove('tile--fall');
       void tile.offsetWidth; // forca reflow para reiniciar a animacao
       tile.classList.add('tile--fall');
     }
   }
   ui.lastGrid = grid;
+  ui.lastOrbs = orbValues ?? new Array(CELLS).fill(0);
+}
+
+/**
+ * Atrasos do sorteio inicial, incluindo a antecipação.
+ * A regra mora em reveal.js, testada sem navegador; aqui só se traduz o
+ * resultado para o formato que renderGrid consome.
+ * @param {number[]} grid
+ * @returns {{ queda: Queda, esperou: boolean, total: number }}
+ */
+function atrasosDeRevelacao(grid) {
+  const r = revealSchedule(grid, {
+    cols: COLS, rows: ROWS,
+    scatterId: Sym.SCATTER, trigger: SCATTER_TRIGGER,
+    step: TIMING.revealStep,
+    anticipation: TIMING.anticipation,
+    rowStep: TIMING.cascadeRow,
+    tile: TIMING.tile,
+  });
+  return {
+    queda: { indices: ALL_CELLS, atrasos: r.delays },
+    esperou: r.anticipated,
+    total: r.total,
+  };
+}
+
+/**
+ * Atrasos de uma cascata: so as colunas que perderam pecas se movem, e as de
+ * baixo assentam antes das de cima.
+ * @param {Set<number>} removidas
+ * @returns {Queda}
+ */
+function quedaDaCascata(removidas) {
+  const colunas = new Set();
+  for (const i of removidas) colunas.add((i / ROWS) | 0);
+  /** @type {number[]} */
+  const indices = [];
+  const atrasos = new Array(CELLS).fill(0);
+  for (const col of colunas) {
+    for (let row = 0; row < ROWS; row++) {
+      const i = col * ROWS + row;
+      indices.push(i);
+      atrasos[i] = (ROWS - 1 - row) * TIMING.cascadeRow;
+    }
+  }
+  return { indices, atrasos };
+}
+
+/* ------------------------------------------------------------------ */
+/* efeitos: particulas, contagem e tremor                              */
+/* ------------------------------------------------------------------ */
+
+const fx = {
+  /** @type {HTMLCanvasElement|null} */ canvas: null,
+  /** @type {CanvasRenderingContext2D|null} */ ctx: null,
+  /** @type {{x:number,y:number,vx:number,vy:number,vida:number,cor:string,r:number}[]} */
+  particulas: [],
+  raf: 0,
+  ultimo: 0,
+};
+
+/** Ajusta o canvas ao tabuleiro, respeitando a densidade de pixels da tela. */
+function ajustarFx() {
+  if (!fx.canvas) return null;
+  const r = el.board.getBoundingClientRect();
+  const dpr = Math.min(globalThis.devicePixelRatio || 1, 2);
+  const largura = Math.round(r.width * dpr);
+  const altura = Math.round(r.height * dpr);
+  if (fx.canvas.width !== largura || fx.canvas.height !== altura) {
+    fx.canvas.width = largura;
+    fx.canvas.height = altura;
+  }
+  fx.ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+  return r;
+}
+
+/**
+ * Estilhaça as celulas que explodiram, cada uma na cor do proprio simbolo.
+ * @param {number[]} indices
+ * @param {number[]} grid
+ */
+function estilhacar(indices, grid) {
+  if (semMovimento || !fx.ctx) return;
+  const base = ajustarFx();
+  if (!base) return;
+
+  for (const i of indices) {
+    const r = tiles[i].getBoundingClientRect();
+    const cx = r.left - base.left + r.width / 2;
+    const cy = r.top - base.top + r.height / 2;
+    const cor = peleDe(grid[i]).color;
+    const quantidade = 10;
+    for (let k = 0; k < quantidade; k++) {
+      const ang = (Math.PI * 2 * k) / quantidade + Math.random() * 0.6;
+      const vel = 40 + Math.random() * 130;
+      fx.particulas.push({
+        x: cx, y: cy,
+        vx: Math.cos(ang) * vel,
+        vy: Math.sin(ang) * vel - 60,
+        vida: 0.5 + Math.random() * 0.35,
+        cor,
+        r: 1.5 + Math.random() * 2.5,
+      });
+    }
+  }
+  if (!fx.raf) {
+    fx.ultimo = performance.now();
+    fx.raf = requestAnimationFrame(passoFx);
+  }
+}
+
+/** @param {number} agora */
+function passoFx(agora) {
+  const ctx = fx.ctx;
+  if (!ctx || !fx.canvas) { fx.raf = 0; return; }
+  const dt = Math.min((agora - fx.ultimo) / 1000, 0.05) * speed();
+  fx.ultimo = agora;
+
+  const larguraCss = fx.canvas.width / Math.min(globalThis.devicePixelRatio || 1, 2);
+  const alturaCss = fx.canvas.height / Math.min(globalThis.devicePixelRatio || 1, 2);
+  ctx.clearRect(0, 0, larguraCss, alturaCss);
+
+  let vivas = 0;
+  for (const p of fx.particulas) {
+    if (p.vida <= 0) continue;
+    p.vida -= dt;
+    p.vx *= 0.98;
+    p.vy = p.vy * 0.98 + 620 * dt;
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    if (p.vida <= 0) continue;
+    vivas += 1;
+    ctx.globalAlpha = Math.min(1, p.vida * 2.4);
+    ctx.fillStyle = p.cor;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  if (vivas === 0) {
+    fx.particulas.length = 0;
+    fx.raf = 0;
+    return;
+  }
+  if (fx.particulas.length > 900) fx.particulas = fx.particulas.filter((p) => p.vida > 0);
+  fx.raf = requestAnimationFrame(passoFx);
+}
+
+/**
+ * Conta o valor subindo em vez de piscar o numero final.
+ * @param {HTMLElement} node
+ * @param {number} paraCents
+ * @param {number} ms
+ */
+function contarAte(node, paraCents, ms) {
+  if (semMovimento || ms <= 0) {
+    node.textContent = formatCents(paraCents);
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    const inicio = performance.now();
+    const duracao = ms / speed();
+    const passo = (/** @type {number} */ agora) => {
+      const t = Math.min(1, (agora - inicio) / duracao);
+      const suave = 1 - (1 - t) ** 3;
+      node.textContent = formatCents(Math.round(paraCents * suave));
+      if (t < 1) requestAnimationFrame(passo);
+      else resolve(undefined);
+    };
+    requestAnimationFrame(passo);
+  });
+}
+
+/** @param {string} classe @param {number} ms */
+async function pulsarTabuleiro(classe, ms) {
+  el.board.classList.add(classe);
+  await wait(ms);
+  el.board.classList.remove(classe);
 }
 
 /* ------------------------------------------------------------------ */
@@ -916,15 +1230,25 @@ async function presentRound(play) {
       el.fsMultiplier.textContent = `×${Math.max(1, spin.globalMultiplier)}`;
     }
 
-    /** Celulas que devem animar a queda no proximo passo da cascata. */
-    let falling = ALL_CELLS;
+    /** Queda a aplicar no proximo passo; o primeiro sorteio revela por coluna. */
+    /** @type {Queda|null} */
+    let queda = null;
 
     for (let d = 0; d < spin.drops.length; d++) {
       const drop = spin.drops[d];
       const grid = /** @type {number[]} */ (drop.grid);
       const orbs = /** @type {number[]} */ (drop.orbValues);
-      renderGrid(grid, orbs, null, falling);
-      await wait(TIMING.reveal);
+
+      if (d === 0) {
+        const revelacao = atrasosDeRevelacao(grid);
+        renderGrid(grid, orbs, null, revelacao.queda);
+        if (revelacao.esperou) el.board.classList.add('board--espera');
+        await wait(revelacao.total);
+        el.board.classList.remove('board--espera');
+      } else {
+        renderGrid(grid, orbs, null, queda);
+        await wait(TIMING.tile + (ROWS - 1) * TIMING.cascadeRow);
+      }
 
       if (drop.wins.length === 0) break;
 
@@ -936,47 +1260,32 @@ async function presentRound(play) {
       await wait(TIMING.highlight);
 
       for (const i of winning) tiles[i].classList.add('tile--pop');
+      estilhacar([...winning], grid);
       await wait(TIMING.pop);
 
-      // so as colunas que perderam pecas se movem no proximo passo
-      falling = fallingColumns(winning);
+      queda = quedaDaCascata(winning);
     }
 
     if (spin.spinWinCents > 0) {
       const mult = spin.multiplierApplied;
       if (mult > 1) {
-        await showOverlay(`Multiplicador ×${mult}`, formatCents(spin.spinWinCents), TIMING.banner);
+        await showOverlay(`Multiplicador ×${mult}`, spin.spinWinCents, TIMING.banner);
       }
     }
-    if (spin.retriggered) await toast(`🪙 ${spin.scatterCount} moedas — mais rodadas!`, 900);
+    if (spin.retriggered) {
+      const moeda = peleDe(Sym.SCATTER);
+      await toast(`${moeda.glyph ?? ''} ${spin.scatterCount} ${moeda.name.toLowerCase()} — mais rodadas!`, 900);
+    }
     if (spin.kind === 'base' && result.featureTriggered && result.mode !== Mode.BUY_FREE_SPINS
         && result.mode !== Mode.BUY_SUPER_FREE_SPINS) {
-      await showOverlay(`${spin.scatterCount} moedas!`, `${FREE_SPINS_AWARDED} rodadas grátis`, TIMING.banner * 1.3);
+      await showOverlay(`${spin.scatterCount} ${peleDe(Sym.SCATTER).name.toLowerCase()}!`,
+        `${FREE_SPINS_AWARDED} rodadas grátis`, TIMING.banner * 1.3);
     }
     await wait(TIMING.betweenSpins);
   }
 
   el.featureBar.hidden = true;
   await finishRound(result);
-}
-
-/**
- * Colunas que perderam pecas — todas as suas celulas se deslocam, entao
- * animamos a coluna inteira. Colunas intactas ficam paradas, o que faz a
- * cascata parecer local em vez de um re-sorteio geral.
- *
- * @param {Set<number>} removed indices que explodiram
- * @returns {number[]}
- */
-function fallingColumns(removed) {
-  const touched = new Set();
-  for (const i of removed) touched.add((i / ROWS) | 0);
-  /** @type {number[]} */
-  const out = [];
-  for (const col of touched) {
-    for (let row = 0; row < ROWS; row++) out.push(col * ROWS + row);
-  }
-  return out;
 }
 
 /** @param {import('../engine/round.js').RoundResult} result */
@@ -987,7 +1296,8 @@ async function finishRound(result) {
   refreshMeters();
 
   if (result.cappedAtMaxWin) {
-    await showOverlay('GANHO MÁXIMO!', `${MAX_WIN_X100 / 100}× · ${formatCents(win)}`, 2600);
+    void pulsarTabuleiro('board--tremor', 900);
+    await showOverlay(`GANHO MÁXIMO ${MAX_WIN_X100 / 100}×`, win, 2600);
     el.winline.textContent = `Teto de ${MAX_WIN_X100 / 100}× atingido — ${formatCents(win)}`;
     el.winline.className = 'winline is-big';
     return;
@@ -999,18 +1309,29 @@ async function finishRound(result) {
   }
   if (x >= 20) {
     const label = x >= 100 ? 'GANHO ÉPICO' : x >= 50 ? 'GANHO ENORME' : 'GANHO GRANDE';
-    await showOverlay(label, formatCents(win), 1800);
+    void pulsarTabuleiro('board--tremor', 520);
+    await showOverlay(label, win, 1800);
   }
   el.winline.textContent = `Ganho total ${formatCents(win)} (${formatMultiplier(win, result.betCents)})`;
   el.winline.className = x >= 20 ? 'winline is-big' : 'winline is-win';
 }
 
-/** @param {string} label @param {string} value @param {number} ms */
+/**
+ * @param {string} label
+ * @param {number|string} value  número em centavos conta subindo; texto aparece direto
+ * @param {number} ms
+ */
 async function showOverlay(label, value, ms) {
   el.winOverlayLabel.textContent = label;
-  el.winOverlayValue.textContent = value;
   el.winOverlay.hidden = false;
-  await wait(ms);
+  if (typeof value === 'number') {
+    el.winOverlayValue.textContent = formatCents(0);
+    await contarAte(el.winOverlayValue, value, Math.min(TIMING.rollUp, ms * 0.7));
+    await wait(ms - TIMING.rollUp > 0 ? ms - TIMING.rollUp : ms * 0.3);
+  } else {
+    el.winOverlayValue.textContent = value;
+    await wait(ms);
+  }
   el.winOverlay.hidden = true;
 }
 
@@ -1020,7 +1341,10 @@ async function showOverlay(label, value, ms) {
  * @param {number} bet
  */
 function describeWins(wins, running, bet) {
-  const parts = wins.map((w) => `${SYMBOLS[w.symbolId].glyph}×${w.count}`);
+  const parts = wins.map((w) => {
+    const pele = peleDe(w.symbolId);
+    return `${pele.glyph ?? pele.name}×${w.count}`;
+  });
   return `${parts.join('  ')}  →  ${formatCents(running)} (${formatMultiplier(running, bet)})`;
 }
 
@@ -1170,31 +1494,84 @@ function renderPaytable() {
   for (let s = SYMBOLS.length - 1; s >= 0; s--) {
     const meta = SYMBOLS[s];
     if (meta.kind !== 'low' && meta.kind !== 'high') continue;
+    const pele = peleDe(s);
     const t = PAYTABLE[s];
     rows.push(`
       <div class="pay-row">
-        <span class="pay-glyph">${meta.glyph}</span>
-        <span class="pay-name">${meta.name}</span>
+        <span class="pay-glyph">${arteHtml(pele)}</span>
+        <span class="pay-name">${escapeHtml(pele.name)}</span>
         ${t.map(([, , pay]) => `<span class="pay-val">${(pay / 100).toLocaleString('pt-BR')}×</span>`).join('')}
       </div>`);
   }
+
+  const moeda = peleDe(Sym.SCATTER);
+  const orbe = peleDe(Sym.ORB);
+
   body.innerHTML = `
+    <div class="tema-linha" role="group" aria-label="Tema visual">
+      <span class="tema-rotulo">Tema</span>
+      <div class="tema-chips">
+        ${THEMES.map((t) => `
+          <button class="tema-chip" data-tema="${t.id}" aria-pressed="${t.id === tema.id}">
+            <span class="tema-badge">${t.badge}</span>
+            <span>
+              <strong>${escapeHtml(t.name)}</strong>
+              <small>${escapeHtml(t.tagline)}</small>
+            </span>
+          </button>`).join('')}
+      </div>
+    </div>
     ${rows.join('')}
     <p class="note">
       <strong>Paga em qualquer posição:</strong> ${MIN_CLUSTER} ou mais símbolos iguais na grade pagam,
       não importa onde estejam. Os prêmios são múltiplos da <em>aposta total</em>.
     </p>
-    <div class="kv"><span>🪙 Moeda (scatter) — 4 / 5 / 6+</span>
+    <div class="kv"><span>${arteHtml(moeda)} ${escapeHtml(moeda.name)} — 4 / 5 / 6+</span>
       <strong>${SCATTER_PAYS[4] / 100}× · ${SCATTER_PAYS[5] / 100}× · ${SCATTER_PAYS[6] / 100}×</strong></div>
-    <div class="kv"><span>🪙 ${SCATTER_TRIGGER}+ moedas</span><strong>${FREE_SPINS_AWARDED} rodadas grátis</strong></div>
-    <div class="kv"><span>🔮 Orbe multiplicador</span><strong>×2 até ×500</strong></div>
+    <div class="kv"><span>${arteHtml(moeda)} ${SCATTER_TRIGGER}+ ${escapeHtml(moeda.name.toLowerCase())}</span>
+      <strong>${FREE_SPINS_AWARDED} rodadas grátis</strong></div>
+    <div class="kv"><span>${arteHtml(orbe)} ${escapeHtml(orbe.name)} (multiplicador)</span><strong>×2 até ×500</strong></div>
     <div class="kv"><span>Ganho máximo por rodada</span><strong>${(MAX_WIN_X100 / 100).toLocaleString('pt-BR')}×</strong></div>
     <div class="kv"><span>RTP teórico</span><strong>${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%</strong></div>
     <p class="note">
       <strong>Cascata:</strong> símbolos vencedores explodem e novos caem no lugar, na mesma rodada, até
-      não haver mais ganho. <strong>Orbes:</strong> no jogo base, a soma dos orbes multiplica o ganho da
-      sequência; nas rodadas grátis a soma é acumulada em um multiplicador global que nunca zera.
+      não haver mais ganho. <strong>Multiplicador:</strong> no jogo base, a soma dos multiplicadores
+      da sequência multiplica o ganho; nas rodadas grátis a soma vai para um total global que nunca zera.
     </p>`;
+
+  for (const node of body.querySelectorAll('.tema-chip')) {
+    node.addEventListener('click', () => {
+      const id = /** @type {HTMLElement} */ (node).dataset.tema;
+      if (!id || id === tema.id) return;
+      trocarTema(id);
+      renderPaytable();
+    });
+  }
+}
+
+/**
+ * HTML do símbolo: imagem quando o tema traz arte, emoji enquanto não traz.
+ * @param {import('./themes.js').SymbolSkin} pele
+ */
+function arteHtml(pele) {
+  return pele.art
+    ? `<img class="pay-art" src="${escapeHtml(pele.art)}" alt="" />`
+    : (pele.glyph ?? '');
+}
+
+/**
+ * Troca o tema em uso e repinta a grade que está na tela.
+ * Só mexe em aparência: nenhuma rodada é re-sorteada e nada de dinheiro muda.
+ * @param {string} id
+ */
+function trocarTema(id) {
+  tema = themeById(id);
+  applyTheme(tema);
+  saveThemeId(tema.id);
+  el.brandMark.textContent = tema.badge;
+  el.brandName.textContent = tema.name;
+  document.title = tema.name;
+  if (!ui.busy) renderGrid(ui.lastGrid, ui.lastOrbs);
 }
 
 function renderBuyMenu() {
@@ -1348,10 +1725,18 @@ function wireControls() {
 }
 
 function init() {
+  applyTheme(tema);
+  el.brandMark.textContent = tema.badge;
+  el.brandName.textContent = tema.name;
+  document.title = tema.name;
+
+  fx.canvas = el.fxLayer;
+  fx.ctx = el.fxLayer.getContext('2d');
+
   buildBoard();
   // grade inicial apenas decorativa, sem consumir aleatoriedade da sessao
   const decorative = ALL_CELLS.map((i) => (i * 7 + (i % 5)) % 9);
-  renderGrid(decorative, new Array(CELLS).fill(0), null, ALL_CELLS);
+  renderGrid(decorative, new Array(CELLS).fill(0), null, { indices: ALL_CELLS });
   el.anteCost.textContent = `+${ANTE_COST_X100 - 100}%`;
   el.btnBuy.querySelector('small')?.replaceChildren(`a partir de ${BUY_PRICES_X100.freeSpins / 100}×`);
   el.rtpBadge.textContent = `${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%`;
@@ -2035,28 +2420,31 @@ const PAYING_FIRST = Sym.BLUE;
 const PAYING_LAST = Sym.CROWN;
 
 /**
+ * Metadado de simbolo visto pelo motor.
+ *
+ * Nome, arte e cor NAO moram aqui: sao aparencia e vivem em src/ui/themes.js.
+ * A separacao e deliberada — trocar de tema nao pode mover o RTP, e a unica
+ * garantia solida disso e o motor nao ter acesso a nada de aparencia.
+ *
  * @typedef {object} SymbolMeta
  * @property {number} id
- * @property {string} key
- * @property {string} name
+ * @property {string} key   chave usada pelos temas para achar a arte
  * @property {'low'|'high'|'scatter'|'orb'} kind
- * @property {string} glyph
- * @property {string} color
  */
 
 /** @type {readonly SymbolMeta[]} */
 const SYMBOLS = Object.freeze([
-  { id: Sym.BLUE,      key: 'BLUE',      name: 'Safira',      kind: 'low',  glyph: '💎', color: '#3f8cff' },
-  { id: Sym.GREEN,     key: 'GREEN',     name: 'Esmeralda',   kind: 'low',  glyph: '🟢', color: '#2fd06a' },
-  { id: Sym.YELLOW,    key: 'YELLOW',    name: 'Topázio',     kind: 'low',  glyph: '🟡', color: '#f5c518' },
-  { id: Sym.PURPLE,    key: 'PURPLE',    name: 'Ametista',    kind: 'low',  glyph: '🟣', color: '#a55bff' },
-  { id: Sym.RED,       key: 'RED',       name: 'Rubi',        kind: 'low',  glyph: '🔴', color: '#ff4d5a' },
-  { id: Sym.CUP,       key: 'CUP',       name: 'Cálice',      kind: 'high', glyph: '🏆', color: '#ffb347' },
-  { id: Sym.RING,      key: 'RING',      name: 'Anel',        kind: 'high', glyph: '💍', color: '#7ce0ff' },
-  { id: Sym.HOURGLASS, key: 'HOURGLASS', name: 'Ampulheta',   kind: 'high', glyph: '⏳', color: '#ff8ae0' },
-  { id: Sym.CROWN,     key: 'CROWN',     name: 'Coroa',       kind: 'high', glyph: '👑', color: '#ffd700' },
-  { id: Sym.SCATTER,   key: 'SCATTER',   name: 'Moeda',       kind: 'scatter', glyph: '🪙', color: '#ffcf40' },
-  { id: Sym.ORB,       key: 'ORB',       name: 'Orbe',        kind: 'orb',  glyph: '🔮', color: '#c084fc' },
+  { id: Sym.BLUE,      key: 'BLUE',      kind: 'low' },
+  { id: Sym.GREEN,     key: 'GREEN',     kind: 'low' },
+  { id: Sym.YELLOW,    key: 'YELLOW',    kind: 'low' },
+  { id: Sym.PURPLE,    key: 'PURPLE',    kind: 'low' },
+  { id: Sym.RED,       key: 'RED',       kind: 'low' },
+  { id: Sym.CUP,       key: 'CUP',       kind: 'high' },
+  { id: Sym.RING,      key: 'RING',      kind: 'high' },
+  { id: Sym.HOURGLASS, key: 'HOURGLASS', kind: 'high' },
+  { id: Sym.CROWN,     key: 'CROWN',     kind: 'high' },
+  { id: Sym.SCATTER,   key: 'SCATTER',   kind: 'scatter' },
+  { id: Sym.ORB,       key: 'ORB',       kind: 'orb' },
 ]);
 
 /**
@@ -2963,6 +3351,231 @@ function formatMultiplier(winCents, betCents) {
 }
 
   return { payToCents, applyMultiplier, assertInt, formatCents, formatMultiplier };
+};
+
+__reg["ui/themes.js"] = () => {
+/**
+ * Temas: tudo o que é aparência, e nada além disso.
+ *
+ * A matemática não sabe que temas existem. `config.js` guarda o que o motor
+ * precisa — id, chave e categoria de cada símbolo — e é aqui que mora o que o
+ * jogador vê: nome, arte e cor. Trocar de tema não pode mexer em peso de rolo,
+ * tabela de prêmios ou RTP, e a separação de arquivos é o que garante isso.
+ *
+ * Arte de cada símbolo, em ordem de preferência:
+ *
+ *   art   caminho ou data: URI de imagem — usado quando existe
+ *   glyph emoji, o padrão enquanto não há arte
+ *
+ * Para trocar emoji por ilustração basta acrescentar `art` ao símbolo; o resto
+ * da interface não muda. Em um pacote de arquivo único a imagem precisa ser
+ * data: URI, porque a política de segurança da página bloqueia imagem externa.
+ *
+ * @typedef {object} SymbolSkin
+ * @property {string} name   nome exibido na tabela de prêmios
+ * @property {string} color  cor do brilho quando o símbolo forma combinação
+ * @property {string} [glyph]
+ * @property {string} [art]
+ *
+ * @typedef {object} Theme
+ * @property {string} id
+ * @property {string} name
+ * @property {string} tagline
+ * @property {string} badge          emoji do logotipo
+ * @property {Record<string, string>} tokens   variáveis CSS sobrescritas
+ * @property {Record<string, SymbolSkin>} symbols  indexado pela chave do símbolo
+ */
+
+/** @type {readonly Theme[]} */
+const THEMES = Object.freeze([
+  {
+    id: 'fortuna',
+    name: 'Fortuna Real',
+    tagline: 'Pedras preciosas e ouro',
+    badge: '👑',
+    tokens: {
+      '--bg': '#0a0713',
+      '--bg-glow-1': '#2b1150',
+      '--bg-glow-2': '#1b0e3a',
+      '--panel': 'rgba(30, 18, 54, 0.72)',
+      '--panel-solid': '#1a1030',
+      '--text': '#f1ecff',
+      '--muted': '#a396c4',
+      '--gold': '#ffcb45',
+      '--gold-deep': '#c8902a',
+      '--gold-ink': '#2a1a00',
+      '--win': '#45e0a0',
+    },
+    symbols: {
+      BLUE:      { name: 'Safira',    color: '#3f8cff', glyph: '💎' },
+      GREEN:     { name: 'Esmeralda', color: '#2fd06a', glyph: '🟢' },
+      YELLOW:    { name: 'Topázio',   color: '#f5c518', glyph: '🟡' },
+      PURPLE:    { name: 'Ametista',  color: '#a55bff', glyph: '🟣' },
+      RED:       { name: 'Rubi',      color: '#ff4d5a', glyph: '🔴' },
+      CUP:       { name: 'Cálice',    color: '#ffb347', glyph: '🏆' },
+      RING:      { name: 'Anel',      color: '#7ce0ff', glyph: '💍' },
+      HOURGLASS: { name: 'Ampulheta', color: '#ff8ae0', glyph: '⏳' },
+      CROWN:     { name: 'Coroa',     color: '#ffd700', glyph: '👑' },
+      SCATTER:   { name: 'Moeda',     color: '#ffcf40', glyph: '🪙' },
+      ORB:       { name: 'Orbe',      color: '#c084fc', glyph: '🔮' },
+    },
+  },
+  {
+    id: 'arraia',
+    name: 'Arraiá da Sorte',
+    tagline: 'Festa junina na fogueira',
+    badge: '🔥',
+    tokens: {
+      // céu de junho: azul profundo em cima, brasa da fogueira embaixo
+      '--bg': '#080d1f',
+      '--bg-glow-1': '#1b2a5c',
+      '--bg-glow-2': '#5c2a10',
+      '--panel': 'rgba(20, 30, 58, 0.74)',
+      '--panel-solid': '#141d38',
+      '--text': '#f6efe2',
+      '--muted': '#93a3c6',
+      '--gold': '#ffb43d',
+      '--gold-deep': '#c4681a',
+      '--gold-ink': '#2a1400',
+      '--win': '#63d98d',
+    },
+    symbols: {
+      BLUE:      { name: 'Pipoca',          color: '#f3e3c2', glyph: '🍿' },
+      GREEN:     { name: 'Milho',           color: '#ffd23f', glyph: '🌽' },
+      YELLOW:    { name: 'Pé de moleque',   color: '#d99a4e', glyph: '🥜' },
+      PURPLE:    { name: 'Maçã do amor',    color: '#ff4d5a', glyph: '🍎' },
+      RED:       { name: 'Quentão',         color: '#e8703a', glyph: '☕' },
+      CUP:       { name: 'Chapéu de palha', color: '#e0b962', glyph: '👒' },
+      RING:      { name: 'Sanfona',         color: '#ff8c42', glyph: '🪗' },
+      HOURGLASS: { name: 'Bandeirinhas',    color: '#4ec9e0', glyph: '🎏' },
+      CROWN:     { name: 'Fogueira',        color: '#ff6b1a', glyph: '🔥' },
+      SCATTER:   { name: 'Balão',           color: '#ff5ea8', glyph: '🎈' },
+      ORB:       { name: 'Fogos',           color: '#ffd84d', glyph: '🎆' },
+    },
+  },
+]);
+
+const DEFAULT_THEME_ID = THEMES[0].id;
+const STORAGE_KEY = 'fortuna-real:tema';
+
+/**
+ * @param {string} id
+ * @returns {Theme}
+ */
+function themeById(id) {
+  return THEMES.find((t) => t.id === id) ?? THEMES[0];
+}
+
+/**
+ * Lê o tema guardado. Pode falhar de verdade — janela anônima, dados do site
+ * bloqueados, captura de miniatura — então o acesso vai dentro de try/catch e
+ * a ausência cai no tema padrão.
+ * @returns {string}
+ */
+function loadThemeId() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) ?? DEFAULT_THEME_ID;
+  } catch {
+    return DEFAULT_THEME_ID;
+  }
+}
+
+/** @param {string} id */
+function saveThemeId(id) {
+  try {
+    localStorage.setItem(STORAGE_KEY, id);
+  } catch {
+    // preferência de aparência não vale um erro na tela
+  }
+}
+
+/**
+ * Aplica os tokens do tema na raiz do documento.
+ * @param {Theme} theme
+ */
+function applyTheme(theme) {
+  const root = document.documentElement;
+  for (const [nome, valor] of Object.entries(theme.tokens)) {
+    root.style.setProperty(nome, valor);
+  }
+  root.dataset.tema = theme.id;
+}
+
+  return { THEMES, DEFAULT_THEME_ID, themeById, loadThemeId, saveThemeId, applyTheme };
+};
+
+__reg["ui/reveal.js"] = () => {
+/**
+ * Cronograma de revelação do sorteio inicial — lógica pura, sem DOM.
+ *
+ * As colunas aparecem da esquerda para a direita. Quando as moedas já visíveis
+ * chegam a UMA de disparar o bônus, as colunas restantes passam a demorar
+ * muito mais: é a "antecipação", o momento em que o slot segura o resultado.
+ *
+ * Duas coisas importam aqui, e por isso este arquivo é separado da interface:
+ *
+ * 1. A antecipação **não decide nada**. O motor já sorteou a rodada inteira
+ *    antes de a primeira peça aparecer; isto só escolhe em que ritmo mostrar.
+ *    Nenhuma função deste módulo recebe ou devolve dinheiro.
+ * 2. A regra usa exclusivamente o que o jogador já tem na tela — as moedas das
+ *    colunas anteriores. Segurar a coluna por causa de uma moeda que ainda não
+ *    apareceu seria mentir para o jogador sobre o que ele está vendo.
+ */
+
+/**
+ * @typedef {object} OpcoesRevelacao
+ * @property {number} cols
+ * @property {number} rows
+ * @property {number} scatterId    id do símbolo que dispara o bônus
+ * @property {number} trigger      quantas moedas o bônus exige
+ * @property {number} step         atraso entre colunas, em ms
+ * @property {number} anticipation atraso entre colunas durante a antecipação
+ * @property {number} rowStep      escalonamento vertical dentro da coluna
+ * @property {number} tile         duração da queda de uma peça
+ */
+
+/**
+ * @typedef {object} Revelacao
+ * @property {number[]} delays     atraso em ms por índice de grade
+ * @property {boolean} anticipated houve pelo menos uma coluna segurada
+ * @property {number} total        quanto tempo até a última peça assentar
+ */
+
+/**
+ * @param {ArrayLike<number>} grid  grade achatada, índice col * rows + row
+ * @param {OpcoesRevelacao} opcoes
+ * @returns {Revelacao}
+ */
+function revealSchedule(grid, opcoes) {
+  const { cols, rows, scatterId, trigger, step, anticipation, rowStep, tile } = opcoes;
+  const delays = new Array(cols * rows).fill(0);
+
+  let acumulado = 0;
+  let moedas = 0;
+  let anticipated = false;
+
+  for (let col = 0; col < cols; col++) {
+    for (let row = 0; row < rows; row++) {
+      const i = col * rows + row;
+      delays[i] = acumulado + row * rowStep;
+      if (grid[i] === scatterId) moedas += 1;
+    }
+
+    // Segurar só faz sentido se ainda houver coluna para revelar: na última,
+    // não há nada pelo que esperar.
+    const aUmaDoGatilho = moedas >= trigger - 1 && col < cols - 1;
+    if (aUmaDoGatilho) anticipated = true;
+    acumulado += aUmaDoGatilho ? anticipation : step;
+  }
+
+  return {
+    delays,
+    anticipated,
+    total: acumulado + (rows - 1) * rowStep + tile,
+  };
+}
+
+  return { revealSchedule };
 };
 
 __mod("ui/app.js");

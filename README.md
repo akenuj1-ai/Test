@@ -11,7 +11,7 @@ navegador, sem `npm install`, sem bundler.
 ![Rodadas grátis com multiplicador global acumulado](docs/captura-bonus.png)
 
 ```bash
-npm test        # 102 testes
+npm test        # 115 testes
 npm run serve   # abre a interface em http://localhost:8080
 npm run bundle  # gera dist/fortuna-real.html — arquivo único, roda no celular
 npm run sim     # simulação de Monte Carlo com relatório
@@ -44,6 +44,22 @@ tela deitada.
 | **Aposta ante** | +25% de custo, 1,51× mais gatilhos, mesmo RTP |
 | **Ganho máximo** | 5.000× a aposta |
 | **RTP** | 96,50% (alvo) — medido em todos os modos, ver `docs/MATH.md` |
+| **Temas** | Fortuna Real (pedras e ouro) e Arraiá da Sorte (festa junina) |
+
+### Temas
+
+![Tema Arraiá da Sorte durante as rodadas grátis](docs/captura-arraia.png)
+
+A aparência vive em `src/ui/themes.js`, separada da matemática por construção:
+`config.js` guarda o que o motor precisa (id, chave, categoria) e o tema guarda
+o que o jogador vê (nome, cor, arte). Um teste falha se nome, emoji ou cor
+voltarem para o `config.js` — é o que garante que um tema novo não possa mover
+o RTP.
+
+Cada símbolo aceita `glyph` (emoji, o padrão) ou `art` (imagem). Para trocar
+emoji por ilustração basta acrescentar `art`; o resto da interface não muda.
+Em um pacote de arquivo único a imagem precisa ser `data:` URI, porque a
+política de segurança da página bloqueia imagem externa.
 
 ![Tabela de prêmios](docs/captura-tabela.png)
 
@@ -73,8 +89,10 @@ src/sim/        ferramentas de matemática
   cli.js          relatório de linha de comando
 
 src/ui/         interface (ESM puro, sem bundler)
+  themes.js       aparência: nomes, cores e arte por tema
+  reveal.js       ritmo da revelação e antecipação — lógica pura, sem DOM
 tools/          servidor estático e verificador de RTP
-test/           102 testes com o runner nativo do Node
+test/           115 testes com o runner nativo do Node
 ```
 
 O princípio que organiza tudo: **o motor é uma função pura de

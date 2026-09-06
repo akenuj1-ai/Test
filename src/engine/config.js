@@ -47,28 +47,31 @@ export const PAYING_FIRST = Sym.BLUE;
 export const PAYING_LAST = Sym.CROWN;
 
 /**
+ * Metadado de simbolo visto pelo motor.
+ *
+ * Nome, arte e cor NAO moram aqui: sao aparencia e vivem em src/ui/themes.js.
+ * A separacao e deliberada — trocar de tema nao pode mover o RTP, e a unica
+ * garantia solida disso e o motor nao ter acesso a nada de aparencia.
+ *
  * @typedef {object} SymbolMeta
  * @property {number} id
- * @property {string} key
- * @property {string} name
+ * @property {string} key   chave usada pelos temas para achar a arte
  * @property {'low'|'high'|'scatter'|'orb'} kind
- * @property {string} glyph
- * @property {string} color
  */
 
 /** @type {readonly SymbolMeta[]} */
 export const SYMBOLS = Object.freeze([
-  { id: Sym.BLUE,      key: 'BLUE',      name: 'Safira',      kind: 'low',  glyph: '💎', color: '#3f8cff' },
-  { id: Sym.GREEN,     key: 'GREEN',     name: 'Esmeralda',   kind: 'low',  glyph: '🟢', color: '#2fd06a' },
-  { id: Sym.YELLOW,    key: 'YELLOW',    name: 'Topázio',     kind: 'low',  glyph: '🟡', color: '#f5c518' },
-  { id: Sym.PURPLE,    key: 'PURPLE',    name: 'Ametista',    kind: 'low',  glyph: '🟣', color: '#a55bff' },
-  { id: Sym.RED,       key: 'RED',       name: 'Rubi',        kind: 'low',  glyph: '🔴', color: '#ff4d5a' },
-  { id: Sym.CUP,       key: 'CUP',       name: 'Cálice',      kind: 'high', glyph: '🏆', color: '#ffb347' },
-  { id: Sym.RING,      key: 'RING',      name: 'Anel',        kind: 'high', glyph: '💍', color: '#7ce0ff' },
-  { id: Sym.HOURGLASS, key: 'HOURGLASS', name: 'Ampulheta',   kind: 'high', glyph: '⏳', color: '#ff8ae0' },
-  { id: Sym.CROWN,     key: 'CROWN',     name: 'Coroa',       kind: 'high', glyph: '👑', color: '#ffd700' },
-  { id: Sym.SCATTER,   key: 'SCATTER',   name: 'Moeda',       kind: 'scatter', glyph: '🪙', color: '#ffcf40' },
-  { id: Sym.ORB,       key: 'ORB',       name: 'Orbe',        kind: 'orb',  glyph: '🔮', color: '#c084fc' },
+  { id: Sym.BLUE,      key: 'BLUE',      kind: 'low' },
+  { id: Sym.GREEN,     key: 'GREEN',     kind: 'low' },
+  { id: Sym.YELLOW,    key: 'YELLOW',    kind: 'low' },
+  { id: Sym.PURPLE,    key: 'PURPLE',    kind: 'low' },
+  { id: Sym.RED,       key: 'RED',       kind: 'low' },
+  { id: Sym.CUP,       key: 'CUP',       kind: 'high' },
+  { id: Sym.RING,      key: 'RING',      kind: 'high' },
+  { id: Sym.HOURGLASS, key: 'HOURGLASS', kind: 'high' },
+  { id: Sym.CROWN,     key: 'CROWN',     kind: 'high' },
+  { id: Sym.SCATTER,   key: 'SCATTER',   kind: 'scatter' },
+  { id: Sym.ORB,       key: 'ORB',       kind: 'orb' },
 ]);
 
 /**

@@ -37,7 +37,10 @@ const HTML = resolve(SRC, 'ui/index.html');
 const CSS = resolve(SRC, 'ui/styles.css');
 const OUT_DIR = resolve(ROOT, 'dist');
 
-/** Formas de import/export que este empacotador não aceita. */
+/**
+ * Formas de import/export que este empacotador não aceita.
+ * @type {readonly [RegExp, string][]}
+ */
 const PROIBIDO = [
   [/^\s*export\s+default\b/m, 'export default'],
   [/^\s*import\s+\*\s+as\b/m, 'import * as'],
@@ -96,7 +99,9 @@ async function carregar(caminho) {
   const exportados = new Set();
 
   // 1. imports -> desestruturação do registro
-  let code = original.replace(IMPORT_RE, (_todo, nomes, especificador) => {
+  let code = original.replace(IMPORT_RE,
+    /** @param {string} _todo @param {string} nomes @param {string} especificador */
+    (_todo, nomes, especificador) => {
     const alvo = resolve(dirname(caminho), especificador);
     const alvoId = idDe(alvo);
     dependencias.push(alvo);
@@ -108,7 +113,9 @@ async function carregar(caminho) {
   });
 
   // 2. `export { a, b };` -> some da saída, os nomes vão para a lista
-  code = code.replace(EXPORT_LIST_RE, (_todo, nomes) => {
+  code = code.replace(EXPORT_LIST_RE,
+    /** @param {string} _todo @param {string} nomes */
+    (_todo, nomes) => {
     for (const n of nomes.split(',').map((x) => x.trim()).filter(Boolean)) {
       if (n.includes(' as ')) throw new Error(`${id}: "export { x as y }" não é suportado (${n}).`);
       exportados.add(n);
@@ -117,7 +124,9 @@ async function carregar(caminho) {
   });
 
   // 3. `export const/function NOME` -> declaração normal, nome registrado
-  code = code.replace(EXPORT_DECL_RE, (_todo, palavra, deslocamento, texto) => {
+  code = code.replace(EXPORT_DECL_RE,
+    /** @param {string} _todo @param {string} palavra @param {number} deslocamento @param {string} texto */
+    (_todo, palavra, deslocamento, texto) => {
     const resto = texto.slice(deslocamento + _todo.length);
     const nome = /^([A-Za-z_$][\w$]*)/.exec(resto)?.[1];
     if (!nome) throw new Error(`${id}: não consegui ler o nome exportado perto de "${_todo.trim()}".`);
@@ -178,7 +187,7 @@ __mod(${JSON.stringify(idDe(ENTRY))});
   // é embutido, mas uma folha hospedada fora só existe como <link>. Os locais
   // ficam de fora — já viraram <style>.
   const linksExternos = (html.match(/<link\b[^>]*>/gi) ?? [])
-    .filter((tag) => /rel="(stylesheet|preconnect)"/i.test(tag) && !/href="\.\//i.test(tag));
+    .filter((/** @type {string} */ tag) => /rel="(stylesheet|preconnect)"/i.test(tag) && !/href="\.\//i.test(tag));
   const corpo = /<body>([\s\S]*?)<\/body>/i.exec(html)?.[1]
     ?? (() => { throw new Error('Não achei <body> em index.html'); })();
 
@@ -212,7 +221,7 @@ ${conteudo.slice(conteudo.indexOf('\n\n', conteudo.indexOf('</style>')) + 2)}
   await writeFile(resolve(OUT_DIR, 'fortuna-real.html'), paginaCompleta);
   await writeFile(resolve(OUT_DIR, 'artifact.html'), `${conteudo}\n`);
 
-  const kb = (t) => `${(Buffer.byteLength(t) / 1024).toFixed(0)} KB`;
+  const kb = (/** @type {string} */ t) => `${(Buffer.byteLength(t) / 1024).toFixed(0)} KB`;
   console.log(`${modulos.size} módulos empacotados:`);
   for (const m of modulos.values()) console.log(`  ${m.id.padEnd(22)} ${m.exports.length} exports`);
   console.log(`\ndist/fortuna-real.html  ${kb(paginaCompleta)}  (página completa)`);

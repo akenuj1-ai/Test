@@ -1,8 +1,11 @@
 name: Publicar Travessia
 
+# Disparo manual: o token do Actions não tem permissão para criar o site
+# do Pages sozinho ("Resource not accessible by integration"), então este
+# workflow só serve depois que o Pages estiver ligado com Source = GitHub
+# Actions — ou com permissões de escrita liberadas em
+# Settings > Actions > General > Workflow permissions.
 on:
-  push:
-    branches: [claude/galaxy-interactive-slideshow-eonxvc]
   workflow_dispatch:
 
 permissions:

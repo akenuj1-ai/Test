@@ -17,6 +17,31 @@ galaxy/
 └── docs/                       # capturas das cenas
 ```
 
+## Publicar no GitHub Pages
+
+O repositório é público, então o Pages está disponível — só falta ligá-lo.
+A raiz deste branch já tem `index.html` (redireciona para `galaxy/`) e
+`.nojekyll`, então nada mais precisa ser preparado.
+
+**Caminho curto** — Settings ▸ Pages ▸ *Build and deployment*:
+
+| campo | valor |
+|---|---|
+| Source | Deploy from a branch |
+| Branch | `claude/galaxy-interactive-slideshow-eonxvc` |
+| Pasta | `/ (root)` |
+
+Salvando, o site sobe em um ou dois minutos:
+
+- **https://akenuj1-ai.github.io/Test/** → redireciona para a experiência
+- **https://akenuj1-ai.github.io/Test/galaxy/** → endereço direto
+
+**Caminho por Actions** — se preferir Source = *GitHub Actions*, este
+repositório traz `.github/workflows/pages.yml`, que monta e publica o
+site. Ele roda por disparo manual (aba Actions ▸ *Publicar Travessia* ▸
+*Run workflow*) e exige permissão de escrita para workflows em
+Settings ▸ Actions ▸ General ▸ *Workflow permissions*.
+
 ## Como abrir
 
 **Por um servidor estático** — jeito recomendado, funciona sem internet:

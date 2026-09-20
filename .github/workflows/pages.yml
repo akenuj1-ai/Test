@@ -1,0 +1,43 @@
+name: Publicar Travessia
+
+on:
+  push:
+    branches: [claude/galaxy-interactive-slideshow-eonxvc]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # enablement: true liga o Pages sozinho se ainda estiver desligado
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Montar o site
+        run: |
+          mkdir -p _site
+          cp -r galaxy _site/galaxy
+          cp index.html _site/index.html
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

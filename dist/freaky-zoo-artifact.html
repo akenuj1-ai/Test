@@ -67,8 +67,11 @@ html, body {
 body {
   display: flex;
   justify-content: center;
-  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
-  min-height: 100dvh;
+  /* 16 px de respiro lateral no minimo; as areas seguras de cima e de baixo
+     ja vem do host quando o jogo roda embutido */
+  padding-block: 10px;
+  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+  min-height: 100%;
 }
 
 .app {

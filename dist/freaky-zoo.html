@@ -1,0 +1,3682 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="Slot 6x4 com 4.096 ways, camelo que lambe ou cospe, gorila freaky com multiplicador, Festa Freaky, Rave Sigma e ganho máximo de 25.000x. Créditos de demonstração." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%A6%8D%3C/text%3E%3C/svg%3E" />
+<title>Freaky Zoo</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Luckiest+Guy&display=swap" />
+
+<style>
+/* ============================================================
+   Freaky Zoo — folha de estilo
+   Festa neon num zoologico: rosa-choque, verde-acido, roxo.
+   Sem dependencias. Cabe num celular em pe (320 px) e cresce ate
+   desktop; nenhum alvo de toque abaixo de 44 px.
+   ============================================================ */
+
+:root {
+  --bg: #0c0518;
+  --glow-1: #4a0d5e;
+  --glow-2: #0d3b3a;
+  --panel: rgba(34, 14, 52, 0.78);
+  --panel-solid: #1d0b2e;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --text: #fbf2ff;
+  --muted: #b7a3cf;
+  --pink: #ff2bd6;
+  --pink-deep: #b3128f;
+  --acid: #7dff3d;
+  --cyan: #36e2ff;
+  --yellow: #ffe14d;
+  --ink: #1b0624;
+  --win: #7dff3d;
+  --danger: #ff5d73;
+
+  --font-display: 'Luckiest Guy', 'Arial Black', system-ui, sans-serif;
+  --font-ui: 'Archivo', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --cell: clamp(42px, 12.6vw, 86px);
+  --gap: clamp(3px, 0.9vw, 7px);
+  --radius: 16px;
+
+  color-scheme: dark;
+}
+
+/* Rodadas gratis mudam a luz da festa */
+body[data-mode='festa'] { --glow-1: #7a0f6a; --glow-2: #3a0d6e; }
+body[data-mode='rave'] { --glow-1: #0f6a3a; --glow-2: #0a4a6e; --pink: #7dff3d; --pink-deep: #1f9e3a; }
+
+* { box-sizing: border-box; }
+
+/* `hidden` perde para qualquer `display` de autor; ver REVIEW.md do Fortuna Real */
+[hidden] { display: none !important; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  overscroll-behavior-y: none;
+  background:
+    radial-gradient(1100px 620px at 15% -10%, var(--glow-1) 0%, transparent 60%),
+    radial-gradient(900px 560px at 95% 110%, var(--glow-2) 0%, transparent 58%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.6s;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  min-height: 100dvh;
+}
+
+.app {
+  width: min(900px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button, .board { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button, .meter, .bet-value, .winline, .feature-chip, .tile { user-select: none; }
+button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+
+/* ---------------- barra superior ---------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(12px);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark {
+  font-size: 32px;
+  filter: drop-shadow(0 0 10px var(--pink));
+  animation: bob 2.4s ease-in-out infinite;
+}
+@keyframes bob { 50% { transform: translateY(-3px) rotate(-6deg); } }
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(20px, 5.4vw, 30px);
+  line-height: 1;
+  letter-spacing: 1px;
+  color: var(--yellow);
+  text-shadow: 2px 2px 0 var(--pink-deep), 4px 4px 0 var(--ink);
+}
+.brand-sub { margin: 3px 0 0; font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+.topbar-right { display: flex; align-items: center; gap: 6px; }
+.meter { text-align: right; margin-right: 4px; }
+.meter-label { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.meter-value { font-size: clamp(14px, 3.8vw, 19px); font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.icon-btn {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  font-size: 17px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+.icon-btn:hover { background: rgba(255, 255, 255, 0.14); }
+.icon-btn:active { transform: scale(0.94); }
+
+/* ---------------- palco ---------------- */
+.stage { display: flex; flex-direction: column; gap: 8px; }
+
+.feature-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.feature-chip {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  font-size: 12px; color: var(--muted);
+}
+.feature-chip strong { color: var(--text); font-size: 15px; font-variant-numeric: tabular-nums; }
+.feature-chip--name strong { font-family: var(--font-display); font-weight: 400; letter-spacing: 1px; color: var(--pink); font-size: 17px; }
+.feature-chip--win strong { color: var(--acid); }
+
+.board-wrap {
+  position: relative;
+  align-self: center;
+  padding: clamp(6px, 1.6vw, 12px);
+  border-radius: calc(var(--radius) + 6px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.2)),
+    var(--panel-solid);
+  border: 2px solid var(--pink);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.35), 0 0 36px -6px var(--pink), inset 0 0 30px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.4s, box-shadow 0.4s;
+}
+.board-wrap--shake { animation: shake 0.45s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes shake {
+  10%, 90% { transform: translate(-2px, 1px); }
+  20%, 80% { transform: translate(4px, -2px); }
+  30%, 50%, 70% { transform: translate(-6px, 2px); }
+  40%, 60% { transform: translate(6px, -1px); }
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, var(--cell));
+  gap: var(--gap);
+}
+
+.reel {
+  position: relative;
+  height: calc(var(--cell) * 4 + var(--gap) * 3);
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+}
+.reel--anticipate { box-shadow: inset 0 0 0 2px var(--cyan), 0 0 22px var(--cyan); }
+.reel--anticipate .reel-strip { filter: brightness(1.25); }
+.reel--sticky { box-shadow: inset 0 0 0 3px var(--pink); }
+
+.reel-strip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  will-change: transform;
+}
+.reel-strip--spinning .tile { filter: blur(1.2px); }
+
+/* ---------------- pecas ---------------- */
+.tile {
+  --glow: #fff;
+  position: relative;
+  width: var(--cell);
+  height: var(--cell);
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--glow) 26%, transparent), transparent 70%), rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: opacity 0.2s, transform 0.2s, filter 0.2s;
+}
+.tile-glyph { font-size: calc(var(--cell) * 0.6); line-height: 1; filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.45)); }
+.tile-acc {
+  position: absolute;
+  font-size: calc(var(--cell) * 0.3);
+  line-height: 1;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.5));
+  pointer-events: none;
+}
+.tile-art { width: 92%; height: 92%; object-fit: contain; pointer-events: none; }
+
+/* cartas */
+.tile--card .tile-glyph {
+  font-family: var(--font-display);
+  font-size: calc(var(--cell) * 0.56);
+  color: var(--glow);
+  text-shadow: 2px 2px 0 var(--ink), 0 0 12px color-mix(in srgb, var(--glow) 60%, transparent);
+  filter: none;
+}
+/* acessorios por personagem */
+.tile--H1 .tile-acc { top: 27%; left: 50%; transform: translateX(-50%); font-size: calc(var(--cell) * 0.26); }
+.tile--H2 .tile-acc { top: 2%; left: 50%; transform: translateX(-54%) rotate(-12deg); filter: hue-rotate(290deg) saturate(2.4) drop-shadow(0 2px 0 rgba(0,0,0,.5)); }
+.tile--H3 .tile-acc { right: 6%; bottom: 6%; }
+.tile--H3 {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0, 0, 0, 0.55) 44%, transparent 46%),
+    conic-gradient(from 0deg, #ff3b3b, #ff9e2c, #ffe14d, #3dff7a, #36b4ff, #a95cff, #ff3b3b);
+}
+/* wild */
+.tile--W {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 43, 214, 0.55), rgba(90, 0, 80, 0.9) 75%);
+  border: 2px solid var(--pink);
+  box-shadow: 0 0 14px -2px var(--pink);
+}
+.tile--W::after {
+  content: 'FREAKY';
+  position: absolute;
+  bottom: 3%;
+  font-family: var(--font-display);
+  font-size: calc(var(--cell) * 0.15);
+  letter-spacing: 0.5px;
+  color: var(--yellow);
+  text-shadow: 1px 1px 0 var(--ink);
+}
+.tile--tongue {
+  background:
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.14) 0 3px, transparent 3px 12px),
+    linear-gradient(90deg, #ff5fa8, #ff86c2 50%, #ff5fa8);
+  border-color: #ffc1e0;
+}
+.tile--tongue::after { content: 'LÍNGUA'; color: #fff; text-shadow: 1px 1px 0 #a4004f; }
+.tile--sticky { box-shadow: 0 0 0 2px var(--yellow), 0 0 18px -2px var(--yellow); }
+.tile--sticky::after { content: 'GRUDOU'; }
+.tile--frenzy { border-color: var(--yellow); box-shadow: 0 0 16px -2px var(--yellow); }
+.tile--C { background: radial-gradient(circle at 50% 40%, rgba(255, 174, 92, 0.5), rgba(80, 40, 10, 0.85) 75%); border-color: #ffae5c; }
+.tile--S { background: radial-gradient(circle at 50% 40%, rgba(159, 246, 255, 0.55), rgba(20, 30, 90, 0.9) 75%); border-color: var(--cyan); }
+.tile--S .tile-glyph { animation: disco 2.2s linear infinite; }
+@keyframes disco { to { filter: drop-shadow(0 3px 0 rgba(0,0,0,.45)) hue-rotate(360deg); } }
+
+.mult-badge {
+  position: absolute;
+  top: 3%;
+  right: 3%;
+  min-width: 42%;
+  padding: 1px 4px;
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 800;
+  font-size: calc(var(--cell) * 0.2);
+  text-align: center;
+  box-shadow: 0 2px 0 var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.mult-badge--pop { animation: pop 0.45s cubic-bezier(.2,1.8,.4,1) both; }
+@keyframes pop { from { transform: scale(0); } }
+
+/* estados de jogo */
+.board--dim .tile:not(.tile--win) { opacity: 0.28; filter: saturate(0.4); }
+.tile--win { animation: win-pulse 0.7s ease-in-out infinite alternate; z-index: 1; }
+@keyframes win-pulse {
+  from { box-shadow: 0 0 0 2px var(--glow), 0 0 10px var(--glow); }
+  to { box-shadow: 0 0 0 3px var(--glow), 0 0 28px var(--glow); transform: scale(1.05); }
+}
+.tile--land { animation: land 0.22s ease-out; }
+@keyframes land { 40% { transform: translateY(6%); } }
+.tile--drop { animation: drop 0.5s cubic-bezier(.3,1.5,.5,1) both; }
+@keyframes drop { from { transform: translateY(-160%) scale(0.6) rotate(-20deg); opacity: 0; } }
+.tile--flip { animation: flip 0.45s ease-in-out; }
+@keyframes flip { 50% { transform: rotateY(90deg) scale(0.9); filter: hue-rotate(90deg) brightness(1.4); } }
+.tile--scatter-hit { animation: scatter-hit 0.8s ease-in-out 2; }
+@keyframes scatter-hit { 50% { transform: scale(1.18) rotate(8deg); box-shadow: 0 0 30px var(--cyan); } }
+.tile--camel-act { animation: camel-act 0.6s ease-in-out; z-index: 2; }
+@keyframes camel-act { 30% { transform: scale(1.3) rotate(-10deg); } 60% { transform: scale(1.2) rotate(8deg); } }
+
+/* ---------------- efeitos ---------------- */
+.fx { position: absolute; inset: 0; pointer-events: none; overflow: visible; z-index: 5; }
+.tongue {
+  position: absolute;
+  border-radius: 40px;
+  background:
+    radial-gradient(ellipse at 50% 100%, #d61f6c 0 18%, transparent 19%),
+    linear-gradient(90deg, #ff4f9a, #ff9ccb 50%, #ff4f9a);
+  box-shadow: 0 0 24px #ff4f9a;
+  transform-origin: 50% 50%;
+}
+.spit {
+  position: absolute;
+  width: calc(var(--cell) * 0.34);
+  height: calc(var(--cell) * 0.34);
+  margin: calc(var(--cell) * -0.17) 0 0 calc(var(--cell) * -0.17);
+  border-radius: 50% 50% 50% 10%;
+  background: radial-gradient(circle at 35% 35%, #f4ffe0, #b8f06a 45%, #6fae2a);
+  box-shadow: 0 0 12px #b8f06a;
+}
+.float-text {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-size: calc(var(--cell) * 0.42);
+  color: var(--yellow);
+  text-shadow: 2px 2px 0 var(--ink), 0 0 14px var(--pink);
+  white-space: nowrap;
+}
+
+.banner {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  border-radius: inherit;
+  background: radial-gradient(circle, rgba(12, 5, 24, 0.82), rgba(12, 5, 24, 0.94));
+  animation: banner-in 0.35s cubic-bezier(.2,1.4,.4,1);
+}
+@keyframes banner-in { from { transform: scale(0.7); opacity: 0; } }
+.banner-kicker { margin: 0; font-size: clamp(12px, 3vw, 15px); letter-spacing: 3px; text-transform: uppercase; color: var(--cyan); }
+.banner-title {
+  margin: 4px 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 11vw, 74px);
+  line-height: 1;
+  color: var(--yellow);
+  text-shadow: 3px 3px 0 var(--pink-deep), 6px 6px 0 var(--ink);
+}
+.banner-sub { margin: 0; font-size: clamp(14px, 3.6vw, 19px); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.banner--max .banner-title { color: var(--acid); animation: rainbow 1.2s linear infinite; }
+@keyframes rainbow { to { filter: hue-rotate(360deg); } }
+
+.winline {
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 6px 12px;
+  text-align: center;
+  font-size: clamp(13px, 3.4vw, 16px);
+  font-weight: 700;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.winline--win { color: var(--acid); border-color: color-mix(in srgb, var(--acid) 50%, transparent); }
+.winline--bad { color: #d6ff9a; }
+
+/* ---------------- controles ---------------- */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.control-group { display: flex; flex-direction: column; gap: 4px; }
+.control-group--main { align-items: center; }
+.control-group--right { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.control-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+
+.bet-stepper { display: flex; align-items: center; gap: 6px; }
+.step-btn {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+}
+.bet-value { min-width: 78px; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+.spin-btn {
+  width: clamp(92px, 24vw, 118px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid var(--ink);
+  background: radial-gradient(circle at 40% 30%, #fff 0 6%, var(--yellow) 22%, #ff9f1c 70%, #c75c00);
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  gap: 2px;
+  box-shadow: 0 6px 0 var(--ink), 0 0 30px -4px var(--yellow);
+  transition: transform 0.1s, filter 0.2s;
+}
+.spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+.spin-btn:disabled { filter: grayscale(0.7) brightness(0.7); cursor: not-allowed; }
+.spin-btn-label { font-family: var(--font-display); font-size: clamp(18px, 5vw, 24px); line-height: 1; }
+.spin-btn-cost { font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.spin-btn--busy .spin-btn-label { animation: bob 0.5s ease-in-out infinite; }
+
+.ghost-btn {
+  min-width: 64px;
+  min-height: 44px;
+  padding: 4px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+.ghost-btn small { font-size: 10px; font-weight: 600; color: var(--muted); }
+.ghost-btn[aria-pressed='true'] { background: color-mix(in srgb, var(--pink) 30%, transparent); border-color: var(--pink); }
+.ghost-btn--hot { background: linear-gradient(180deg, var(--pink), var(--pink-deep)); border-color: #ffb3f0; }
+.ghost-btn--hot small { color: #ffe6fa; }
+.ghost-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.disclaimer { margin: 0; text-align: center; font-size: 11px; color: var(--muted); }
+.disclaimer a { color: var(--cyan); }
+
+/* ---------------- modais ---------------- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(5, 2, 10, 0.72);
+  backdrop-filter: blur(6px);
+}
+.modal-card {
+  width: min(460px, 100%);
+  max-height: min(88dvh, 760px);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-solid);
+  border: 2px solid var(--pink);
+  border-radius: var(--radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px -10px var(--pink);
+}
+.modal-card--wide { width: min(640px, 100%); }
+.modal-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px 10px 16px; border-bottom: 1px solid var(--line); }
+.modal-head h2 { margin: 0; font-family: var(--font-display); font-weight: 400; letter-spacing: 1px; color: var(--yellow); font-size: 22px; }
+.modal-body { padding: 14px 16px 18px; overflow-y: auto; font-size: 14px; line-height: 1.5; }
+.modal-body h3 { margin: 18px 0 6px; font-size: 15px; color: var(--pink); }
+.modal-body h3:first-child { margin-top: 0; }
+.modal-body p { margin: 6px 0; }
+.note { font-size: 12px; color: var(--muted); }
+
+.buy-grid { display: grid; gap: 10px; }
+.buy-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.buy-card:hover:not(:disabled) { border-color: var(--pink); background: rgba(255, 43, 214, 0.12); }
+.buy-card:disabled { opacity: 0.45; cursor: not-allowed; }
+.buy-card-icon { font-size: 34px; }
+.buy-card strong { display: block; font-size: 16px; }
+.buy-card small { color: var(--muted); font-size: 12px; }
+.buy-card-price { font-weight: 800; font-size: 16px; color: var(--yellow); text-align: right; font-variant-numeric: tabular-nums; }
+.buy-card-price small { display: block; font-weight: 600; }
+
+table.pays { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table.pays th, table.pays td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: right; }
+table.pays th:first-child, table.pays td:first-child { text-align: left; }
+table.pays th { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.pay-sym { display: inline-flex; align-items: center; gap: 8px; }
+.pay-sym .mini { width: 34px; height: 34px; --cell: 34px; border-radius: 8px; }
+
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 14px; font-variant-numeric: tabular-nums; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; font-weight: 700; text-align: right; }
+.fair-hash { font-family: ui-monospace, monospace; font-size: 11px; word-break: break-all; background: rgba(0, 0, 0, 0.3); padding: 6px 8px; border-radius: 8px; }
+.fair-row { display: flex; gap: 8px; margin-top: 8px; }
+.fair-row input {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text);
+  font: inherit;
+}
+
+/* ---------------- telas estreitas e deitadas ---------------- */
+@media (max-width: 560px) {
+  .controls { grid-template-columns: 1fr auto; grid-template-areas: 'bet spin' 'extra extra'; }
+  .controls > .control-group:first-child { grid-area: bet; }
+  .control-group--main { grid-area: spin; }
+  .control-group--right { grid-area: extra; justify-content: center; }
+  .brand-sub { display: none; }
+  .disclaimer .long { display: none; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  :root { --cell: clamp(34px, 10.5vh, 62px); }
+  .app { width: min(1100px, 100%); display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'top top' 'stage controls' 'foot foot'; }
+  .topbar { grid-area: top; }
+  .stage { grid-area: stage; }
+  .controls { grid-area: controls; grid-template-columns: 1fr; align-content: center; }
+  .disclaimer { grid-area: foot; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+</style>
+</head>
+<body>
+
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🦍</span>
+        <div>
+          <h1>Freaky Zoo</h1>
+          <p class="brand-sub">6×4 · 4.096 ways · RTP <span id="rtp-badge">96,50%</span> · máx 25.000×</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="meter">
+          <span class="meter-label" id="balance-label">Saldo</span>
+          <strong id="balance" class="meter-value">R$ 0,00</strong>
+        </div>
+        <button class="icon-btn" id="btn-rules" title="Regras e prêmios" aria-label="Regras e prêmios">📜</button>
+        <button class="icon-btn" id="btn-fair" title="Verificação justa" aria-label="Verificação justa">🔐</button>
+        <button class="icon-btn" id="btn-stats" title="Estatísticas da sessão" aria-label="Estatísticas da sessão">📊</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="feature-bar" id="feature-bar" hidden>
+        <div class="feature-chip feature-chip--name"><strong id="fs-name">Festa Freaky</strong></div>
+        <div class="feature-chip"><span>Rodada</span><strong id="fs-count">0/10</strong></div>
+        <div class="feature-chip feature-chip--win"><span>Ganho do bônus</span><strong id="fs-win">R$ 0,00</strong></div>
+      </div>
+
+      <div class="board-wrap" id="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Rolos do jogo"></div>
+        <div class="fx" id="fx" aria-hidden="true"></div>
+        <div class="banner" id="banner" hidden>
+          <p class="banner-kicker" id="banner-kicker"></p>
+          <p class="banner-title" id="banner-title"></p>
+          <p class="banner-sub" id="banner-sub"></p>
+        </div>
+      </div>
+
+      <div class="winline" id="winline" aria-live="polite">Gire para começar a festa.</div>
+    </main>
+
+    <footer class="controls">
+      <div class="control-group">
+        <span class="control-label">Aposta</span>
+        <div class="bet-stepper">
+          <button class="step-btn" id="bet-down" aria-label="Diminuir aposta">−</button>
+          <span class="bet-value" id="bet-value">R$ 1,00</span>
+          <button class="step-btn" id="bet-up" aria-label="Aumentar aposta">+</button>
+        </div>
+      </div>
+
+      <div class="control-group control-group--main">
+        <button class="spin-btn" id="btn-spin">
+          <span class="spin-btn-label" id="spin-label">GIRAR</span>
+          <span class="spin-btn-cost" id="spin-cost">R$ 1,00</span>
+        </button>
+      </div>
+
+      <div class="control-group control-group--right">
+        <button class="ghost-btn" id="btn-hunt" aria-pressed="false" title="Caçada Freaky: custa 3× e o bônus sai ~4× mais">
+          <span>Caçada</span><small>3× · bônus 4×</small>
+        </button>
+        <button class="ghost-btn" id="btn-lingua" aria-pressed="false" title="Língua Garantida: custa 2× e todo giro tem um camelo lambendo">
+          <span>Língua</span><small>2× · garantida</small>
+        </button>
+        <button class="ghost-btn ghost-btn--hot" id="btn-buy"><span>Comprar</span><small>bônus</small></button>
+        <button class="ghost-btn" id="btn-turbo" aria-pressed="false"><span>Turbo</span><small>⚡</small></button>
+        <button class="ghost-btn" id="btn-auto" aria-pressed="false"><span>Auto</span><small id="auto-count">10×</small></button>
+      </div>
+    </footer>
+
+    <p class="disclaimer">
+      Jogo de <strong>demonstração</strong> com créditos fictícios — sem depósito, sem prêmio em dinheiro real.
+      <span class="long">Feito para estudo de matemática de slots.</span>
+      <a href="https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/jogo-responsavel" target="_blank" rel="noopener noreferrer">Jogue com responsabilidade.</a>
+    </p>
+  </div>
+
+  <!-- ======================= modais ======================= -->
+  <div class="modal" id="modal-buy" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Comprar bônus</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="buy-grid" id="buy-grid"></div>
+        <p class="note">O preço é o valor esperado do bônus dividido pelo RTP — comprar não é melhor nem pior que esperar o gatilho, só mais volátil.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-rules" hidden>
+    <div class="modal-card modal-card--wide">
+      <header class="modal-head">
+        <h2>Regras e prêmios</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="rules-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-fair" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Verificação justa</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="fair-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Estatísticas da sessão</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="stats-body"></div>
+    </div>
+  </div>
+
+<script type="module">
+// ---------------------------------------------------------------------------
+// Gerado por tools/bundle.js — não edite. A fonte está em src/.
+// Cada módulo virou uma função que devolve seus exports; __mod resolve e
+// memoriza. Nenhum identificador foi renomeado.
+// ---------------------------------------------------------------------------
+const __reg = {};
+const __cache = new Map();
+function __mod(id) {
+  if (!__cache.has(id)) {
+    const fabrica = __reg[id];
+    if (!fabrica) throw new Error('Módulo ausente no pacote: ' + id);
+    __cache.set(id, fabrica());
+  }
+  return __cache.get(id);
+}
+
+__reg["freaky/ui/app.js"] = () => {
+/**
+ * Controlador da interface do Freaky Zoo.
+ *
+ * A interface e um TOCADOR DE BOOKS: recebe a lista de eventos de uma rodada
+ * — do motor local (modo demonstracao) ou do RGS da Stake Engine — e anima um
+ * por um. Nenhuma regra de jogo mora aqui e nenhum premio e recalculado: se um
+ * numero aparece na tela, ele veio do book. Consequencia: a mesma interface
+ * roda a demonstracao e o jogo publicado, e trocar animacao nao move o RTP.
+ */
+
+const { GRID, SYMBOLS, PAYTABLE, MODES, BET_LEVELS, DEFAULT_BET, MAX_WIN_X100, TARGET_RTP, FEATURE_TRIGGERS, RETRIGGER_SCATTERS, RETRIGGER_SPINS, BUY_SPINS, GORILLA_MULT_VALUES, CAMEL_TONGUE_CHANCE, FRENZY_WILD_MULT } = __mod("freaky/config.js");
+const { createSession, moneyOf, formatMoney } = __mod("freaky/session.js");
+const { applyEvent, stopPlan, winTier } = __mod("freaky/ui/board-model.js");
+const { SKINS, skinOf } = __mod("freaky/ui/skins.js");
+const { rgsParamsFromUrl, createRgsClient, eventsOfRound, RgsError } = __mod("freaky/ui/rgs.js");
+
+const { REELS, ROWS } = GRID;
+
+/* ------------------------------------------------------------------ */
+/* fontes de rodada: demonstracao local ou RGS da Stake                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * @typedef {object} Played
+ * @property {Record<string, any>[]} events
+ * @property {number} payoutX100
+ * @property {number} cost
+ * @property {number} balanceAfterDebit
+ * @property {() => Promise<number>} finish  credita o ganho e devolve o saldo final
+ */
+
+/**
+ * @typedef {object} Source
+ * @property {'local'|'rgs'} kind
+ * @property {string} currency
+ * @property {number[]} betLevels
+ * @property {number} defaultBet
+ * @property {number} balance
+ * @property {(mode: string, bet: number) => Promise<Played>} play
+ * @property {any} [session]
+ * @property {any} [pendingRound]
+ * @property {() => Promise<void>} [closePending]
+ */
+
+/**
+ * Demonstracao local. `?demoSeed=xyz` na URL fixa a semente do servidor e
+ * torna a sequencia de rodadas reproduzivel (util para QA e capturas).
+ * @returns {Source}
+ */
+function localSource() {
+  const demoSeed = new URL(location.href).searchParams.get('demoSeed');
+  const session = createSession(demoSeed ? { serverSeed: demoSeed } : {});
+  return {
+    kind: 'local',
+    currency: 'BRL',
+    betLevels: [...BET_LEVELS],
+    defaultBet: DEFAULT_BET,
+    session,
+    get balance() { return session.balance; },
+    async play(mode, bet) {
+      session.setBet(bet);
+      const out = session.play({ mode: /** @type {any} */ (mode) });
+      return {
+        events: /** @type {Record<string, any>[]} */ (out.result.events),
+        payoutX100: out.result.payoutX100,
+        cost: out.cost,
+        balanceAfterDebit: out.balanceBefore - out.cost,
+        finish: async () => out.balanceAfter,
+      };
+    },
+  };
+}
+
+/**
+ * @param {import('./rgs.js').RgsParams} params
+ * @returns {Promise<Source>}
+ */
+async function rgsSource(params) {
+  const client = createRgsClient(params);
+  const auth = await client.authenticate();
+  let balance = Number(auth.balance?.amount ?? 0);
+  const cfg = auth.config ?? {};
+  /** @type {number[]} */
+  const levels = (Array.isArray(cfg.betLevels) && cfg.betLevels.length ? cfg.betLevels : BET_LEVELS)
+    .map(Number).filter((/** @type {number} */ b) => b > 0 && b % 100 === 0);
+  return {
+    kind: 'rgs',
+    currency: auth.balance?.currency ?? 'USD',
+    betLevels: levels,
+    defaultBet: levels.includes(Number(cfg.defaultBetLevel)) ? Number(cfg.defaultBetLevel) : levels[0],
+    pendingRound: auth.round?.active ? auth.round : null,
+    async closePending() {
+      const end = await client.endRound();
+      balance = Number(end.balance?.amount ?? balance);
+    },
+    get balance() { return balance; },
+    async play(mode, bet) {
+      const res = await client.play(bet, mode);
+      balance = Number(res.balance?.amount ?? balance);
+      const round = res.round;
+      const events = eventsOfRound(round);
+      const payoutX100 = Number(round.payoutMultiplier ?? events.at(-1)?.amount ?? 0);
+      return {
+        events,
+        payoutX100,
+        cost: moneyOf(bet, MODES[/** @type {keyof typeof MODES} */ (mode)].costX100),
+        balanceAfterDebit: balance,
+        finish: async () => {
+          if (round.active ?? payoutX100 > 0) {
+            const end = await client.endRound();
+            balance = Number(end.balance?.amount ?? balance);
+          }
+          return balance;
+        },
+      };
+    },
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* estado                                                              */
+/* ------------------------------------------------------------------ */
+
+/** @type {Source} */
+let source = localSource();
+
+const ui = {
+  busy: false,
+  turbo: false,
+  /** @type {'base'|'hunt'|'lingua'} */
+  featureMode: 'base',
+  autoRemaining: 0,
+  autoSizes: [10, 25, 50, 100, 0],
+  autoSizeIndex: 0,
+  bet: DEFAULT_BET,
+  /** saldo mostrado durante a animacao (o debito aparece ja, o credito so no fim) */
+  /** @type {number|null} */
+  shownBalance: null,
+  /** @type {import('./board-model.js').Board} */
+  board: demoBoard(),
+  /** @type {'festa'|'rave'|null} */
+  feature: null,
+};
+
+const stats = {
+  rounds: 0, wagered: 0, won: 0, biggest: 0, biggestX: 0,
+  festa: 0, rave: 0, tongues: 0, spits: 0, frenzies: 0, maxWins: 0,
+};
+
+const semMovimento = globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+const BASE_TIMING = {
+  spinBase: 520, spinStagger: 150, anticipation: 1150, msPerCell: 40,
+  winEach: 950, winAll: 750, banner: 1700, bannerShort: 1050,
+  camel: 650, spitFly: 420, tongue: 560, drop: 380, pop: 240, pause: 260,
+};
+
+/** Duracoes em ms, encurtadas no turbo. */
+function T() {
+  const k = semMovimento ? 0.25 : ui.turbo ? 0.4 : 1;
+  /** @type {typeof BASE_TIMING} */
+  const out = /** @type {any} */ ({});
+  for (const [key, v] of Object.entries(BASE_TIMING)) /** @type {any} */ (out)[key] = Math.round(v * k);
+  return out;
+}
+
+const wait = (/** @type {number} */ ms) => new Promise((r) => setTimeout(r, ms));
+const $ = (/** @type {string} */ id) => /** @type {HTMLElement} */ (document.getElementById(id));
+
+const el = {
+  board: $('board'),
+  boardWrap: $('board-wrap'),
+  fx: $('fx'),
+  banner: $('banner'),
+  bannerKicker: $('banner-kicker'),
+  bannerTitle: $('banner-title'),
+  bannerSub: $('banner-sub'),
+  winline: $('winline'),
+  balance: $('balance'),
+  balanceLabel: $('balance-label'),
+  betValue: $('bet-value'),
+  betDown: /** @type {HTMLButtonElement} */ ($('bet-down')),
+  betUp: /** @type {HTMLButtonElement} */ ($('bet-up')),
+  spin: /** @type {HTMLButtonElement} */ ($('btn-spin')),
+  spinLabel: $('spin-label'),
+  spinCost: $('spin-cost'),
+  hunt: /** @type {HTMLButtonElement} */ ($('btn-hunt')),
+  lingua: /** @type {HTMLButtonElement} */ ($('btn-lingua')),
+  buy: /** @type {HTMLButtonElement} */ ($('btn-buy')),
+  turbo: /** @type {HTMLButtonElement} */ ($('btn-turbo')),
+  auto: /** @type {HTMLButtonElement} */ ($('btn-auto')),
+  autoCount: $('auto-count'),
+  featureBar: $('feature-bar'),
+  fsName: $('fs-name'),
+  fsCount: $('fs-count'),
+  fsWin: $('fs-win'),
+  rtpBadge: $('rtp-badge'),
+  fairBtn: /** @type {HTMLButtonElement} */ ($('btn-fair')),
+};
+
+const money = (/** @type {number} */ micro) => formatMoney(micro, source.currency, 'pt-BR');
+const moneyX = (/** @type {number} */ x100) => money(moneyOf(ui.bet, x100));
+const fmtX = (/** @type {number} */ x) => `${x.toLocaleString('pt-BR', { maximumFractionDigits: 2 })}×`;
+
+/* ------------------------------------------------------------------ */
+/* tabuleiro                                                           */
+/* ------------------------------------------------------------------ */
+
+/** Grade de abertura: todo o elenco a vista. */
+function demoBoard() {
+  const cols = [
+    ['H1', 'L1', 'H2', 'L4'], ['L2', 'W', 'H3', 'L3'], ['S', 'H1', 'L1', 'H2'],
+    ['H3', 'L3', 'C', 'L2'], ['L4', 'H2', 'W', 'H1'], ['L1', 'S', 'H3', 'L3'],
+  ];
+  return cols.map((c) => c.map((name) => ({ name })));
+}
+
+/** @type {{ el: HTMLElement, strip: HTMLElement, tiles: HTMLElement[] }[]} */
+const reels = [];
+
+function buildBoard() {
+  el.board.replaceChildren();
+  reels.length = 0;
+  for (let r = 0; r < REELS; r++) {
+    const reel = document.createElement('div');
+    reel.className = 'reel';
+    const strip = document.createElement('div');
+    strip.className = 'reel-strip';
+    reel.appendChild(strip);
+    el.board.appendChild(reel);
+    reels.push({ el: reel, strip, tiles: [] });
+  }
+  ui.board.forEach((col, r) => renderReel(r, col));
+}
+
+/**
+ * Cria a peca de uma celula.
+ * @param {import('./board-model.js').Cell} cell
+ */
+function makeTile(cell) {
+  const skin = skinOf(cell.name);
+  const tile = document.createElement('div');
+  // rolo grudento e lingua que ficou: mesma cara de lingua, com selo "GRUDOU"
+  const tongue = Boolean(cell.tongue || cell.sticky);
+  const classes = ['tile', `tile--${cell.name}`];
+  if (skin.look === 'card') classes.push('tile--card');
+  if (tongue) classes.push('tile--tongue');
+  if (cell.sticky) classes.push('tile--sticky');
+  if (cell.frenzy) classes.push('tile--frenzy');
+  tile.className = classes.join(' ');
+  tile.style.setProperty('--glow', skin.color);
+  tile.setAttribute('role', 'gridcell');
+  const label = tongue ? 'Língua do camelo (wild)' : skin.name;
+  tile.setAttribute('aria-label', cell.multiplier ? `${label} ×${cell.multiplier}` : label);
+
+  if (skin.art && !tongue) {
+    const img = document.createElement('img');
+    img.className = 'tile-art';
+    img.src = skin.art;
+    img.alt = '';
+    img.draggable = false;
+    tile.appendChild(img);
+  } else {
+    const glyph = document.createElement('span');
+    glyph.className = 'tile-glyph';
+    glyph.textContent = tongue ? '👅' : skin.glyph;
+    tile.appendChild(glyph);
+    if (skin.accessory && !tongue) {
+      const acc = document.createElement('span');
+      acc.className = 'tile-acc';
+      acc.textContent = skin.accessory;
+      tile.appendChild(acc);
+    }
+  }
+  if (cell.multiplier && cell.multiplier > 1) {
+    const badge = document.createElement('span');
+    badge.className = 'mult-badge';
+    badge.textContent = `×${cell.multiplier}`;
+    tile.appendChild(badge);
+  }
+  return tile;
+}
+
+/**
+ * Pinta um rolo parado.
+ * @param {number} r
+ * @param {import('./board-model.js').Cell[]} col
+ */
+function renderReel(r, col) {
+  const tiles = col.map(makeTile);
+  const reel = reels[r];
+  reel.strip.style.transition = 'none';
+  reel.strip.style.transform = '';
+  reel.strip.classList.remove('reel-strip--spinning');
+  reel.strip.replaceChildren(...tiles);
+  reel.tiles = tiles;
+}
+
+/**
+ * Troca uma celula no lugar, com animacao opcional.
+ * @param {number} r @param {number} row
+ * @param {import('./board-model.js').Cell} cell
+ * @param {string} [anim] classe de animacao
+ */
+function repaint(r, row, cell, anim) {
+  const tile = makeTile(cell);
+  if (anim) tile.classList.add(anim);
+  reels[r].tiles[row].replaceWith(tile);
+  reels[r].tiles[row] = tile;
+  return tile;
+}
+
+/** Codigos usados para encher a fita durante o giro (so aparencia). */
+const FILLER = ['L4', 'L4', 'L3', 'L3', 'L2', 'L2', 'L1', 'L1', 'H3', 'H2', 'H1', 'W', 'C', 'S'];
+const filler = () => ({ name: FILLER[Math.floor(Math.random() * FILLER.length)] });
+
+/** Distancia vertical entre duas pecas, em px. */
+function pitch() {
+  const tile = reels[0].tiles[0];
+  const gap = parseFloat(getComputedStyle(reels[0].strip).rowGap || '0') || 0;
+  return (tile?.getBoundingClientRect().height ?? 60) + gap;
+}
+
+/**
+ * Gira e para os rolos na grade do `reveal`, da esquerda para a direita, com
+ * antecipacao quando o proximo rolo pode completar o gatilho.
+ * @param {import('./board-model.js').Board} board
+ */
+async function spinTo(board) {
+  const t = T();
+  const plan = stopPlan(board);
+  const p = pitch();
+  let extra = 0;
+  const jobs = board.map((col, r) => {
+    if (plan[r].anticipation) extra += t.anticipation;
+    const duration = t.spinBase + r * t.spinStagger + extra;
+    const reel = reels[r];
+    const count = Math.max(6, Math.ceil(duration / Math.max(12, t.msPerCell)));
+    const finalTiles = col.map(makeTile);
+    const fillerTiles = Array.from({ length: count }, () => makeTile(filler()));
+    reel.strip.replaceChildren(...finalTiles, ...fillerTiles, ...reel.tiles);
+    reel.strip.style.transition = 'none';
+    reel.strip.style.transform = `translateY(${-(finalTiles.length + fillerTiles.length) * p}px)`;
+    reel.strip.classList.add('reel-strip--spinning');
+    void reel.strip.offsetHeight; // reinicia a transicao
+    reel.strip.style.transition = `transform ${duration}ms cubic-bezier(.12,.7,.25,1.03)`;
+    reel.strip.style.transform = 'translateY(0)';
+
+    const previousStop = r === 0 ? 0 : t.spinBase + (r - 1) * t.spinStagger + extra - (plan[r].anticipation ? t.anticipation : 0);
+    if (plan[r].anticipation) setTimeout(() => reel.el.classList.add('reel--anticipate'), previousStop);
+
+    return wait(duration).then(() => {
+      reel.el.classList.remove('reel--anticipate');
+      renderReel(r, col);
+      for (const tile of reel.tiles) tile.classList.add('tile--land');
+    });
+  });
+  await Promise.all(jobs);
+}
+
+/* ------------------------------------------------------------------ */
+/* efeitos                                                             */
+/* ------------------------------------------------------------------ */
+
+/** Centro de uma celula em coordenadas da camada de efeitos. */
+function centerOf(/** @type {number} */ r, /** @type {number} */ row) {
+  const box = el.fx.getBoundingClientRect();
+  const cell = reels[r].tiles[row].getBoundingClientRect();
+  return { x: cell.left - box.left + cell.width / 2, y: cell.top - box.top + cell.height / 2, w: cell.width, h: cell.height };
+}
+
+/**
+ * Texto flutuante sobre a grade.
+ * @param {string} text @param {{x:number,y:number}} at
+ */
+function floatText(text, at) {
+  const t = T();
+  const node = document.createElement('div');
+  node.className = 'float-text';
+  node.textContent = text;
+  node.style.left = `${at.x}px`;
+  node.style.top = `${at.y}px`;
+  el.fx.appendChild(node);
+  node.animate(
+    [{ transform: 'translate(-50%,-50%) scale(.4)', opacity: 0 }, { transform: 'translate(-50%,-90%) scale(1.1)', opacity: 1, offset: 0.3 }, { transform: 'translate(-50%,-160%) scale(1)', opacity: 0 }],
+    { duration: Math.max(300, t.banner), easing: 'ease-out' },
+  ).finished.then(() => node.remove(), () => node.remove());
+}
+
+/**
+ * Faixa central.
+ * @param {{ kicker?: string, title: string, sub?: string, cls?: string, ms?: number }} b
+ */
+async function banner({ kicker = '', title, sub = '', cls = '', ms }) {
+  el.bannerKicker.textContent = kicker;
+  el.bannerTitle.textContent = title;
+  el.bannerSub.textContent = sub;
+  el.banner.className = `banner ${cls}`.trim();
+  el.banner.hidden = false;
+  await wait(ms ?? T().banner);
+  el.banner.hidden = true;
+}
+
+/**
+ * Conta de 0 ate o valor na faixa (ganhos grandes).
+ * @param {string} title @param {number} x100 @param {string} [cls]
+ */
+async function bigWin(title, x100, cls = '') {
+  const t = T();
+  el.bannerKicker.textContent = fmtX(x100 / 100);
+  el.bannerTitle.textContent = title;
+  el.banner.className = `banner ${cls}`.trim();
+  el.banner.hidden = false;
+  const total = moneyOf(ui.bet, x100);
+  const steps = semMovimento ? 1 : 24;
+  for (let i = 1; i <= steps; i++) {
+    el.bannerSub.textContent = money(Math.round((total * i) / steps));
+    await wait(t.banner / steps);
+  }
+  await wait(t.bannerShort);
+  el.banner.hidden = true;
+}
+
+function shake() {
+  el.boardWrap.classList.remove('board-wrap--shake');
+  void el.boardWrap.offsetWidth;
+  el.boardWrap.classList.add('board-wrap--shake');
+}
+
+function clearWinState() {
+  el.board.classList.remove('board--dim');
+  for (const reel of reels) for (const tile of reel.tiles) tile.classList.remove('tile--win');
+}
+
+/**
+ * @param {string} text
+ * @param {'win'|'bad'|''} [kind]
+ */
+function setWinline(text, kind = '') {
+  el.winline.textContent = text;
+  el.winline.className = `winline${kind ? ` winline--${kind}` : ''}`;
+}
+
+/* ---- camelo ---- */
+
+/**
+ * @param {Record<string, any>} ev
+ * @param {import('./board-model.js').Board} after
+ */
+async function showCamel(ev, after) {
+  const t = T();
+  for (const c of ev.camels) {
+    const tile = reels[c.reel].tiles[c.row];
+    tile.classList.add('tile--camel-act');
+    floatText(c.action === 'tongue' ? '👅 LÍNGUA!' : '💦 CUSPE!', centerOf(c.reel, c.row));
+  }
+  await wait(t.camel);
+
+  const spitters = ev.camels.filter((/** @type {any} */ c) => c.action === 'spit');
+  if (ev.spit?.length) {
+    setWinline('💦 O camelo cuspiu: todo símbolo alto virou carta!', 'bad');
+    const from = centerOf(spitters[0].reel, spitters[0].row);
+    await Promise.all(ev.spit.map((/** @type {any} */ s, /** @type {number} */ k) => new Promise((resolve) => {
+      const to = centerOf(s.reel, s.row);
+      const blob = document.createElement('div');
+      blob.className = 'spit';
+      el.fx.appendChild(blob);
+      const anim = blob.animate(
+        [
+          { transform: `translate(${from.x}px, ${from.y}px) scale(.3)` },
+          { transform: `translate(${(from.x + to.x) / 2}px, ${Math.min(from.y, to.y) - from.h * 0.8}px) scale(1)`, offset: 0.5 },
+          { transform: `translate(${to.x}px, ${to.y}px) scale(.8)` },
+        ],
+        { duration: t.spitFly, delay: k * 35, easing: 'ease-in', fill: 'forwards' },
+      );
+      const done = () => {
+        blob.remove();
+        repaint(s.reel, s.row, after[s.reel][s.row], 'tile--flip');
+        resolve(null);
+      };
+      anim.finished.then(done, done);
+    })));
+    await wait(t.pause);
+  } else if (spitters.length) {
+    // cuspiu, mas nao havia simbolo alto para acertar
+    for (const c of spitters) repaint(c.reel, c.row, after[c.reel][c.row], 'tile--flip');
+  }
+
+  for (const tg of ev.tongues ?? []) {
+    setWinline(tg.sticky ? '👅 Língua grudenta! Esse rolo fica wild até o fim.' : '👅 O camelo mostrou a língua: rolo inteiro wild!', 'win');
+    const camel = ev.camels.find((/** @type {any} */ c) => c.reel === tg.reel);
+    const top = centerOf(tg.reel, 0);
+    const bottom = centerOf(tg.reel, ROWS - 1);
+    const node = document.createElement('div');
+    node.className = 'tongue';
+    const width = top.w * 0.62;
+    node.style.left = `${top.x - width / 2}px`;
+    node.style.width = `${width}px`;
+    node.style.top = `${top.y - top.h / 2}px`;
+    node.style.height = `${bottom.y - top.y + top.h}px`;
+    const origin = camel ? ((camel.row + 0.5) / ROWS) * 100 : 50;
+    node.style.transformOrigin = `50% ${origin}%`;
+    el.fx.appendChild(node);
+    const grow = node.animate([{ transform: 'scaleY(0)' }, { transform: 'scaleY(1.06)', offset: 0.7 }, { transform: 'scaleY(1)' }], { duration: t.tongue, easing: 'ease-out', fill: 'forwards' });
+    await grow.finished.catch(() => {});
+    for (const row of tg.rows) repaint(tg.reel, row, after[tg.reel][row], 'tile--land');
+    if (tg.sticky) reels[tg.reel].el.classList.add('reel--sticky');
+    node.animate([{ opacity: 1 }, { opacity: 0 }], { duration: t.pop, fill: 'forwards' }).finished.then(() => node.remove(), () => node.remove());
+  }
+  await wait(t.pause);
+}
+
+/* ---- ganhos ---- */
+
+/**
+ * @param {Record<string, any>} ev
+ */
+async function showWins(ev) {
+  const t = T();
+  const wins = [...ev.wins].sort((a, b) => b.win - a.win);
+  el.board.classList.add('board--dim');
+  /** @param {{reel:number,row:number}[]} positions */
+  const light = (positions) => {
+    for (const reel of reels) for (const tile of reel.tiles) tile.classList.remove('tile--win');
+    for (const p of positions) reels[p.reel].tiles[p.row].classList.add('tile--win');
+  };
+  // cada ganho sozinho (no maximo 4, para nao arrastar), depois todos juntos
+  for (const w of wins.slice(0, 4)) {
+    light(w.positions);
+    const skin = SKINS[w.symbol];
+    const ways = w.ways === w.plainWays ? `${w.ways} ways` : `${w.plainWays} ways · multi ×${fmtMult(w.ways / w.plainWays)}`;
+    const who = skin.look === 'card' ? skin.name : `${skin.glyph} ${skin.name}`;
+    setWinline(`${who} ×${w.kind} · ${ways} → ${moneyX(w.win)}`, 'win');
+    await wait(wins.length > 1 ? t.winEach : t.winEach + t.winAll);
+  }
+  if (wins.length > 1) {
+    light(wins.flatMap((w) => w.positions));
+    setWinline(`${wins.length} ganhos → ${moneyX(ev.totalWin)}`, 'win');
+    await wait(t.winAll);
+  }
+}
+
+/** @param {number} m */
+const fmtMult = (m) => (Number.isInteger(m) ? String(m) : m.toLocaleString('pt-BR', { maximumFractionDigits: 2 }));
+
+/* ------------------------------------------------------------------ */
+/* tocador de books                                                    */
+/* ------------------------------------------------------------------ */
+
+/** @param {'festa'|'rave'} feature */
+const featureName = (feature) => (feature === 'rave' ? 'Rave Sigma' : 'Festa Freaky');
+
+/**
+ * Anima os eventos de uma rodada, em ordem.
+ * @param {Record<string, any>[]} events
+ */
+async function playEvents(events) {
+  const t = T();
+  let board = ui.board;
+  let featureWin = 0;
+  let baseWin = 0;
+  let capped = false;
+
+  for (const ev of events) {
+    switch (ev.type) {
+      case 'reveal': {
+        clearWinState();
+        if (ev.gameType === 'basegame') setWinline('Girando...');
+        board = applyEvent(board, ev);
+        await spinTo(board);
+        // rolos grudentos continuam marcados ate o fim do bonus
+        if (ui.feature !== 'rave') for (const reel of reels) reel.el.classList.remove('reel--sticky');
+        break;
+      }
+      case 'stickyWilds': {
+        board = applyEvent(board, ev);
+        for (const r of ev.reels) {
+          board[r].forEach((cell, row) => { if (cell.sticky) repaint(r, row, cell, 'tile--drop'); });
+          reels[r].el.classList.add('reel--sticky');
+        }
+        await wait(t.drop);
+        break;
+      }
+      case 'gorillaMultipliers': {
+        board = applyEvent(board, ev);
+        for (const w of ev.wilds) {
+          const tile = repaint(w.reel, w.row, board[w.reel][w.row]);
+          tile.querySelector('.mult-badge')?.classList.add('mult-badge--pop');
+        }
+        await wait(t.pop + t.pause);
+        break;
+      }
+      case 'freakyFrenzy': {
+        stats.frenzies += 1;
+        shake();
+        await banner({ kicker: 'o gorila surtou', title: 'SURTO FREAKY!', sub: `${ev.wilds.length} wilds ×${FRENZY_WILD_MULT}`, ms: t.bannerShort });
+        board = applyEvent(board, ev);
+        for (const [k, w] of ev.wilds.entries()) {
+          setTimeout(() => repaint(w.reel, w.row, board[w.reel][w.row], 'tile--drop'), k * 90);
+        }
+        await wait(t.drop + ev.wilds.length * 90);
+        break;
+      }
+      case 'camel': {
+        for (const c of ev.camels) stats[c.action === 'tongue' ? 'tongues' : 'spits'] += 1;
+        board = applyEvent(board, ev);
+        await showCamel(ev, board);
+        break;
+      }
+      case 'winInfo':
+        await showWins(ev);
+        break;
+      case 'setWin': {
+        if (ui.feature) {
+          setWinline(`Ganho do giro: ${moneyX(ev.amount)}`, 'win');
+        } else {
+          baseWin = ev.amount;
+          const tier = winTier(ev.amount / 100);
+          if (tier) await bigWin(tier.label, ev.amount, `banner--${tier.key}`);
+          setWinline(`Ganho: ${moneyX(ev.amount)} (${fmtX(ev.amount / 100)})`, 'win');
+        }
+        break;
+      }
+      case 'setTotalWin':
+        if (ui.feature) {
+          featureWin = ev.amount - baseWin;
+          el.fsWin.textContent = moneyX(featureWin);
+        }
+        break;
+      case 'freeSpinTrigger': {
+        for (const p of ev.positions ?? []) reels[p.reel].tiles[p.row]?.classList.add('tile--scatter-hit');
+        if (ev.positions?.length) await wait(t.bannerShort);
+        ui.feature = ev.feature;
+        stats[/** @type {'festa'|'rave'} */ (ev.feature)] += 1;
+        document.body.dataset.mode = ev.feature;
+        el.featureBar.hidden = false;
+        el.fsName.textContent = featureName(ev.feature);
+        el.fsCount.textContent = `0/${ev.totalFs}`;
+        el.fsWin.textContent = money(0);
+        await banner({
+          kicker: ev.bought ? 'bônus comprado' : `${ev.positions.length} globos de discoteca`,
+          title: featureName(ev.feature).toUpperCase(),
+          sub: `${ev.totalFs} rodadas grátis${ev.feature === 'rave' ? ' · camelo só lambe e a língua gruda' : ' · gorilas com multiplicador'}`,
+        });
+        break;
+      }
+      case 'updateFreeSpin':
+        el.fsCount.textContent = `${ev.amount}/${ev.total}`;
+        break;
+      case 'freeSpinRetrigger':
+        for (const p of ev.positions ?? []) reels[p.reel].tiles[p.row]?.classList.add('tile--scatter-hit');
+        await banner({ kicker: 'mais globo!', title: `+${RETRIGGER_SPINS} RODADAS`, sub: `total ${ev.totalFs}`, ms: t.bannerShort });
+        break;
+      case 'freeSpinEnd': {
+        const tier = winTier(ev.amount / 100);
+        if (tier && !capped) await bigWin(tier.label, ev.amount, `banner--${tier.key}`);
+        await banner({ kicker: `fim da ${featureName(ev.feature)}`, title: moneyX(ev.amount), sub: fmtX(ev.amount / 100), ms: t.bannerShort });
+        ui.feature = null;
+        delete document.body.dataset.mode;
+        el.featureBar.hidden = true;
+        for (const reel of reels) reel.el.classList.remove('reel--sticky');
+        break;
+      }
+      case 'wincap':
+        capped = true;
+        stats.maxWins += 1;
+        await bigWin('GANHO MÁXIMO', ev.amount, 'banner--max');
+        break;
+      case 'finalWin':
+        if (ev.amount > 0) setWinline(`Total da rodada: ${moneyX(ev.amount)} (${fmtX(ev.amount / 100)})`, 'win');
+        else if (!el.winline.classList.contains('winline--bad')) setWinline('Sem ganho dessa vez.');
+        break;
+      default:
+        break;
+    }
+  }
+  ui.board = board;
+  ui.feature = null;
+}
+
+/* ------------------------------------------------------------------ */
+/* rodada                                                              */
+/* ------------------------------------------------------------------ */
+
+/** @param {string} mode */
+const costOf = (mode) => moneyOf(ui.bet, MODES[/** @type {keyof typeof MODES} */ (mode)].costX100);
+
+/**
+ * Uma rodada completa. Devolve false se nao pode jogar (saldo, erro).
+ * @param {string} mode
+ */
+async function playOnce(mode) {
+  if (source.balance < costOf(mode)) {
+    setWinline('Saldo insuficiente para essa aposta.', 'bad');
+    return false;
+  }
+  ui.busy = true;
+  updateControls();
+  try {
+    const played = await source.play(mode, ui.bet);
+    ui.shownBalance = played.balanceAfterDebit;
+    renderBalance();
+    await playEvents(played.events);
+    await played.finish();
+    stats.rounds += 1;
+    stats.wagered += played.cost;
+    const won = moneyOf(ui.bet, played.payoutX100);
+    stats.won += won;
+    if (won > stats.biggest) { stats.biggest = won; stats.biggestX = played.payoutX100 / 100; }
+    return true;
+  } catch (err) {
+    const msg = err instanceof RgsError ? `${err.message} (${err.code})` : `Erro: ${/** @type {Error} */ (err).message}`;
+    setWinline(msg, 'bad');
+    console.error(err);
+    return false;
+  } finally {
+    ui.shownBalance = null;
+    ui.busy = false;
+    renderBalance();
+    updateControls();
+  }
+}
+
+/**
+ * Laco do automatico. Iterativo de proposito: recursao empilharia um quadro
+ * por rodada (ver achado 8 em docs/REVIEW.md).
+ */
+async function runAuto() {
+  while (ui.autoRemaining > 0) {
+    ui.autoRemaining -= 1;
+    updateControls();
+    const ok = await playOnce(ui.featureMode);
+    if (!ok) ui.autoRemaining = 0;
+    await wait(T().pause);
+  }
+  updateControls();
+}
+
+/* ------------------------------------------------------------------ */
+/* controles                                                           */
+/* ------------------------------------------------------------------ */
+
+function renderBalance() {
+  el.balance.textContent = money(ui.shownBalance ?? source.balance);
+}
+
+function updateControls() {
+  const busy = ui.busy || ui.autoRemaining > 0;
+  const idx = source.betLevels.indexOf(ui.bet);
+  el.betValue.textContent = money(ui.bet);
+  el.betDown.disabled = busy || idx <= 0;
+  el.betUp.disabled = busy || idx >= source.betLevels.length - 1;
+  el.spin.disabled = ui.busy && ui.autoRemaining === 0;
+  el.spin.classList.toggle('spin-btn--busy', ui.busy);
+  el.spinLabel.textContent = ui.autoRemaining > 0 ? 'PARAR' : 'GIRAR';
+  el.spinCost.textContent = money(costOf(ui.featureMode));
+  el.hunt.setAttribute('aria-pressed', String(ui.featureMode === 'hunt'));
+  el.lingua.setAttribute('aria-pressed', String(ui.featureMode === 'lingua'));
+  el.hunt.disabled = busy;
+  el.lingua.disabled = busy;
+  el.buy.disabled = busy;
+  el.turbo.setAttribute('aria-pressed', String(ui.turbo));
+  el.auto.setAttribute('aria-pressed', String(ui.autoRemaining > 0));
+  const size = ui.autoSizes[ui.autoSizeIndex];
+  el.autoCount.textContent = ui.autoRemaining > 0
+    ? (ui.autoRemaining > 1e6 ? '∞' : `${ui.autoRemaining}×`)
+    : (size === 0 ? '∞' : `${size}×`);
+  renderBalance();
+}
+
+/** @param {number} dir */
+function stepBet(dir) {
+  const idx = source.betLevels.indexOf(ui.bet);
+  const next = source.betLevels[Math.max(0, Math.min(source.betLevels.length - 1, idx + dir))];
+  if (next !== undefined) ui.bet = next;
+  updateControls();
+}
+
+/** @param {'hunt'|'lingua'} mode */
+function toggleFeatureMode(mode) {
+  ui.featureMode = ui.featureMode === mode ? 'base' : mode;
+  updateControls();
+}
+
+async function onSpin() {
+  if (ui.autoRemaining > 0) { ui.autoRemaining = 0; updateControls(); return; }
+  if (ui.busy) return;
+  await playOnce(ui.featureMode);
+}
+
+/* ------------------------------------------------------------------ */
+/* modais                                                              */
+/* ------------------------------------------------------------------ */
+
+/** @param {string} id */
+function openModal(id) { $(id).hidden = false; }
+/** @param {string} id */
+function closeModal(id) { $(id).hidden = true; }
+
+function wireModals() {
+  for (const modal of document.querySelectorAll('.modal')) {
+    modal.addEventListener('click', (e) => {
+      const target = /** @type {HTMLElement} */ (e.target);
+      if (target === modal || target.closest('[data-close]')) /** @type {HTMLElement} */ (modal).hidden = true;
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    const open = /** @type {HTMLElement|null} */ (document.querySelector('.modal:not([hidden])'));
+    if (e.key === 'Escape' && open) { open.hidden = true; return; }
+    if (e.code === 'Space' && !open && !(e.target instanceof HTMLInputElement)) {
+      e.preventDefault();
+      onSpin();
+    }
+  });
+}
+
+function renderBuy() {
+  const grid = $('buy-grid');
+  const cards = [
+    { mode: 'festa', icon: '🪩', title: 'Festa Freaky', desc: `${BUY_SPINS} rodadas · gorilas ×2 a ×100` },
+    { mode: 'rave', icon: '🐪', title: 'Rave Sigma', desc: `${BUY_SPINS} rodadas · língua grudenta, sem cuspe` },
+  ];
+  grid.replaceChildren(...cards.map((c) => {
+    const btn = document.createElement('button');
+    btn.className = 'buy-card';
+    const cost = costOf(c.mode);
+    btn.disabled = source.balance < cost;
+    btn.innerHTML = `<span class="buy-card-icon">${c.icon}</span><span><strong>${c.title}</strong><small>${c.desc}</small></span><span class="buy-card-price">${money(cost)}<small>${MODES[/** @type {'festa'|'rave'} */ (c.mode)].costX100 / 100}×</small></span>`;
+    btn.addEventListener('click', () => {
+      closeModal('modal-buy');
+      playOnce(c.mode);
+    });
+    return btn;
+  }));
+}
+
+function renderRules() {
+  const pct = (/** @type {number} */ p) => `${Math.round(p * 100)}%`;
+  const rows = PAYTABLE.map((pays, s) => {
+    const code = SYMBOLS[s].code;
+    const skin = SKINS[code];
+    return `<tr><td><span class="pay-sym">${makeTile({ name: code }).outerHTML.replace('class="tile', 'class="tile mini')}${skin.name}</span></td>${pays.map((p) => `<td>${fmtX(p / 100)}<br><small class="note">${moneyX(p)}</small></td>`).join('')}</tr>`;
+  }).join('');
+  const triggers = Object.entries(FEATURE_TRIGGERS).map(([n, t]) => `${n} globos → ${featureName(t.feature)} (${t.spins} rodadas)`).join(' · ');
+  $('rules-body').innerHTML = `
+    <h3>Como ganhar</h3>
+    <p><strong>4.096 ways</strong>: 3 ou mais símbolos iguais em rolos vizinhos, a partir do primeiro rolo à esquerda, em qualquer linha. O prêmio da tabela é <em>por way</em> e multiplica pelo número de ways.</p>
+    <p>Multiplicadores de wild <strong>somam</strong> dentro de um rolo e <strong>multiplicam</strong> entre rolos: gorilas ×10 em dois rolos diferentes = ×100.</p>
+    <table class="pays"><thead><tr><th>Símbolo</th><th>3</th><th>4</th><th>5</th><th>6</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="note">Valores por way, em múltiplos da aposta e na aposta atual.</p>
+    <h3>🦍 Gorila Freaky (wild)</h3>
+    <p>Aparece do rolo 2 ao 6 e substitui todos os símbolos, menos o camelo e o globo. Nas rodadas grátis cada gorila chega com multiplicador de ×${GORILLA_MULT_VALUES[0]} a ×${GORILLA_MULT_VALUES.at(-1)}.</p>
+    <h3>🐪 Camelo</h3>
+    <p>Aparece do rolo 2 ao 5 e reage na hora:</p>
+    <p>👅 <strong>Língua</strong> — o rolo inteiro vira wild (menos globos e gorilas, que mantêm o multiplicador).<br>
+    💦 <strong>Cuspe</strong> — todo Leão vira A, todo Macaco vira K, toda Tartaruga vira Q, e o camelo vira J.</p>
+    <p>Chance de língua: jogo base ${pct(CAMEL_TONGUE_CHANCE.base)} · Festa Freaky ${pct(CAMEL_TONGUE_CHANCE.festa)} · Rave Sigma ${pct(CAMEL_TONGUE_CHANCE.rave)}. Os cuspes resolvem antes das línguas.</p>
+    <h3>⚡ Surto Freaky</h3>
+    <p>No jogo base, de vez em quando o gorila invade a tela e joga de 2 a 5 wilds ×${FRENZY_WILD_MULT} nos rolos 2 a 6.</p>
+    <h3>🪩 Globo de Discoteca</h3>
+    <p>${triggers}. Durante o bônus, ${RETRIGGER_SCATTERS}+ globos dão +${RETRIGGER_SPINS} rodadas.</p>
+    <h3>Festa Freaky (bônus)</h3>
+    <p>Gorilas com multiplicador em todo giro. O camelo lambe mais do que cospe.</p>
+    <h3>Rave Sigma (super bônus)</h3>
+    <p>O camelo só lambe — e a língua <strong>gruda</strong>: o rolo fica wild até o fim do bônus. Gorilas com multiplicador em cima disso.</p>
+    <h3>FeatureSpins</h3>
+    <p><strong>Caçada Freaky</strong> (${MODES.hunt.costX100 / 100}× a aposta): bônus cerca de 4× mais frequente e Rave Sigma cerca de 9× mais.<br>
+    <strong>Língua Garantida</strong> (${MODES.lingua.costX100 / 100}× a aposta): todo giro tem um camelo lambendo.<br>
+    <strong>Compra</strong>: Festa Freaky ${MODES.festa.costX100 / 100}× · Rave Sigma ${MODES.rave.costX100 / 100}×.</p>
+    <h3>Números</h3>
+    <dl class="kv">
+      <dt>RTP (todos os modos)</dt><dd>${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%</dd>
+      <dt>Volatilidade</dt><dd>muito alta</dd>
+      <dt>Ganho máximo</dt><dd>${(MAX_WIN_X100 / 100).toLocaleString('pt-BR')}× a aposta</dd>
+    </dl>
+    <p class="note">Ao atingir o ganho máximo a rodada termina na hora e as rodadas grátis restantes são descartadas. Mau funcionamento anula jogadas e prêmios.</p>`;
+}
+
+function renderStats() {
+  const rtp = stats.wagered ? stats.won / stats.wagered : 0;
+  $('stats-body').innerHTML = `<dl class="kv">
+    <dt>Rodadas</dt><dd>${stats.rounds}</dd>
+    <dt>Apostado</dt><dd>${money(stats.wagered)}</dd>
+    <dt>Ganho</dt><dd>${money(stats.won)}</dd>
+    <dt>RTP da sessão</dt><dd>${(rtp * 100).toFixed(2)}%</dd>
+    <dt>Maior ganho</dt><dd>${money(stats.biggest)} (${fmtX(stats.biggestX)})</dd>
+    <dt>Festas Freaky</dt><dd>${stats.festa}</dd>
+    <dt>Raves Sigma</dt><dd>${stats.rave}</dd>
+    <dt>Línguas 👅</dt><dd>${stats.tongues}</dd>
+    <dt>Cuspes 💦</dt><dd>${stats.spits}</dd>
+    <dt>Surtos Freaky</dt><dd>${stats.frenzies}</dd>
+    <dt>Ganhos máximos</dt><dd>${stats.maxWins}</dd>
+  </dl>
+  <p class="note">Com volatilidade muito alta, o RTP de algumas centenas de rodadas não diz quase nada: ele converge para ${(TARGET_RTP * 100).toFixed(1)}% só em milhões de rodadas.</p>`;
+}
+
+/** Escapa texto do usuario antes de entrar em innerHTML. */
+const escapeHtml = (/** @type {string} */ s) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+
+/** @type {{ serverSeed: string, hash: string, rounds: number }[]} */
+const revealed = [];
+
+function renderFair() {
+  const body = $('fair-body');
+  const session = source.session;
+  if (!session) {
+    body.innerHTML = '<p>Jogando pelo RGS da Stake Engine: cada rodada é sorteada no servidor a partir da biblioteca de books publicada e auditada pela Stake.</p>';
+    return;
+  }
+  body.innerHTML = `
+    <p>Cada rodada usa <code>HMAC-SHA256(semente do servidor, semente do cliente:nonce:bloco)</code>. O hash da semente do servidor é mostrado <em>antes</em> das rodadas; ao revelar, confira que ela gera esse hash.</p>
+    <p class="note">Hash da semente do servidor</p>
+    <div class="fair-hash">${session.serverSeedHash()}</div>
+    <dl class="kv"><dt>Nonce</dt><dd>${session.nonce}</dd></dl>
+    <div class="fair-row"><input id="fair-client" value="${escapeHtml(session.clientSeed)}" maxlength="64" aria-label="Semente do cliente" /><button class="ghost-btn" id="fair-set">Usar</button></div>
+    <div class="fair-row"><button class="ghost-btn" id="fair-rotate">Revelar e trocar semente</button></div>
+    ${revealed.map((r) => `<p class="note">Revelada (${r.rounds} rodadas)</p><div class="fair-hash">${r.serverSeed}<br>sha256 = ${r.hash}</div>`).join('')}`;
+  $('fair-set').addEventListener('click', () => {
+    try { session.setClientSeed(/** @type {HTMLInputElement} */ ($('fair-client')).value); } catch (e) { setWinline(/** @type {Error} */ (e).message, 'bad'); }
+    renderFair();
+  });
+  $('fair-rotate').addEventListener('click', () => {
+    revealed.unshift(session.rotateServerSeed());
+    renderFair();
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* inicio                                                              */
+/* ------------------------------------------------------------------ */
+
+function wireControls() {
+  el.spin.addEventListener('click', onSpin);
+  el.betDown.addEventListener('click', () => stepBet(-1));
+  el.betUp.addEventListener('click', () => stepBet(1));
+  el.hunt.addEventListener('click', () => toggleFeatureMode('hunt'));
+  el.lingua.addEventListener('click', () => toggleFeatureMode('lingua'));
+  el.turbo.addEventListener('click', () => { ui.turbo = !ui.turbo; updateControls(); });
+  el.auto.addEventListener('click', () => {
+    if (ui.autoRemaining > 0) { ui.autoRemaining = 0; updateControls(); return; }
+    if (ui.busy) return;
+    const size = ui.autoSizes[ui.autoSizeIndex];
+    ui.autoSizeIndex = (ui.autoSizeIndex + 1) % ui.autoSizes.length;
+    ui.autoRemaining = size === 0 ? Number.MAX_SAFE_INTEGER : size;
+    runAuto();
+  });
+  el.buy.addEventListener('click', () => { renderBuy(); openModal('modal-buy'); });
+  $('btn-rules').addEventListener('click', () => { renderRules(); openModal('modal-rules'); });
+  $('btn-stats').addEventListener('click', () => { renderStats(); openModal('modal-stats'); });
+  el.fairBtn.addEventListener('click', () => { renderFair(); openModal('modal-fair'); });
+}
+
+async function init() {
+  const params = rgsParamsFromUrl(location.href);
+  if (params) {
+    try {
+      source = await rgsSource(params);
+      el.balanceLabel.textContent = 'Saldo';
+    } catch (err) {
+      setWinline(`Não consegui conectar ao RGS: ${/** @type {Error} */ (err).message}`, 'bad');
+    }
+  }
+  ui.bet = source.betLevels.includes(source.defaultBet) ? source.defaultBet : source.betLevels[0];
+  el.rtpBadge.textContent = `${(TARGET_RTP * 100).toFixed(2).replace('.', ',')}%`;
+  buildBoard();
+  wireControls();
+  wireModals();
+  updateControls();
+  // rodada que ficou aberta no RGS (queda de conexao): termina de mostrar e fecha
+  if (source.pendingRound) {
+    ui.busy = true;
+    updateControls();
+    try {
+      await playEvents(eventsOfRound(source.pendingRound));
+      await source.closePending?.();
+    } finally {
+      ui.busy = false;
+      updateControls();
+    }
+  }
+}
+
+init();
+
+  return {};
+};
+
+__reg["freaky/config.js"] = () => {
+/**
+ * Configuracao matematica de "Freaky Zoo".
+ *
+ * Mesmas regras de casa do Fortuna Real: nada de ponto flutuante para
+ * dinheiro. O motor deste jogo nem conhece dinheiro — ele trabalha em
+ * CENTESIMOS DA APOSTA BASE (x100), a mesma unidade do `payoutMultiplier` da
+ * Stake Engine (1150 = 11,5x). A conversao para centavos e feita uma unica vez,
+ * na sessao, por `payToCents`.
+ *
+ * Formato do jogo
+ * ---------------
+ * 6 rolos x 4 linhas, 4.096 ways (pagamento da esquerda para a direita, 3 ou
+ * mais rolos seguidos a partir do primeiro). Cada rolo e uma FITA fisica
+ * (reel strip) gerada de forma deterministica a partir das contagens abaixo;
+ * o sorteio escolhe uma parada por rolo, exatamente como a math-sdk da Stake.
+ *
+ * Multiplicadores em ways: dentro de um rolo os multiplicadores das celulas
+ * que servem ao simbolo SE SOMAM; entre rolos eles SE MULTIPLICAM. Um rolo com
+ * um J e um gorila x5 vale 1 + 5 = 6 "ways" para o J. E o que faz dois gorilas
+ * x10 em rolos diferentes virarem x100.
+ *
+ * Regras de contorno assumidas:
+ *  1. Gorila (WILD) e camelo nunca aparecem no rolo 1, entao todo way comeca
+ *     num simbolo pagante de verdade — nao existe way "so de wild".
+ *  2. Scatter e camelo sao "especiais": na fita ficam a pelo menos 4 posicoes
+ *     um do outro, entao cada rolo mostra no maximo UM especial por giro.
+ *  3. O camelo reage ao cair: LINGUA (vira wild expandido no rolo inteiro) ou
+ *     CUSPE (todo simbolo alto da grade vira carta). Todos os cuspes resolvem
+ *     antes das linguas.
+ *  4. A lingua cobre tudo no rolo menos scatter e gorila — o gorila mantem o
+ *     multiplicador dele.
+ */
+
+const GRID = Object.freeze({ REELS: 6, ROWS: 4, CELLS: 24 });
+
+/** Identificadores de simbolo. A ordem e usada como indice de tabela. */
+const Sym = Object.freeze({
+  J: 0, Q: 1, K: 2, A: 3,          // cartas (baixos)
+  TURTLE: 4, MONKEY: 5, LION: 6,   // altos
+  WILD: 7,                         // Gorila Freaky
+  CAMEL: 8,                        // Camelo (lingua ou cuspe)
+  SCATTER: 9,                      // Globo de Discoteca
+});
+
+const SYMBOL_COUNT = 10;
+/** Simbolos 0..PAYING_COUNT-1 formam combinacao. */
+const PAYING_COUNT = 7;
+
+/**
+ * Metadado visto pelo motor. `code` e o nome usado nos books da Stake Engine
+ * (convencao da math-sdk: H = alto, L = baixo, W = wild, S = scatter).
+ * Nome, emoji e arte moram em src/freaky/ui/skins.js.
+ *
+ * @typedef {object} SymbolMeta
+ * @property {number} id
+ * @property {string} key
+ * @property {string} code
+ * @property {'low'|'high'|'wild'|'camel'|'scatter'} kind
+ */
+
+/** @type {readonly SymbolMeta[]} */
+const SYMBOLS = Object.freeze([
+  { id: Sym.J,       key: 'J',       code: 'L4', kind: 'low' },
+  { id: Sym.Q,       key: 'Q',       code: 'L3', kind: 'low' },
+  { id: Sym.K,       key: 'K',       code: 'L2', kind: 'low' },
+  { id: Sym.A,       key: 'A',       code: 'L1', kind: 'low' },
+  { id: Sym.TURTLE,  key: 'TURTLE',  code: 'H3', kind: 'high' },
+  { id: Sym.MONKEY,  key: 'MONKEY',  code: 'H2', kind: 'high' },
+  { id: Sym.LION,    key: 'LION',    code: 'H1', kind: 'high' },
+  { id: Sym.WILD,    key: 'WILD',    code: 'W',  kind: 'wild' },
+  { id: Sym.CAMEL,   key: 'CAMEL',   code: 'C',  kind: 'camel' },
+  { id: Sym.SCATTER, key: 'SCATTER', code: 'S',  kind: 'scatter' },
+]);
+
+/**
+ * Tabela de premios POR WAY, em centesimos da aposta, para 3, 4, 5 e 6 rolos.
+ *
+ * Os valores sao pequenos porque o jogo tem so 7 simbolos pagantes em 4
+ * linhas: cada simbolo aparece em media em ~0,7 celula por rolo, entao ways
+ * longos e multiplos sao comuns. O que paga e a MULTIPLICACAO de ways — um
+ * Leao x6 com 4x3x2x2x3x2 = 288 ways paga 0,80 x 288 = 230x. Ver
+ * docs/FREAKY_ZOO.md.
+ * @type {readonly (readonly number[])[]}
+ */
+const PAYTABLE = Object.freeze([
+  /* J      */ Object.freeze([1, 2, 4, 8]),
+  /* Q      */ Object.freeze([1, 2, 5, 10]),
+  /* K      */ Object.freeze([2, 3, 6, 12]),
+  /* A      */ Object.freeze([2, 4, 8, 15]),
+  /* TURTLE */ Object.freeze([4, 8, 15, 30]),
+  /* MONKEY */ Object.freeze([5, 10, 25, 50]),
+  /* LION   */ Object.freeze([8, 15, 40, 80]),
+]);
+
+/** Menor quantidade de rolos seguidos que paga. */
+const MIN_KIND = 3;
+
+/** Para onde cada simbolo alto vai quando leva cuspe. O camelo que cospe vira J. */
+const SPIT_DOWNGRADE = Object.freeze({
+  [Sym.LION]: Sym.A,
+  [Sym.MONKEY]: Sym.K,
+  [Sym.TURTLE]: Sym.Q,
+  [Sym.CAMEL]: Sym.J,
+});
+
+/**
+ * Tipos de jogo. `festa` e `rave` sao os dois bonus; cada um tem fitas e
+ * regras proprias.
+ * @typedef {'base'|'festa'|'rave'} GameType
+ */
+
+/** Probabilidade de o camelo mostrar a LINGUA (o resto e CUSPE), por tipo de jogo. */
+const CAMEL_TONGUE_CHANCE = Object.freeze({
+  base: 0.6,
+  festa: 0.8,
+  rave: 1,      // na Rave Sigma o camelo esta de bom humor: nunca cospe
+});
+
+/**
+ * Contagens das fitas. Linha = rolo, coluna = simbolo (ordem de `Sym`).
+ * As fitas sao montadas por src/freaky/reels.js com semente fixa, entao a
+ * mesma contagem gera sempre a mesma fita.
+ *
+ *  BR0  jogo base
+ *  BRH  jogo base "cheio de scatter" — misturado ao BR0 na Cacada Freaky
+ *  FR0  Festa Freaky (bonus)
+ *  FRS  Rave Sigma (super bonus)
+ *
+ * @type {Readonly<Record<string, readonly (readonly number[])[]>>}
+ */
+const REEL_COUNTS = Object.freeze({
+  //                    J   Q   K   A  TRT MNK LIO  W  CML  SC
+  BR0: Object.freeze([
+    Object.freeze([21, 20, 19, 18, 17, 16, 15,  0,  0,  2]),
+    Object.freeze([20, 19, 18, 18, 17, 16, 14,  3,  1,  2]),
+    Object.freeze([20, 19, 18, 18, 17, 16, 14,  3,  1,  2]),
+    Object.freeze([20, 19, 18, 18, 17, 16, 14,  3,  1,  2]),
+    Object.freeze([20, 19, 18, 18, 17, 16, 14,  3,  1,  2]),
+    Object.freeze([20, 19, 18, 18, 17, 16, 15,  3,  0,  2]),
+  ]),
+  BRH: Object.freeze([
+    Object.freeze([19, 18, 17, 16, 15, 14, 13,  0,  0,  4]),
+    Object.freeze([18, 17, 16, 16, 15, 14, 12,  3,  1,  4]),
+    Object.freeze([18, 17, 16, 16, 15, 14, 12,  3,  1,  4]),
+    Object.freeze([18, 17, 16, 16, 15, 14, 12,  3,  1,  4]),
+    Object.freeze([18, 17, 16, 16, 15, 14, 12,  3,  1,  4]),
+    Object.freeze([18, 17, 16, 16, 15, 14, 13,  3,  0,  4]),
+  ]),
+  FR0: Object.freeze([
+    Object.freeze([21, 20, 19, 18, 17, 16, 15,  0,  0,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  8,  2,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  8,  2,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  8,  2,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  8,  2,  2]),
+    Object.freeze([20, 19, 18, 17, 16, 15, 15,  8,  0,  2]),
+  ]),
+  FRS: Object.freeze([
+    Object.freeze([21, 20, 19, 18, 17, 16, 15,  0,  0,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  6,  2,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  6,  2,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  6,  2,  2]),
+    Object.freeze([19, 18, 17, 17, 16, 15, 14,  6,  2,  2]),
+    Object.freeze([20, 19, 18, 17, 16, 15, 15,  6,  0,  2]),
+  ]),
+});
+
+/**
+ * Tamanho das pilhas nas fitas: pesos para pilhas de 1, 2, 3 e 4 simbolos
+ * iguais. Pilhas deixam a janela com menos simbolos diferentes (acerto menor)
+ * e fazem os ganhos grandes chegarem em blocos (volatilidade maior).
+ */
+const STACK_WEIGHTS = Object.freeze({
+  low: Object.freeze([30, 35, 25, 10]),
+  high: Object.freeze([25, 30, 25, 20]),
+  wild: Object.freeze([1, 0, 0, 0]),
+});
+
+/** Semente fixa do gerador de fitas. Mudar a semente muda as fitas (e o RTP medido). */
+const REEL_SEED = 'freaky-zoo-fitas-v1';
+
+/**
+ * Gatilho do bonus pelo numero de scatters no jogo base.
+ * @type {Readonly<Record<number, { feature: 'festa'|'rave', spins: number }>>}
+ */
+const FEATURE_TRIGGERS = Object.freeze({
+  3: Object.freeze({ feature: 'festa', spins: 10 }),
+  4: Object.freeze({ feature: 'rave', spins: 10 }),
+  5: Object.freeze({ feature: 'rave', spins: 12 }),
+  6: Object.freeze({ feature: 'rave', spins: 15 }),
+});
+
+/** Scatters que re-disparam dentro do bonus, e quantas rodadas somam. */
+const RETRIGGER_SCATTERS = 3;
+const RETRIGGER_SPINS = 5;
+
+/** Rodadas de um bonus comprado. */
+const BUY_SPINS = 10;
+
+/**
+ * Multiplicador do Gorila Freaky nas rodadas gratis. No jogo base o gorila e x1.
+ * Os pesos-base sao "inclinados" por `GORILLA_TILT` (w_i * v_i^theta): o
+ * formato da distribuicao fica igual, so desliza para valores maiores ou
+ * menores. E a constante de calibragem de cada bonus.
+ */
+const GORILLA_MULT_VALUES = Object.freeze([2, 3, 4, 5, 10, 20, 50, 100]);
+const GORILLA_MULT_WEIGHTS = Object.freeze([400, 300, 160, 100, 40, 14, 4, 1]);
+
+/**
+ * Surto Freaky: no jogo base, o gorila as vezes invade a tela e joga wilds x2
+ * nos rolos 2 a 6 antes da avaliacao.
+ */
+const FRENZY_WILD_COUNTS = Object.freeze([2, 3, 4, 5]);
+const FRENZY_WILD_WEIGHTS = Object.freeze([50, 30, 15, 5]);
+const FRENZY_WILD_MULT = 2;
+
+/**
+ * Constantes de calibragem. Cada uma resolve UM alvo e afeta UM modo — por
+ * isso a resolucao e sequencial, sem sistema acoplado. Reproduza com
+ * `npm run freaky:tune`.
+ *
+ *   tilt.festa          -> fixa E[Festa] = preco x RTP alvo
+ *   tilt.rave           -> fixa E[Rave]  = preco x RTP alvo
+ *   frenzyChance        -> fixa o RTP do jogo base (com os bonus ja fixados)
+ *   frenzyChanceLingua  -> fixa o RTP da Lingua Garantida
+ *   huntMix             -> fracao de giros com a fita BRH na Cacada Freaky
+ */
+const CALIBRATION = Object.freeze({
+  frenzyChance: 0.01793,
+  frenzyChanceLingua: 0.0121,
+  tilt: Object.freeze({ festa: -0.1919, rave: 0.0733 }),
+  huntMix: 0.39438,
+});
+
+/**
+ * Modos de aposta (bet modes da Stake Engine). `costX100` em centesimos da
+ * aposta base.
+ */
+const MODES = Object.freeze({
+  base:  Object.freeze({ costX100: 100,   label: 'Giro normal' }),
+  hunt:  Object.freeze({ costX100: 300,   label: 'Cacada Freaky' }),
+  lingua: Object.freeze({ costX100: 200,  label: 'Lingua Garantida' }),
+  festa: Object.freeze({ costX100: 10000, label: 'Comprar Festa Freaky' }),
+  rave:  Object.freeze({ costX100: 50000, label: 'Comprar Rave Sigma' }),
+});
+
+/** @typedef {keyof typeof MODES} ModeName */
+
+/** Teto de ganho por rodada: 25.000x a aposta. */
+const MAX_WIN_X100 = 2_500_000;
+
+/** RTP alvo de todos os modos. A Stake Engine aceita 90%-98%, com no maximo 0,5 p.p. entre modos. */
+const TARGET_RTP = 0.965;
+
+/**
+ * Dinheiro na unidade da Stake Engine: inteiro, 1.000.000 = 1 unidade de moeda.
+ * Com apostas multiplas de 100 micro-unidades, qualquer payout x100 vira um
+ * inteiro exato (aposta * payout / 100), sem arredondamento.
+ */
+const MONEY_UNIT = 1_000_000;
+
+/** Niveis de aposta, em micro-unidades (0,20 a 200,00). */
+const BET_LEVELS = Object.freeze([
+  0.2, 0.4, 0.6, 1, 2, 4, 6, 10, 20, 40, 100, 200,
+].map((v) => Math.round(v * MONEY_UNIT)));
+const DEFAULT_BET = MONEY_UNIT;
+const DEFAULT_BALANCE = 1000 * MONEY_UNIT;
+
+  return { GRID, Sym, SYMBOL_COUNT, PAYING_COUNT, SYMBOLS, PAYTABLE, MIN_KIND, SPIT_DOWNGRADE, CAMEL_TONGUE_CHANCE, REEL_COUNTS, STACK_WEIGHTS, REEL_SEED, FEATURE_TRIGGERS, RETRIGGER_SCATTERS, RETRIGGER_SPINS, BUY_SPINS, GORILLA_MULT_VALUES, GORILLA_MULT_WEIGHTS, FRENZY_WILD_COUNTS, FRENZY_WILD_WEIGHTS, FRENZY_WILD_MULT, CALIBRATION, MODES, MAX_WIN_X100, TARGET_RTP, MONEY_UNIT, BET_LEVELS, DEFAULT_BET, DEFAULT_BALANCE };
+};
+
+__reg["freaky/session.js"] = () => {
+/**
+ * Sessao de demonstracao do Freaky Zoo: carteira, aposta, historico e
+ * verificacao justa. Mesma divisao do Fortuna Real — round.js e uma funcao
+ * pura, aqui mora o estado mutavel do jogador.
+ *
+ * Dinheiro em micro-unidades (1.000.000 = 1), a unidade da Stake Engine, para
+ * que a sessao local e o RGS falem a mesma lingua. O custo e debitado ANTES do
+ * sorteio e o ganho creditado depois; `play` recusa a aposta sem saldo.
+ */
+
+const { createEngine, costX100Of } = __mod("freaky/round.js");
+const { createSecureRng, createProvablyFairRng } = __mod("engine/rng.js");
+const { sha256, utf8, toHex } = __mod("engine/sha256.js");
+const { assertInt } = __mod("engine/money.js");
+const { BET_LEVELS, DEFAULT_BET, DEFAULT_BALANCE, MODES, MONEY_UNIT } = __mod("freaky/config.js");
+
+/**
+ * Converte centesimos da aposta em micro-unidades.
+ * Exato porque toda aposta e multipla de 100 micro-unidades.
+ * @param {number} bet  micro-unidades
+ * @param {number} x100
+ */
+function moneyOf(bet, x100) {
+  assertInt(bet, 'bet');
+  assertInt(x100, 'x100');
+  const product = bet * x100;
+  if (!Number.isSafeInteger(product)) throw new RangeError(`Overflow monetario: ${bet} x ${x100}.`);
+  if (product % 100 !== 0) throw new RangeError(`Aposta ${bet} nao e multipla de 100 micro-unidades.`);
+  return product / 100;
+}
+
+/**
+ * Formata micro-unidades como moeda. Trunca para os centavos: o jogador
+ * nunca ve um centavo que nao tem.
+ * @param {number} micro
+ * @param {string} [currency]
+ * @param {string} [locale]
+ */
+function formatMoney(micro, currency = 'BRL', locale = 'pt-BR') {
+  const cents = Math.floor(micro / (MONEY_UNIT / 100));
+  return new Intl.NumberFormat(locale, { style: 'currency', currency, minimumFractionDigits: 2 }).format(cents / 100);
+}
+
+/** Semente de servidor aleatoria de 256 bits, em hexadecimal. */
+function randomServerSeed() {
+  const bytes = new Uint32Array(8);
+  const g = /** @type {any} */ (globalThis);
+  if (!g.crypto?.getRandomValues) throw new Error('crypto.getRandomValues indisponivel.');
+  g.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (n) => n.toString(16).padStart(8, '0')).join('');
+}
+
+/**
+ * @param {object} [opts]
+ * @param {number} [opts.balance]
+ * @param {number} [opts.bet]
+ * @param {import('./round.js').Engine} [opts.engine]
+ * @param {'secure'|'provablyFair'} [opts.rngMode]
+ * @param {string} [opts.clientSeed]
+ * @param {string} [opts.serverSeed]
+ */
+function createSession(opts = {}) {
+  const engine = opts.engine ?? createEngine();
+  let balance = opts.balance ?? DEFAULT_BALANCE;
+  let bet = opts.bet ?? DEFAULT_BET;
+  let rngMode = opts.rngMode ?? 'provablyFair';
+  let serverSeed = opts.serverSeed ?? randomServerSeed();
+  let clientSeed = opts.clientSeed ?? 'jogador';
+  let nonce = 0;
+  const secureRng = createSecureRng();
+
+  const stats = {
+    rounds: 0, wagered: 0, won: 0, biggestWin: 0, biggestWinX: 0,
+    festa: 0, rave: 0, bought: 0, tongues: 0, spits: 0, frenzies: 0,
+  };
+  /** @type {import('./round.js').RoundResult[]} */
+  const history = [];
+
+  assertInt(balance, 'balance');
+  assertBet(bet);
+
+  /** @param {number} value */
+  function assertBet(value) {
+    if (!BET_LEVELS.includes(value)) throw new RangeError(`Aposta ${value} fora dos niveis permitidos.`);
+  }
+
+  /** @param {import('./config.js').ModeName} mode */
+  const costFor = (mode) => moneyOf(bet, costX100Of(mode));
+
+  /**
+   * @param {object} [args]
+   * @param {import('./config.js').ModeName} [args.mode]
+   */
+  function play({ mode = 'base' } = {}) {
+    if (!MODES[mode]) throw new RangeError(`Modo desconhecido: ${String(mode)}`);
+    const cost = costFor(mode);
+    if (balance < cost) throw new RangeError(`Saldo insuficiente: precisa de ${cost}, tem ${balance}.`);
+
+    const balanceBefore = balance;
+    const roundNonce = nonce;
+    const rng = rngMode === 'provablyFair'
+      ? createProvablyFairRng({ serverSeed, clientSeed, nonce: roundNonce })
+      : secureRng;
+
+    balance -= cost;
+    const result = engine.playRound({ rng, mode, trace: true });
+    const win = moneyOf(bet, result.payoutX100);
+    balance += win;
+    nonce += 1;
+
+    stats.rounds += 1;
+    stats.wagered += cost;
+    stats.won += win;
+    if (win > stats.biggestWin) {
+      stats.biggestWin = win;
+      stats.biggestWinX = result.payoutX100 / 100;
+    }
+    if (result.feature === 'festa') stats.festa += 1;
+    if (result.feature === 'rave') stats.rave += 1;
+    if (result.bought) stats.bought += 1;
+    for (const ev of result.events ?? []) {
+      if (ev.type === 'freakyFrenzy') stats.frenzies += 1;
+      if (ev.type === 'camel') {
+        for (const c of ev.camels) stats[c.action === 'tongue' ? 'tongues' : 'spits'] += 1;
+      }
+    }
+    history.unshift(result);
+    if (history.length > 30) history.pop();
+
+    return {
+      result,
+      bet,
+      cost,
+      win,
+      balanceBefore,
+      balanceAfter: balance,
+      proof: { mode: rngMode, clientSeed, nonce: roundNonce, serverSeedHash: serverSeedHash() },
+    };
+  }
+
+  function serverSeedHash() {
+    return toHex(sha256(utf8(serverSeed)));
+  }
+
+  /** Revela a semente atual e sorteia outra (as rodadas passadas ficam verificaveis). */
+  function rotateServerSeed() {
+    const revealed = { serverSeed, hash: serverSeedHash(), rounds: nonce };
+    serverSeed = randomServerSeed();
+    nonce = 0;
+    return { ...revealed, newHash: serverSeedHash() };
+  }
+
+  return {
+    play,
+    costFor,
+    canAfford: (/** @type {import('./config.js').ModeName} */ mode) => balance >= costFor(mode),
+    rotateServerSeed,
+    serverSeedHash,
+    getStats: () => ({ ...stats, rtp: stats.wagered ? stats.won / stats.wagered : 0 }),
+    get history() { return history; },
+    get balance() { return balance; },
+    get bet() { return bet; },
+    get nonce() { return nonce; },
+    get clientSeed() { return clientSeed; },
+    get rngMode() { return rngMode; },
+    /** @param {number} value */
+    setBet(value) { assertBet(value); bet = value; },
+    /** @param {string} value */
+    setClientSeed(value) {
+      const v = String(value).trim();
+      if (!v) throw new RangeError('A semente do cliente nao pode ser vazia.');
+      clientSeed = v.slice(0, 64);
+      nonce = 0;
+    },
+    /** @param {'secure'|'provablyFair'} value */
+    setRngMode(value) { rngMode = value; },
+    /** @param {number} value creditos de demonstracao */
+    deposit(value) { assertInt(value, 'value'); balance += value; },
+  };
+}
+
+  return { moneyOf, formatMoney, randomServerSeed, createSession };
+};
+
+__reg["freaky/round.js"] = () => {
+/**
+ * Motor de rodada do Freaky Zoo.
+ *
+ * Funcao pura de (aleatoriedade, modo) -> resultado. Nao conhece dinheiro nem
+ * carteira: todo valor sai em centesimos da aposta base (x100), a mesma unidade
+ * do `payoutMultiplier` dos books da Stake Engine. Com `trace` ligado, a rodada
+ * devolve tambem a lista de EVENTOS no formato de book (reveal, winInfo,
+ * freeSpinTrigger...) — e exatamente o que a interface anima e o que o
+ * exportador grava. Um unico codigo para jogar, simular e exportar: o RTP
+ * medido e o RTP que o jogador recebe.
+ *
+ * Ordem de resolucao de um giro (fixa, porque define o consumo do RNG):
+ *   1. paradas das fitas                     (6 sorteios)
+ *   2. rolos grudentos da Rave Sigma viram wild
+ *   3. multiplicador de cada gorila          (so no bonus)
+ *   4. Surto Freaky                          (so no jogo base)
+ *   5. reacao de cada camelo, da esquerda para a direita
+ *      -> todos os CUSPES resolvem, depois todas as LINGUAS
+ *   6. avaliacao dos ways
+ *   7. contagem de scatters (gatilho / re-gatilho)
+ *
+ * Regra do teto: ao atingir MAX_WIN_X100, o total trava no teto e a rodada
+ * acaba na hora — rodadas gratis restantes sao descartadas (evento `wincap`).
+ */
+
+const { GRID, Sym, SYMBOLS, SPIT_DOWNGRADE, CAMEL_TONGUE_CHANCE, FEATURE_TRIGGERS, RETRIGGER_SCATTERS, RETRIGGER_SPINS, BUY_SPINS, GORILLA_MULT_VALUES, GORILLA_MULT_WEIGHTS, FRENZY_WILD_COUNTS, FRENZY_WILD_WEIGHTS, FRENZY_WILD_MULT, CALIBRATION, MODES, MAX_WIN_X100 } = __mod("freaky/config.js");
+const { buildReelSets, spinReels } = __mod("freaky/reels.js");
+const { evaluateWays, buildPayLookup } = __mod("freaky/ways.js");
+const { weightedPicker } = __mod("engine/rng.js");
+
+const { REELS, ROWS, CELLS } = GRID;
+
+/** Marcas de celula, para a interface saber de onde veio cada wild. */
+const Tag = Object.freeze({ NONE: 0, GORILLA: 1, FRENZY: 2, TONGUE: 3, STICKY: 4 });
+
+/**
+ * @typedef {import('./config.js').ModeName} ModeName
+ * @typedef {'festa'|'rave'} Feature
+ * @typedef {'base'|Feature} GameType
+ */
+
+/**
+ * @typedef {object} RoundResult
+ * @property {ModeName} mode
+ * @property {number} costX100
+ * @property {number} payoutX100      ganho total da rodada (ja com teto)
+ * @property {number} baseWinX100     parcela do giro base
+ * @property {number} freeWinX100     parcela do bonus
+ * @property {boolean} capped
+ * @property {Feature|null} feature
+ * @property {boolean} bought
+ * @property {number} freeSpinsPlayed
+ * @property {number} freeSpinsAwarded
+ * @property {number} retriggers
+ * @property {number} scatters        scatters do giro base (0 em compra)
+ * @property {Record<string, any>[]} [events]  so com trace
+ */
+
+/**
+ * Pesos "inclinados": w_i * v_i^theta. theta > 0 puxa para valores altos.
+ * @param {readonly number[]} weights
+ * @param {readonly number[]} values
+ * @param {number} theta
+ */
+function tiltWeights(weights, values, theta) {
+  return weights.map((w, i) => w * values[i] ** theta);
+}
+
+/**
+ * @param {object} [overrides]  substituicoes usadas pelo calibrador e pelos testes
+ * @param {Readonly<Record<string, readonly (readonly number[])[]>>} [overrides.reelCounts]
+ * @param {readonly (readonly number[])[]} [overrides.paytable]
+ * @param {Partial<typeof CALIBRATION> & { tilt?: Partial<typeof CALIBRATION.tilt> }} [overrides.calibration]
+ * @param {Partial<typeof CAMEL_TONGUE_CHANCE>} [overrides.tongueChance]
+ * @param {number} [overrides.maxWinX100]
+ */
+function createEngine(overrides = {}) {
+  const reelSets = buildReelSets(overrides.reelCounts);
+  const cal = {
+    ...CALIBRATION,
+    ...overrides.calibration,
+    tilt: { ...CALIBRATION.tilt, ...overrides.calibration?.tilt },
+  };
+  const tongueChance = { ...CAMEL_TONGUE_CHANCE, ...overrides.tongueChance };
+  const maxWinX100 = overrides.maxWinX100 ?? MAX_WIN_X100;
+  const payLookup = buildPayLookup(overrides.paytable);
+
+  const gorillaPickers = {
+    festa: weightedPicker(tiltWeights(GORILLA_MULT_WEIGHTS, GORILLA_MULT_VALUES, cal.tilt.festa)),
+    rave: weightedPicker(tiltWeights(GORILLA_MULT_WEIGHTS, GORILLA_MULT_VALUES, cal.tilt.rave)),
+  };
+  const frenzyPicker = weightedPicker(FRENZY_WILD_WEIGHTS);
+
+  // buffers reutilizados — o motor e single-threaded por design
+  const board = new Int8Array(CELLS);
+  const mult = new Int32Array(CELLS);
+  const tag = new Int8Array(CELLS);
+  const stops = new Int32Array(REELS);
+  const sticky = new Uint8Array(REELS);
+  const candidates = new Int32Array(CELLS);
+  const camelCells = new Int32Array(REELS);
+  const camelTongue = new Uint8Array(REELS);
+
+  /**
+   * Um giro: sorteio, modificadores, avaliacao.
+   * @param {GameType} gameType
+   * @param {import('./reels.js').ReelSet} reelSet
+   * @param {import('../engine/rng.js').Rng} rng
+   * @param {Record<string, any>[]|null} events
+   * @returns {{ win: number, scatters: number, scatterCells: number[]|null }}
+   */
+  function playSpin(gameType, reelSet, rng, events, forceTongue = false) {
+    spinReels(reelSet, rng, board, stops);
+    mult.fill(1);
+    tag.fill(Tag.NONE);
+    if (forceTongue) forceCamel(rng);
+
+    if (events) {
+      emit(events, {
+        type: 'reveal',
+        gameType: gameType === 'base' ? 'basegame' : 'freegame',
+        feature: gameType === 'base' ? null : gameType,
+        reelSet: reelSet.name,
+        stops: Array.from(stops),
+        board: snapshot(),
+      });
+    }
+
+    // 2. lingua grudenta: rolos que ja lamberam na Rave continuam wild
+    if (gameType === 'rave') {
+      /** @type {number[]} */
+      const stuck = [];
+      for (let r = 0; r < REELS; r++) {
+        if (!sticky[r]) continue;
+        stuck.push(r);
+        for (let row = 0; row < ROWS; row++) {
+          const i = r * ROWS + row;
+          if (board[i] !== Sym.SCATTER && board[i] !== Sym.WILD) {
+            board[i] = Sym.WILD;
+            tag[i] = Tag.STICKY;
+          }
+        }
+      }
+      if (events && stuck.length) emit(events, { type: 'stickyWilds', reels: stuck });
+    }
+
+    // 3. gorilas do bonus carregam multiplicador
+    if (gameType !== 'base') {
+      const picker = gorillaPickers[gameType];
+      /** @type {{reel:number,row:number,multiplier:number}[]|null} */
+      const list = events ? [] : null;
+      for (let i = 0; i < CELLS; i++) {
+        if (board[i] === Sym.WILD && tag[i] === Tag.NONE) {
+          mult[i] = GORILLA_MULT_VALUES[picker.pick(rng)];
+          tag[i] = Tag.GORILLA;
+          if (list) list.push({ reel: (i / ROWS) | 0, row: i % ROWS, multiplier: mult[i] });
+        }
+      }
+      if (events && list && list.length) emit(events, { type: 'gorillaMultipliers', wilds: list });
+    }
+
+    // 4. Surto Freaky
+    if (gameType === 'base' && rng.float() < (forceTongue ? cal.frenzyChanceLingua : cal.frenzyChance)) {
+      let n = 0;
+      for (let i = ROWS; i < CELLS; i++) {
+        const s = board[i];
+        if (s !== Sym.SCATTER && s !== Sym.CAMEL && s !== Sym.WILD) candidates[n++] = i;
+      }
+      const k = Math.min(n, FRENZY_WILD_COUNTS[frenzyPicker.pick(rng)]);
+      /** @type {{reel:number,row:number,multiplier:number}[]|null} */
+      const list = events ? [] : null;
+      for (let j = 0; j < k; j++) {
+        // Fisher-Yates parcial: sorteio sem reposicao
+        const pick = j + rng.int(n - j);
+        const i = candidates[pick];
+        candidates[pick] = candidates[j];
+        candidates[j] = i;
+        board[i] = Sym.WILD;
+        mult[i] = FRENZY_WILD_MULT;
+        tag[i] = Tag.FRENZY;
+        if (list) list.push({ reel: (i / ROWS) | 0, row: i % ROWS, multiplier: FRENZY_WILD_MULT });
+      }
+      if (events && list) {
+        list.sort((a, b) => a.reel - b.reel || a.row - b.row);
+        emit(events, { type: 'freakyFrenzy', wilds: list });
+      }
+    }
+
+    // 5. camelos
+    let camels = 0;
+    for (let i = 0; i < CELLS; i++) if (board[i] === Sym.CAMEL) camelCells[camels++] = i;
+    if (camels > 0) {
+      const chance = forceTongue ? 1 : tongueChance[gameType];
+      let spits = 0;
+      for (let c = 0; c < camels; c++) {
+        camelTongue[c] = rng.float() < chance ? 1 : 0;
+        if (!camelTongue[c]) spits += 1;
+      }
+
+      /** @type {{reel:number,row:number,from:string,to:string}[]|null} */
+      const spat = events ? [] : null;
+      if (spits > 0) {
+        for (let i = 0; i < CELLS; i++) {
+          const s = board[i];
+          if (s === Sym.LION || s === Sym.MONKEY || s === Sym.TURTLE) {
+            const to = SPIT_DOWNGRADE[s];
+            if (spat) spat.push({ reel: (i / ROWS) | 0, row: i % ROWS, from: SYMBOLS[s].code, to: SYMBOLS[to].code });
+            board[i] = to;
+          }
+        }
+        for (let c = 0; c < camels; c++) {
+          if (camelTongue[c]) continue;
+          const i = camelCells[c];
+          const to = SPIT_DOWNGRADE[Sym.CAMEL];
+          if (spat) spat.push({ reel: (i / ROWS) | 0, row: i % ROWS, from: SYMBOLS[Sym.CAMEL].code, to: SYMBOLS[to].code });
+          board[i] = to;
+        }
+        if (spat) spat.sort((a, b) => a.reel - b.reel || a.row - b.row);
+      }
+
+      /** @type {{reel:number,rows:number[],sticky:boolean}[]|null} */
+      const tongues = events ? [] : null;
+      for (let c = 0; c < camels; c++) {
+        if (!camelTongue[c]) continue;
+        const r = (camelCells[c] / ROWS) | 0;
+        /** @type {number[]} */
+        const rows = [];
+        for (let row = 0; row < ROWS; row++) {
+          const i = r * ROWS + row;
+          if (board[i] !== Sym.SCATTER && board[i] !== Sym.WILD) {
+            board[i] = Sym.WILD;
+            mult[i] = 1;
+            tag[i] = Tag.TONGUE;
+            rows.push(row);
+          }
+        }
+        if (gameType === 'rave') sticky[r] = 1;
+        if (tongues) tongues.push({ reel: r, rows, sticky: gameType === 'rave' });
+      }
+
+      if (events) {
+        /** @type {{reel:number,row:number,action:'tongue'|'spit'}[]} */
+        const list = [];
+        for (let c = 0; c < camels; c++) {
+          const i = camelCells[c];
+          list.push({ reel: (i / ROWS) | 0, row: i % ROWS, action: camelTongue[c] ? 'tongue' : 'spit' });
+        }
+        emit(events, { type: 'camel', camels: list, spit: spat, tongues });
+      }
+    }
+
+    // 6. avaliacao
+    /** @type {import('./ways.js').WayWin[]|null} */
+    const wins = events ? [] : null;
+    const win = evaluateWays(board, mult, wins, payLookup);
+    if (events && wins && wins.length) {
+      emit(events, {
+        type: 'winInfo',
+        totalWin: win,
+        wins: wins.map((w) => ({
+          symbol: w.code,
+          kind: w.kind,
+          ways: w.ways,
+          plainWays: w.plainWays,
+          payPerWay: w.payX100,
+          win: w.winX100,
+          positions: w.positions.map((i) => ({ reel: (i / ROWS) | 0, row: i % ROWS })),
+        })),
+      });
+    }
+
+    // 7. scatters
+    let scatters = 0;
+    /** @type {number[]|null} */
+    const scatterCells = events ? [] : null;
+    for (let i = 0; i < CELLS; i++) {
+      if (board[i] === Sym.SCATTER) {
+        scatters += 1;
+        if (scatterCells) scatterCells.push(i);
+      }
+    }
+    return { win, scatters, scatterCells };
+  }
+
+  /**
+   * Lingua Garantida: se nenhum camelo caiu, um aparece num rolo de 2 a 5 que
+   * nao mostre scatter. Acontece ANTES do `reveal`, entao para o jogador (e
+   * para o book) o camelo simplesmente caiu ali.
+   * @param {import('../engine/rng.js').Rng} rng
+   */
+  function forceCamel(rng) {
+    let open = 0;
+    for (let r = 1; r <= 4; r++) {
+      let blocked = false;
+      for (let row = 0; row < ROWS; row++) {
+        const s = board[r * ROWS + row];
+        if (s === Sym.CAMEL) return;
+        if (s === Sym.SCATTER) blocked = true;
+      }
+      if (!blocked) candidates[open++] = r;
+    }
+    if (open === 0) return; // 4 scatters nos rolos 2-5: o bonus ja compensa
+    const r = candidates[rng.int(open)];
+    board[r * ROWS + rng.int(ROWS)] = Sym.CAMEL;
+  }
+
+  /** Grade atual no formato de book (reel-major, como o `reveal` da math-sdk). */
+  function snapshot() {
+    /** @type {{name:string, multiplier?:number, tongue?:true, sticky?:true, frenzy?:true}[][]} */
+    const out = [];
+    for (let r = 0; r < REELS; r++) {
+      const col = [];
+      for (let row = 0; row < ROWS; row++) {
+        const i = r * ROWS + row;
+        /** @type {{name:string, multiplier?:number, tongue?:true, sticky?:true, frenzy?:true}} */
+        const cell = { name: SYMBOLS[board[i]].code };
+        if (board[i] === Sym.WILD && mult[i] > 1) cell.multiplier = mult[i];
+        if (tag[i] === Tag.TONGUE) cell.tongue = true;
+        if (tag[i] === Tag.STICKY) cell.sticky = true;
+        if (tag[i] === Tag.FRENZY) cell.frenzy = true;
+        col.push(cell);
+      }
+      out.push(col);
+    }
+    return out;
+  }
+
+  /**
+   * Joga uma rodada completa (um debito, um credito).
+   * @param {object} args
+   * @param {import('../engine/rng.js').Rng} args.rng
+   * @param {ModeName} [args.mode]
+   * @param {boolean} [args.trace]
+   * @param {number} [args.freeSpins]  so em compra: troca as 10 rodadas (usado
+   *   pelo calibrador para medir a Rave de 12 e 15 rodadas do gatilho natural)
+   * @param {import('../engine/rng.js').Rng} [args.featureRng]  fonte separada
+   *   para as rodadas gratis. Padrao: a mesma `rng`. O exportador da Stake usa
+   *   isso para amostrar "rodadas que bateram o teto" sem refazer o giro base.
+   * @returns {RoundResult}
+   */
+  function playRound({ rng, mode = 'base', trace = false, freeSpins = BUY_SPINS, featureRng = rng }) {
+    const modeCfg = MODES[mode];
+    if (!modeCfg) throw new RangeError(`Modo desconhecido: ${String(mode)}`);
+    /** @type {Record<string, any>[]|null} */
+    const events = trace ? [] : null;
+
+    let total = 0;
+    let capped = false;
+    let baseWin = 0;
+    /** @type {Feature|null} */
+    let feature = null;
+    let bought = false;
+    let fsTotal = 0;
+    let fsPlayed = 0;
+    let retriggers = 0;
+    let baseScatters = 0;
+
+    /** @param {number} x */
+    const credit = (x) => {
+      total += x;
+      if (total >= maxWinX100) {
+        total = maxWinX100;
+        capped = true;
+      }
+    };
+
+    if (mode === 'festa' || mode === 'rave') {
+      feature = mode;
+      bought = true;
+      fsTotal = freeSpins;
+      if (events) emit(events, { type: 'freeSpinTrigger', feature, totalFs: fsTotal, positions: [], bought: true });
+    } else {
+      const useHunt = mode === 'hunt' && rng.float() < cal.huntMix;
+      const spin = playSpin('base', useHunt ? reelSets.BRH : reelSets.BR0, rng, events, mode === 'lingua');
+      credit(spin.win);
+      baseWin = total;
+      baseScatters = spin.scatters;
+      if (events && spin.win > 0) {
+        emit(events, { type: 'setWin', amount: spin.win });
+        emit(events, { type: 'setTotalWin', amount: total });
+      }
+      const trigger = FEATURE_TRIGGERS[spin.scatters];
+      if (trigger && !capped) {
+        feature = trigger.feature;
+        fsTotal = trigger.spins;
+        if (events) {
+          emit(events, {
+            type: 'freeSpinTrigger', feature, totalFs: fsTotal, bought: false,
+            positions: (spin.scatterCells ?? []).map(toPos),
+          });
+        }
+      }
+    }
+
+    if (feature) {
+      sticky.fill(0);
+      const set = feature === 'festa' ? reelSets.FR0 : reelSets.FRS;
+      while (fsPlayed < fsTotal && !capped) {
+        fsPlayed += 1;
+        if (events) emit(events, { type: 'updateFreeSpin', amount: fsPlayed, total: fsTotal });
+        const spin = playSpin(feature, set, featureRng, events);
+        credit(spin.win);
+        if (events && spin.win > 0) {
+          emit(events, { type: 'setWin', amount: spin.win });
+          emit(events, { type: 'setTotalWin', amount: total });
+        }
+        if (spin.scatters >= RETRIGGER_SCATTERS && !capped) {
+          fsTotal += RETRIGGER_SPINS;
+          retriggers += 1;
+          if (events) {
+            emit(events, {
+              type: 'freeSpinRetrigger', totalFs: fsTotal,
+              positions: (spin.scatterCells ?? []).map(toPos),
+            });
+          }
+        }
+      }
+      if (events) emit(events, { type: 'freeSpinEnd', feature, amount: total - baseWin });
+    }
+
+    if (events) {
+      if (capped) emit(events, { type: 'wincap', amount: total });
+      emit(events, { type: 'finalWin', amount: total });
+    }
+
+    /** @type {RoundResult} */
+    const result = {
+      mode,
+      costX100: modeCfg.costX100,
+      payoutX100: total,
+      baseWinX100: baseWin,
+      freeWinX100: total - baseWin,
+      capped,
+      feature,
+      bought,
+      freeSpinsPlayed: fsPlayed,
+      freeSpinsAwarded: fsTotal,
+      retriggers,
+      scatters: baseScatters,
+    };
+    if (events) result.events = events;
+    return result;
+  }
+
+  return { playRound, reelSets, maxWinX100, calibration: cal, tongueChance, payLookup };
+}
+
+/** @typedef {ReturnType<typeof createEngine>} Engine */
+
+/**
+ * @param {Record<string, any>[]} events
+ * @param {Record<string, any>} event
+ */
+function emit(events, event) {
+  events.push({ index: events.length, ...event });
+}
+
+/** @param {number} i */
+function toPos(i) {
+  return { reel: (i / ROWS) | 0, row: i % ROWS };
+}
+
+/**
+ * Custo de um modo em centesimos da aposta base.
+ * @param {ModeName} mode
+ */
+function costX100Of(mode) {
+  const cfg = MODES[mode];
+  if (!cfg) throw new RangeError(`Modo desconhecido: ${String(mode)}`);
+  return cfg.costX100;
+}
+
+  return { tiltWeights, createEngine, costX100Of };
+};
+
+__reg["freaky/reels.js"] = () => {
+/**
+ * Fitas de rolo (reel strips).
+ *
+ * Um cassino de verdade — e a math-sdk da Stake Engine — sorteia uma PARADA
+ * por rolo numa fita fixa, e a janela visivel sao as 4 posicoes a partir dela.
+ * Aqui as fitas nao sao digitadas a mao: sao montadas a partir das contagens de
+ * config.js por um embaralhamento com semente fixa. Resultado deterministico,
+ * exportavel como CSV (formato da math-sdk) e com duas garantias estruturais:
+ *
+ *  - especiais (scatter e camelo) ficam a >= ROWS posicoes um do outro, de
+ *    forma circular, entao nenhuma janela mostra dois especiais no mesmo rolo;
+ *  - cada especial e visto em exatamente ROWS paradas, o que torna a
+ *    probabilidade de ele aparecer EXATA: ROWS * contagem / comprimento.
+ */
+
+const { GRID, Sym, SYMBOLS, REEL_COUNTS, REEL_SEED, STACK_WEIGHTS } = __mod("freaky/config.js");
+const { createSeededRng } = __mod("engine/rng.js");
+
+const { REELS, ROWS } = GRID;
+
+/**
+ * @typedef {object} ReelSet
+ * @property {string} name
+ * @property {Int8Array[]} strips
+ */
+
+/**
+ * Monta uma fita a partir das contagens de simbolo.
+ *
+ * @param {readonly number[]} counts contagem por simbolo (ordem de `Sym`)
+ * @param {string} seed
+ * @returns {Int8Array}
+ */
+function buildStrip(counts, seed) {
+  const rng = createSeededRng(seed);
+  const length = counts.reduce((a, b) => a + b, 0);
+
+  /** @type {number[]} */
+  const specials = [];
+  /** @type {number[][]} */
+  const blocks = [];
+  counts.forEach((n, sym) => {
+    if (sym === Sym.SCATTER || sym === Sym.CAMEL) {
+      for (let i = 0; i < n; i++) specials.push(sym);
+      return;
+    }
+    // simbolos normais entram em PILHAS de 1 a 4 iguais: a janela mostra
+    // menos simbolos diferentes, o acerto cai e o ganho grande (pilhas
+    // alinhadas) fica maior — e a alavanca classica de volatilidade em ways
+    const weights = stackWeightsFor(sym);
+    let left = n;
+    while (left > 0) {
+      const size = Math.min(left, pickIndex(weights, rng) + 1);
+      blocks.push(new Array(size).fill(sym));
+      left -= size;
+    }
+  });
+
+  const spacing = specials.length ? length / specials.length : length;
+  if (specials.length && spacing < ROWS) {
+    throw new RangeError(`Fita curta demais: ${specials.length} especiais em ${length} posicoes.`);
+  }
+
+  shuffle(specials, rng);
+  shuffle(blocks, rng);
+  const normals = blocks.flat();
+
+  const strip = new Int8Array(length).fill(-1);
+  // especiais espalhados de forma uniforme; a folga (spacing - ROWS) vira um
+  // deslocamento aleatorio que nunca viola a distancia minima
+  const slack = Math.max(0, Math.floor(spacing) - ROWS);
+  const start = rng.int(length);
+  specials.forEach((sym, k) => {
+    const jitter = slack > 0 ? rng.int(slack + 1) - (slack >> 1) : 0;
+    const base = Math.round(k * spacing) + (k === 0 ? 0 : jitter);
+    strip[(start + base + length) % length] = sym;
+  });
+  assertSpecialSpacing(strip);
+
+  let j = 0;
+  for (let i = 0; i < length; i++) {
+    if (strip[i] === -1) strip[i] = normals[j++];
+  }
+  return strip;
+}
+
+/**
+ * Pesos do tamanho de pilha (indice 0 = pilha de 1) para um simbolo.
+ * @param {number} sym
+ */
+function stackWeightsFor(sym) {
+  if (sym === Sym.WILD) return STACK_WEIGHTS.wild;
+  return SYMBOLS[sym].kind === 'high' ? STACK_WEIGHTS.high : STACK_WEIGHTS.low;
+}
+
+/**
+ * Sorteio ponderado simples (so usado na montagem das fitas).
+ * @param {readonly number[]} weights
+ * @param {import('../engine/rng.js').Rng} rng
+ */
+function pickIndex(weights, rng) {
+  const total = weights.reduce((a, b) => a + b, 0);
+  let x = rng.float() * total;
+  for (let i = 0; i < weights.length; i++) {
+    x -= weights[i];
+    if (x < 0) return i;
+  }
+  return weights.length - 1;
+}
+
+/**
+ * Garante a distancia minima circular entre especiais.
+ * @param {Int8Array} strip  pode conter -1 (posicao ainda vazia)
+ */
+function assertSpecialSpacing(strip) {
+  /** @type {number[]} */
+  const at = [];
+  strip.forEach((s, i) => { if (s === Sym.SCATTER || s === Sym.CAMEL) at.push(i); });
+  for (let k = 0; k < at.length; k++) {
+    const next = k + 1 < at.length ? at[k + 1] : at[0] + strip.length;
+    if (at.length > 1 && next - at[k] < ROWS) {
+      throw new Error(`Especiais a menos de ${ROWS} posicoes na fita (indices ${at[k]} e ${next % strip.length}).`);
+    }
+  }
+}
+
+/**
+ * Fisher-Yates.
+ * @template T
+ * @param {T[]} arr
+ * @param {import('../engine/rng.js').Rng} rng
+ */
+function shuffle(arr, rng) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const k = rng.int(i + 1);
+    const tmp = arr[i]; arr[i] = arr[k]; arr[k] = tmp;
+  }
+}
+
+/**
+ * Monta todos os conjuntos de fitas.
+ * @param {Readonly<Record<string, readonly (readonly number[])[]>>} [counts]
+ * @param {string} [seed]
+ * @returns {Record<string, ReelSet>}
+ */
+function buildReelSets(counts = REEL_COUNTS, seed = REEL_SEED) {
+  /** @type {Record<string, ReelSet>} */
+  const sets = {};
+  for (const [name, reels] of Object.entries(counts)) {
+    if (reels.length !== REELS) throw new RangeError(`${name}: esperava ${REELS} rolos.`);
+    sets[name] = { name, strips: reels.map((c, r) => buildStrip(c, `${seed}:${name}:${r}`)) };
+  }
+  return sets;
+}
+
+/**
+ * Sorteia as paradas e escreve a janela visivel em `board`.
+ * Indice de celula: reel * ROWS + row (row 0 = topo).
+ *
+ * @param {ReelSet} set
+ * @param {import('../engine/rng.js').Rng} rng
+ * @param {Int8Array} board  saida, CELLS posicoes
+ * @param {Int32Array} stops saida, REELS posicoes
+ */
+function spinReels(set, rng, board, stops) {
+  for (let r = 0; r < REELS; r++) {
+    const strip = set.strips[r];
+    const n = strip.length;
+    const stop = rng.int(n);
+    stops[r] = stop;
+    const base = r * ROWS;
+    for (let row = 0; row < ROWS; row++) {
+      const p = stop + row;
+      board[base + row] = strip[p < n ? p : p - n];
+    }
+  }
+}
+
+/**
+ * Probabilidade EXATA de cada rolo mostrar um especial.
+ * @param {ReelSet} set
+ * @param {number} sym  Sym.SCATTER ou Sym.CAMEL
+ * @returns {number[]}
+ */
+function specialChancePerReel(set, sym) {
+  return set.strips.map((strip) => {
+    let count = 0;
+    for (const s of strip) if (s === sym) count += 1;
+    return (ROWS * count) / strip.length;
+  });
+}
+
+/**
+ * Distribuicao EXATA do numero de scatters visiveis: convolucao de Bernoullis
+ * independentes (um especial por rolo, no maximo).
+ * @param {ReelSet} set
+ * @returns {number[]} indice = quantidade de scatters (0..REELS)
+ */
+function scatterDistribution(set) {
+  let dist = [1];
+  for (const p of specialChancePerReel(set, Sym.SCATTER)) {
+    const next = new Array(dist.length + 1).fill(0);
+    dist.forEach((q, k) => {
+      next[k] += q * (1 - p);
+      next[k + 1] += q * p;
+    });
+    dist = next;
+  }
+  return dist;
+}
+
+/**
+ * Exporta um conjunto de fitas no formato CSV da math-sdk: uma linha por
+ * posicao, uma coluna por rolo, codigos de simbolo (L4, H1, W, S...).
+ * Fitas de comprimentos diferentes deixam a celula vazia.
+ * @param {ReelSet} set
+ */
+function reelSetToCsv(set) {
+  const longest = Math.max(...set.strips.map((s) => s.length));
+  const lines = [];
+  for (let i = 0; i < longest; i++) {
+    lines.push(set.strips.map((s) => (i < s.length ? SYMBOLS[s[i]].code : '')).join(','));
+  }
+  return `${lines.join('\n')}\n`;
+}
+
+  return { buildStrip, buildReelSets, spinReels, specialChancePerReel, scatterDistribution, reelSetToCsv };
+};
+
+__reg["engine/rng.js"] = () => {
+/**
+ * Fontes de aleatoriedade do jogo.
+ *
+ * Tres implementacoes, todas expondo a mesma interface {@link Rng}:
+ *
+ *  - createSeededRng   : xoshiro128** — deterministico, rapido. Uso: simulacao
+ *                        de RTP e testes. NAO usar para dinheiro real.
+ *  - createSecureRng   : CSPRNG do ambiente (node:crypto / WebCrypto).
+ *  - createProvablyFairRng : HMAC-SHA256(serverSeed, clientSeed:nonce:cursor),
+ *                        deterministico e auditavel pelo jogador. Uso: producao.
+ *
+ * Todos os consumidores do motor recebem um Rng por injecao de dependencia;
+ * nenhum modulo chama Math.random diretamente. Isso e o que torna cada rodada
+ * reproduzivel a partir de uma semente.
+ *
+ * @typedef {object} Rng
+ * @property {() => number} float      Retorna um numero em [0, 1).
+ * @property {(n: number) => number} int Inteiro uniforme em [0, n).
+ * @property {string} kind
+ */
+
+const { hmacSha256, utf8 } = __mod("engine/sha256.js");
+
+/**
+ * Mistura uma string em quatro palavras de 32 bits (variante de splitmix32).
+ * @param {string} seed
+ * @returns {Uint32Array}
+ */
+function seedState(seed) {
+  let h = 1779033703 ^ seed.length;
+  const state = new Uint32Array(4);
+  for (let i = 0; i < seed.length; i++) {
+    h = Math.imul(h ^ seed.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  for (let i = 0; i < 4; i++) {
+    h = Math.imul(h ^ (h >>> 16), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    state[i] = (h ^= h >>> 16) >>> 0;
+  }
+  // xoshiro nao pode partir do estado zero
+  if (!(state[0] | state[1] | state[2] | state[3])) state[0] = 0x9e3779b9;
+  return state;
+}
+
+/**
+ * PRNG xoshiro128** — periodo 2^128-1, passa em BigCrush. Deterministico.
+ * @param {string|number} seed
+ * @returns {Rng}
+ */
+function createSeededRng(seed) {
+  const s = seedState(String(seed));
+  const next = () => {
+    const r = (Math.imul((Math.imul(s[1], 5) >>> 0) << 7 | (Math.imul(s[1], 5) >>> 25), 9)) >>> 0;
+    const t = (s[1] << 9) >>> 0;
+    s[2] ^= s[0]; s[3] ^= s[1]; s[1] ^= s[2]; s[0] ^= s[3]; s[2] ^= t;
+    s[3] = ((s[3] << 11) | (s[3] >>> 21)) >>> 0;
+    return r;
+  };
+  return {
+    kind: 'seeded',
+    // 2^-32 mantem o resultado estritamente < 1
+    float: () => next() * 2.3283064365386963e-10,
+    int: (n) => Math.floor(next() * 2.3283064365386963e-10 * n),
+  };
+}
+
+/**
+ * CSPRNG do ambiente, com buffer para amortizar o custo por chamada.
+ * @param {number} [bufferWords]
+ * @returns {Rng}
+ */
+function createSecureRng(bufferWords = 1024) {
+  const getRandomValues = resolveCryptoSource();
+  const buf = new Uint32Array(bufferWords);
+  let i = buf.length;
+  const next = () => {
+    if (i >= buf.length) { getRandomValues(buf); i = 0; }
+    return buf[i++];
+  };
+  return {
+    kind: 'secure',
+    float: () => next() * 2.3283064365386963e-10,
+    int: (n) => Math.floor(next() * 2.3283064365386963e-10 * n),
+  };
+}
+
+/** @returns {(a: Uint32Array) => void} */
+function resolveCryptoSource() {
+  const g = /** @type {any} */ (globalThis);
+  if (g.crypto?.getRandomValues) return (a) => g.crypto.getRandomValues(a);
+  throw new Error('Nenhuma fonte criptografica disponivel (globalThis.crypto ausente).');
+}
+
+/**
+ * RNG "provably fair": o cassino publica sha256(serverSeed) antes da rodada,
+ * o jogador escolhe o clientSeed, e o serverSeed e revelado depois. Com os
+ * tres valores qualquer pessoa reconstroi a rodada bit a bit.
+ *
+ * Cada bloco HMAC rende 8 floats de 32 bits; o cursor avanca conforme o consumo.
+ *
+ * @param {object} opts
+ * @param {string} opts.serverSeed
+ * @param {string} opts.clientSeed
+ * @param {number} opts.nonce  Indice da rodada; deve ser unico por serverSeed.
+ * @returns {Rng & { cursor: () => number }}
+ */
+function createProvablyFairRng({ serverSeed, clientSeed, nonce }) {
+  const key = utf8(serverSeed);
+  let block = -1;
+  let word = 8;
+  let consumed = 0;
+  /** @type {DataView} */
+  let view = new DataView(new ArrayBuffer(32));
+
+  const next = () => {
+    if (word >= 8) {
+      block += 1;
+      word = 0;
+      const digest = hmacSha256(key, utf8(`${clientSeed}:${nonce}:${block}`));
+      view = new DataView(digest.buffer, digest.byteOffset, digest.byteLength);
+    }
+    consumed += 1;
+    return view.getUint32(word++ * 4, false);
+  };
+  return {
+    kind: 'provably-fair',
+    float: () => next() * 2.3283064365386963e-10,
+    int: (n) => Math.floor(next() * 2.3283064365386963e-10 * n),
+    cursor: () => consumed,
+  };
+}
+
+/**
+ * Sorteio ponderado por busca binaria sobre a soma acumulada.
+ * A tabela acumulada e pre-calculada uma unica vez por conjunto de pesos.
+ *
+ * @param {readonly number[]} weights
+ * @returns {{ total: number, pick: (rng: Rng) => number }}
+ */
+function weightedPicker(weights) {
+  const cum = new Float64Array(weights.length);
+  let total = 0;
+  for (let i = 0; i < weights.length; i++) {
+    if (weights[i] < 0 || !Number.isFinite(weights[i])) {
+      throw new RangeError(`Peso invalido no indice ${i}: ${weights[i]}`);
+    }
+    total += weights[i];
+    cum[i] = total;
+  }
+  if (total <= 0) throw new RangeError('A soma dos pesos deve ser positiva.');
+
+  return {
+    total,
+    pick(rng) {
+      const target = rng.float() * total;
+      let lo = 0;
+      let hi = cum.length - 1;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (target < cum[mid]) hi = mid; else lo = mid + 1;
+      }
+      return lo;
+    },
+  };
+}
+
+  return { createSeededRng, createSecureRng, createProvablyFairRng, weightedPicker };
+};
+
+__reg["engine/sha256.js"] = () => {
+/**
+ * SHA-256 e HMAC-SHA256 sincronos em JS puro.
+ *
+ * Motivo de existir: o esquema "provably fair" precisa produzir exatamente o
+ * mesmo resultado no Node (servidor / simulador) e no navegador (cliente).
+ * A WebCrypto do navegador so expoe API assincrona, o que impediria usar o
+ * hash dentro do laco sincrono do motor. Esta implementacao e pequena,
+ * auditavel e testada contra vetores conhecidos (ver test/sha256.test.js).
+ *
+ * Nao use este modulo para criptografia de producao: ele nao e resistente a
+ * ataques de canal lateral (timing). Aqui serve apenas para verificacao de
+ * integridade das rodadas, onde a chave e revelada ao final de qualquer forma.
+ */
+
+const K = new Uint32Array([
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
+  0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
+  0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
+  0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
+  0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13,
+  0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b,
+  0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a,
+  0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
+  0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+]);
+
+const BLOCK_BYTES = 64;
+
+/** @param {number} x @param {number} n */
+const rotr = (x, n) => ((x >>> n) | (x << (32 - n))) >>> 0;
+
+/**
+ * Digest SHA-256.
+ * @param {Uint8Array} message
+ * @returns {Uint8Array} 32 bytes
+ */
+function sha256(message) {
+  const bitLen = message.length * 8;
+  // Padding: byte 0x80, zeros, e 8 bytes com o comprimento em bits (big-endian).
+  // Sao necessarios len + 1 + 8 bytes arredondados para cima ao proximo bloco.
+  // O arredondamento tem de ser `ceil`: usar `floor + 1` acrescenta um bloco
+  // inteiro de zeros quando len + 9 ja e multiplo de 64 (len = 55, 119, ...),
+  // o que muda o digest.
+  const paddedLen = Math.ceil((message.length + 9) / BLOCK_BYTES) * BLOCK_BYTES;
+  const buf = new Uint8Array(paddedLen);
+  buf.set(message);
+  buf[message.length] = 0x80;
+  const view = new DataView(buf.buffer);
+  // comprimento cabe em 53 bits com seguranca; escrevemos os 64 bits em duas metades
+  view.setUint32(paddedLen - 8, Math.floor(bitLen / 0x100000000), false);
+  view.setUint32(paddedLen - 4, bitLen >>> 0, false);
+
+  const h = new Uint32Array([
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
+  ]);
+  const w = new Uint32Array(64);
+
+  for (let off = 0; off < paddedLen; off += BLOCK_BYTES) {
+    for (let i = 0; i < 16; i++) w[i] = view.getUint32(off + i * 4, false);
+    for (let i = 16; i < 64; i++) {
+      const s0 = (rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3)) >>> 0;
+      const s1 = (rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10)) >>> 0;
+      w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+    }
+    let [a, b, c, d, e, f, g, hh] = h;
+    for (let i = 0; i < 64; i++) {
+      const S1 = (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) >>> 0;
+      const ch = ((e & f) ^ (~e & g)) >>> 0;
+      const t1 = (hh + S1 + ch + K[i] + w[i]) >>> 0;
+      const S0 = (rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) >>> 0;
+      const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
+      const t2 = (S0 + maj) >>> 0;
+      hh = g; g = f; f = e;
+      e = (d + t1) >>> 0;
+      d = c; c = b; b = a;
+      a = (t1 + t2) >>> 0;
+    }
+    h[0] = (h[0] + a) >>> 0; h[1] = (h[1] + b) >>> 0;
+    h[2] = (h[2] + c) >>> 0; h[3] = (h[3] + d) >>> 0;
+    h[4] = (h[4] + e) >>> 0; h[5] = (h[5] + f) >>> 0;
+    h[6] = (h[6] + g) >>> 0; h[7] = (h[7] + hh) >>> 0;
+  }
+
+  const out = new Uint8Array(32);
+  const outView = new DataView(out.buffer);
+  for (let i = 0; i < 8; i++) outView.setUint32(i * 4, h[i], false);
+  return out;
+}
+
+/**
+ * HMAC-SHA256 (RFC 2104).
+ * @param {Uint8Array} key
+ * @param {Uint8Array} message
+ * @returns {Uint8Array} 32 bytes
+ */
+function hmacSha256(key, message) {
+  let k = key;
+  if (k.length > BLOCK_BYTES) k = sha256(k);
+  const pad = new Uint8Array(BLOCK_BYTES);
+  pad.set(k);
+
+  const inner = new Uint8Array(BLOCK_BYTES + message.length);
+  const outer = new Uint8Array(BLOCK_BYTES + 32);
+  for (let i = 0; i < BLOCK_BYTES; i++) {
+    inner[i] = pad[i] ^ 0x36;
+    outer[i] = pad[i] ^ 0x5c;
+  }
+  inner.set(message, BLOCK_BYTES);
+  outer.set(sha256(inner), BLOCK_BYTES);
+  return sha256(outer);
+}
+
+/** @param {string} str @returns {Uint8Array} */
+function utf8(str) {
+  return new TextEncoder().encode(str);
+}
+
+/** @param {Uint8Array} bytes @returns {string} */
+function toHex(bytes) {
+  let s = '';
+  for (const b of bytes) s += b.toString(16).padStart(2, '0');
+  return s;
+}
+
+  return { sha256, hmacSha256, utf8, toHex };
+};
+
+__reg["freaky/ways.js"] = () => {
+/**
+ * Avaliacao de 4.096 ways com multiplicadores.
+ *
+ * Para cada simbolo pagante s:
+ *
+ *     W_r = soma dos multiplicadores das celulas do rolo r que servem a s
+ *           (o proprio s vale 1; um wild vale o multiplicador dele)
+ *     comprimento L = rolos seguidos, a partir do primeiro, com W_r > 0
+ *     premio = PAYTABLE[s][L] * W_0 * W_1 * ... * W_(L-1)      (se L >= 3)
+ *
+ * Sem multiplicador, o produto dos W_r e exatamente o numero de ways. Com
+ * multiplicador, e a soma, sobre todos os ways, do produto dos multiplicadores
+ * de cada way — a definicao usual de "multiplicadores se multiplicam no way".
+ *
+ * Como o rolo 1 nunca tem wild, cada way pertence a um unico simbolo e nao ha
+ * contagem dupla.
+ */
+
+const { GRID, Sym, PAYING_COUNT, PAYTABLE, MIN_KIND, SYMBOLS } = __mod("freaky/config.js");
+
+const { REELS, ROWS } = GRID;
+
+/**
+ * Teto do produto de ways. Acima disso qualquer premio ja passa do ganho
+ * maximo (menor premio 5 x 1e9 >> 2.500.000), entao o valor exato nao importa —
+ * e travar aqui mantem a conta dentro dos inteiros exatos do double.
+ */
+const PRODUCT_GUARD = 1e9;
+
+/**
+ * @typedef {object} WayWin
+ * @property {number} symbol
+ * @property {string} code
+ * @property {number} kind         quantidade de rolos (3..6)
+ * @property {number} ways         produto dos W_r (ways ponderados pelo multiplicador)
+ * @property {number} plainWays    numero de ways sem multiplicador
+ * @property {number} payX100      premio por way
+ * @property {number} winX100      payX100 * ways
+ * @property {number[]} positions  indices de celula (reel * ROWS + row)
+ */
+
+/**
+ * Tabela de premio achatada: indice symbol * (REELS + 1) + L.
+ * @param {readonly (readonly number[])[]} [paytable]
+ */
+function buildPayLookup(paytable = PAYTABLE) {
+  const lookup = new Int32Array(PAYING_COUNT * (REELS + 1));
+  for (let s = 0; s < PAYING_COUNT; s++) {
+    for (let L = MIN_KIND; L <= REELS; L++) {
+      lookup[s * (REELS + 1) + L] = paytable[s][L - MIN_KIND];
+    }
+  }
+  return lookup;
+}
+
+const DEFAULT_LOOKUP = buildPayLookup();
+
+/**
+ * Avalia a grade. Laco quente do simulador: sem alocacao quando `wins` e null.
+ *
+ * @param {Int8Array} board
+ * @param {Int32Array} mult  multiplicador por celula (so e lido em wilds)
+ * @param {WayWin[]|null} [wins]  se dado, recebe o detalhe de cada ganho
+ * @param {Int32Array} [payLookup]
+ * @returns {number} ganho total em centesimos da aposta
+ */
+function evaluateWays(board, mult, wins = null, payLookup = DEFAULT_LOOKUP) {
+  let total = 0;
+  for (let s = 0; s < PAYING_COUNT; s++) {
+    // rolo 1: sem wild por construcao
+    let first = 0;
+    for (let row = 0; row < ROWS; row++) if (board[row] === s) first += 1;
+    if (first === 0) continue;
+
+    let product = first;
+    let plain = first;
+    let L = 1;
+    for (let r = 1; r < REELS; r++) {
+      const base = r * ROWS;
+      let w = 0;
+      let c = 0;
+      for (let row = 0; row < ROWS; row++) {
+        const cell = board[base + row];
+        if (cell === s) { w += 1; c += 1; } else if (cell === Sym.WILD) { w += mult[base + row]; c += 1; }
+      }
+      if (w === 0) break;
+      product *= w;
+      if (product > PRODUCT_GUARD) product = PRODUCT_GUARD;
+      plain *= c;
+      L += 1;
+    }
+    if (L < MIN_KIND) continue;
+
+    const pay = payLookup[s * (REELS + 1) + L];
+    const win = pay * product;
+    total += win;
+
+    if (wins) {
+      /** @type {number[]} */
+      const positions = [];
+      for (let r = 0; r < L; r++) {
+        for (let row = 0; row < ROWS; row++) {
+          const i = r * ROWS + row;
+          if (board[i] === s || (r > 0 && board[i] === Sym.WILD)) positions.push(i);
+        }
+      }
+      wins.push({
+        symbol: s, code: SYMBOLS[s].code, kind: L, ways: product, plainWays: plain,
+        payX100: pay, winX100: win, positions,
+      });
+    }
+  }
+  return total;
+}
+
+  return { buildPayLookup, evaluateWays };
+};
+
+__reg["engine/money.js"] = () => {
+/**
+ * Aritmetica monetaria em inteiros.
+ *
+ * Regra do projeto: dinheiro e SEMPRE um inteiro em centavos. Ponto flutuante
+ * so aparece na formatacao para a tela. Isso elimina toda uma classe de bugs
+ * de "0,1 + 0,2" que, em um jogo de aposta, viram divergencia de caixa.
+ *
+ * Premios sao expressos em centesimos da aposta (x100). A conversao para
+ * centavos e uma multiplicacao seguida de divisao por 100 com arredondamento
+ * meio-para-cima deterministico.
+ */
+
+/** Maior inteiro seguro para dinheiro; acima disso a soma deixa de ser exata. */
+const MAX_SAFE_CENTS = Number.MAX_SAFE_INTEGER;
+
+/**
+ * Converte um premio expresso em centesimos da aposta para centavos.
+ *
+ * Com apostas multiplas de 20 centavos e premios multiplos de 5 (invariantes
+ * garantidas por config.js e checadas em teste), o produto e sempre multiplo
+ * de 100 e a divisao e exata. O arredondamento existe apenas como rede de
+ * seguranca para multiplicadores de orbe arbitrarios.
+ *
+ * @param {number} betCents  Aposta total em centavos (inteiro > 0).
+ * @param {number} payX100   Premio em centesimos da aposta (inteiro >= 0).
+ * @returns {number} centavos (inteiro >= 0)
+ */
+function payToCents(betCents, payX100) {
+  assertInt(betCents, 'betCents');
+  assertInt(payX100, 'payX100');
+  const product = betCents * payX100;
+  if (product > MAX_SAFE_CENTS) {
+    throw new RangeError(`Overflow monetario: ${betCents} x ${payX100} excede o inteiro seguro.`);
+  }
+  return Math.round(product / 100);
+}
+
+/**
+ * Multiplica um valor em centavos por um multiplicador inteiro (orbe, global).
+ * @param {number} cents
+ * @param {number} multiplier inteiro >= 1
+ * @returns {number}
+ */
+function applyMultiplier(cents, multiplier) {
+  assertInt(cents, 'cents');
+  assertInt(multiplier, 'multiplier');
+  if (multiplier < 1) throw new RangeError(`Multiplicador deve ser >= 1, recebido ${multiplier}.`);
+  const product = cents * multiplier;
+  if (product > MAX_SAFE_CENTS) {
+    throw new RangeError(`Overflow monetario ao aplicar multiplicador ${multiplier}.`);
+  }
+  return product;
+}
+
+/**
+ * @param {number} value
+ * @param {string} name
+ */
+function assertInt(value, name) {
+  if (!Number.isInteger(value)) {
+    throw new TypeError(`${name} deve ser um inteiro, recebido ${value}.`);
+  }
+  if (value < 0) {
+    throw new RangeError(`${name} nao pode ser negativo, recebido ${value}.`);
+  }
+}
+
+/**
+ * Formata centavos para exibicao (pt-BR).
+ * @param {number} cents
+ * @param {string} [locale]
+ * @param {string} [currency]
+ */
+function formatCents(cents, locale = 'pt-BR', currency = 'BRL') {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency', currency, minimumFractionDigits: 2,
+  }).format(cents / 100);
+}
+
+/**
+ * Formata um ganho como multiplo da aposta ("12,50x").
+ * @param {number} winCents
+ * @param {number} betCents
+ */
+function formatMultiplier(winCents, betCents) {
+  if (betCents <= 0) return '0x';
+  const x = winCents / betCents;
+  return `${x.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}x`;
+}
+
+  return { payToCents, applyMultiplier, assertInt, formatCents, formatMultiplier };
+};
+
+__reg["freaky/ui/board-model.js"] = () => {
+/**
+ * Modelo da grade do lado da interface — logica pura, sem DOM.
+ *
+ * A interface nunca roda o motor para decidir o que mostrar: ela recebe os
+ * EVENTOS de um book (do motor local ou do RGS da Stake) e reproduz. Os
+ * eventos que mexem na grade trazem so a diferenca (quem virou wild, quem
+ * levou cuspe), e este modulo aplica essas diferencas. Um teste confere que,
+ * para milhares de rodadas, a grade reconstruida aqui e exatamente a que o
+ * motor avaliou — e o que garante que a tela nunca mostre um ganho que a
+ * grade nao justifica.
+ */
+
+/**
+ * @typedef {{ name: string, multiplier?: number, tongue?: true, sticky?: true, frenzy?: true }} Cell
+ * @typedef {Cell[][]} Board  board[reel][row]
+ */
+
+/** @param {Board} board @returns {Board} */
+function cloneBoard(board) {
+  return board.map((col) => col.map((c) => ({ ...c })));
+}
+
+/**
+ * Aplica um evento que modifica a grade. Eventos que nao mexem na grade
+ * devolvem a mesma referencia.
+ * @param {Board} board
+ * @param {Record<string, any>} ev
+ * @returns {Board}
+ */
+function applyEvent(board, ev) {
+  switch (ev.type) {
+    case 'reveal':
+      return cloneBoard(ev.board);
+    case 'stickyWilds': {
+      const next = cloneBoard(board);
+      for (const r of ev.reels) {
+        next[r] = next[r].map((c) => (c.name === 'S' || c.name === 'W' ? c : { name: 'W', sticky: true }));
+      }
+      return next;
+    }
+    case 'gorillaMultipliers':
+    case 'freakyFrenzy': {
+      const next = cloneBoard(board);
+      for (const w of ev.wilds) {
+        /** @type {Cell} */
+        const cell = { name: 'W' };
+        if (w.multiplier > 1) cell.multiplier = w.multiplier;
+        if (ev.type === 'freakyFrenzy') cell.frenzy = true;
+        next[w.reel][w.row] = cell;
+      }
+      return next;
+    }
+    case 'camel': {
+      const next = cloneBoard(board);
+      for (const s of ev.spit ?? []) next[s.reel][s.row] = { name: s.to };
+      for (const t of ev.tongues ?? []) {
+        for (const row of t.rows) {
+          /** @type {Cell} */
+          const cell = { name: 'W', tongue: true };
+          if (t.sticky) cell.sticky = true;
+          next[t.reel][row] = cell;
+        }
+      }
+      return next;
+    }
+    default:
+      return board;
+  }
+}
+
+/**
+ * Divide os eventos de um book em giros: cada `reveal` abre um giro novo.
+ * Eventos antes do primeiro reveal (gatilho de compra) ficam num giro 0 sem
+ * grade.
+ * @param {Record<string, any>[]} events
+ * @returns {Record<string, any>[][]}
+ */
+function splitSpins(events) {
+  /** @type {Record<string, any>[][]} */
+  const spins = [[]];
+  for (const ev of events) {
+    if (ev.type === 'reveal') spins.push([]);
+    spins[spins.length - 1].push(ev);
+  }
+  return spins.filter((s) => s.length > 0);
+}
+
+/**
+ * Plano de parada dos rolos: ordem da esquerda para a direita, com
+ * ANTECIPACAO nos rolos seguintes quando ja ha scatters suficientes para que
+ * o proximo complete o gatilho (2+ no jogo base; 2+ no bonus para o
+ * re-gatilho de 3).
+ * @param {Board} board  grade do reveal
+ * @returns {{ anticipation: boolean }[]}
+ */
+function stopPlan(board) {
+  let seen = 0;
+  return board.map((col) => {
+    const anticipation = seen >= 2;
+    if (col.some((c) => c.name === 'S')) seen += 1;
+    return { anticipation };
+  });
+}
+
+/**
+ * Faixa de celebracao de um ganho, em multiplos da aposta base.
+ * @param {number} x
+ * @param {boolean} capped
+ * @returns {{ key: string, label: string } | null}
+ */
+function winTier(x, capped = false) {
+  if (capped) return { key: 'max', label: 'GANHO MAXIMO' };
+  if (x >= 2500) return { key: 'sigma', label: 'SIGMA WIN' };
+  if (x >= 500) return { key: 'freaky', label: 'FREAKY WIN' };
+  if (x >= 100) return { key: 'mega', label: 'MEGA WIN' };
+  if (x >= 20) return { key: 'big', label: 'BIG WIN' };
+  return null;
+}
+
+  return { cloneBoard, applyEvent, splitSpins, stopPlan, winTier };
+};
+
+__reg["freaky/ui/skins.js"] = () => {
+/**
+ * Aparencia dos simbolos do Freaky Zoo.
+ *
+ * Mesmo principio do Fortuna Real: o motor conhece `code` (L4, H1, W...) e
+ * nada mais. Nome, emoji, cor e arte moram aqui — trocar a arte nao pode mover
+ * o RTP.
+ *
+ * Cada simbolo aceita `art` (URL ou data: URI de uma imagem). Enquanto nao
+ * houver arte, a interface compoe emoji + acessorio. Os prompts para gerar as
+ * ilustracoes estao em docs/FREAKY_PROMPTS.md; para trocar, basta preencher
+ * `art` (no pacote de arquivo unico a imagem precisa ser data: URI).
+ */
+
+/**
+ * @typedef {object} Skin
+ * @property {string} name        nome exibido
+ * @property {string} glyph       emoji ou letra
+ * @property {string} [accessory] emoji sobreposto (chapeu, oculos...)
+ * @property {string} color       cor de brilho do simbolo
+ * @property {'card'|'animal'|'wild'|'camel'|'scatter'} look
+ * @property {string} blurb       frase curta para a tabela de premios
+ * @property {string} [art]       imagem que substitui glyph + accessory
+ */
+
+/** @type {Readonly<Record<string, Skin>>} */
+const SKINS = Object.freeze({
+  L4: { name: 'J', glyph: 'J', color: '#39c6ff', look: 'card', blurb: 'Carta.' },
+  L3: { name: 'Q', glyph: 'Q', color: '#6dff7a', look: 'card', blurb: 'Carta.' },
+  L2: { name: 'K', glyph: 'K', color: '#ffb33d', look: 'card', blurb: 'Carta.' },
+  L1: { name: 'A', glyph: 'A', color: '#ff4f9a', look: 'card', blurb: 'Carta.' },
+  H3: {
+    name: 'Tartaruga Pride', glyph: '🐢', accessory: '💅', color: '#b56bff', look: 'animal',
+    blurb: 'Casco arco-íris, unhas feitas, zero pressa.',
+  },
+  H2: {
+    name: 'Macaco do Chapéu Rosa', glyph: '🐒', accessory: '👒', color: '#ff7ad9', look: 'animal',
+    blurb: 'Chapéu rosa de aba larga e energia caótica.',
+  },
+  H1: {
+    name: 'Leão Sigma', glyph: '🦁', accessory: '🕶️', color: '#ffd23d', look: 'animal',
+    blurb: 'Mogger oficial. Paga mais que todo mundo.',
+  },
+  W: {
+    name: 'Gorila Freaky', glyph: '🦍', color: '#ff3df2', look: 'wild',
+    blurb: 'Wild. Substitui tudo menos camelo e globo. No bônus vem com multiplicador ×2 a ×100.',
+  },
+  C: {
+    name: 'Camelo', glyph: '🐪', color: '#ffae5c', look: 'camel',
+    blurb: 'Língua: vira wild no rolo inteiro. Cuspe: todo símbolo alto vira carta.',
+  },
+  S: {
+    name: 'Globo de Discoteca', glyph: '🪩', color: '#9ff6ff', look: 'scatter',
+    blurb: '3 = Festa Freaky · 4+ = Rave Sigma.',
+  },
+});
+
+/**
+ * @param {string} code
+ * @returns {Skin}
+ */
+function skinOf(code) {
+  const skin = SKINS[code];
+  if (!skin) throw new RangeError(`Simbolo sem aparencia: ${code}`);
+  return skin;
+}
+
+  return { SKINS, skinOf };
+};
+
+__reg["freaky/ui/rgs.js"] = () => {
+/**
+ * Cliente do RGS da Stake Engine.
+ *
+ * Quando o jogo e aberto pela Stake, a URL traz `sessionID` e `rgs_url`. Nesse
+ * caso a interface NAO usa o motor local: ela pede a rodada ao RGS, que sorteia
+ * um book da biblioteca exportada por tools/freaky-stake.js, e anima os mesmos
+ * eventos que o modo demonstracao anima. Sem esses parametros, o jogo roda em
+ * modo demonstracao com o motor local.
+ *
+ * Endpoints (docs/rgs_docs/RGS.md da math-sdk):
+ *   POST /wallet/authenticate { sessionID }            -> balance, config, round
+ *   POST /wallet/play         { sessionID, amount, mode } -> balance, round
+ *   POST /wallet/end-round    { sessionID }            -> balance
+ * Dinheiro em inteiros com 6 casas: 1.000.000 = 1 unidade de moeda.
+ *
+ * O formato exato de `round` nao e documentado na pagina do RGS; este cliente
+ * aceita os eventos em `round.state` (usado pelo web-sdk) ou `round.events`.
+ * Confira contra a documentacao vigente antes de publicar.
+ */
+
+/**
+ * @typedef {object} RgsParams
+ * @property {string} sessionID
+ * @property {string} rgsUrl
+ * @property {string} lang
+ * @property {string} device
+ */
+
+/**
+ * Le os parametros que a Stake passa na URL do jogo.
+ * @param {string} href
+ * @returns {RgsParams|null}
+ */
+function rgsParamsFromUrl(href) {
+  const url = new URL(href);
+  const sessionID = url.searchParams.get('sessionID');
+  const rgsUrl = url.searchParams.get('rgs_url');
+  if (!sessionID || !rgsUrl) return null;
+  return {
+    sessionID,
+    rgsUrl,
+    lang: url.searchParams.get('lang') ?? 'pt',
+    device: url.searchParams.get('device') ?? 'desktop',
+  };
+}
+
+/** Erro do RGS com o codigo da Stake (ERR_IPB, ERR_IS...). */
+class RgsError extends Error {
+  /** @param {string} code @param {string} message */
+  constructor(code, message) {
+    super(message);
+    this.code = code;
+  }
+}
+
+/** Mensagens para os codigos documentados. */
+const RGS_MESSAGES = Object.freeze({
+  ERR_VAL: 'Requisição inválida.',
+  ERR_IPB: 'Saldo insuficiente.',
+  ERR_IS: 'Sessão inválida ou expirada.',
+  ERR_ATE: 'Falha de autenticação.',
+  ERR_GLE: 'Limite de jogo atingido.',
+  ERR_LOC: 'Jogo indisponível na sua região.',
+  ERR_GEN: 'Erro no servidor.',
+  ERR_MAINTENANCE: 'Servidor em manutenção.',
+});
+
+/**
+ * @param {RgsParams} params
+ * @param {typeof fetch} [fetchImpl]
+ */
+function createRgsClient(params, fetchImpl = globalThis.fetch.bind(globalThis)) {
+  const base = /^https?:\/\//.test(params.rgsUrl) ? params.rgsUrl : `https://${params.rgsUrl}`;
+
+  /**
+   * @param {string} path
+   * @param {Record<string, unknown>} body
+   */
+  async function post(path, body) {
+    const res = await fetchImpl(`${base.replace(/\/$/, '')}${path}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sessionID: params.sessionID, ...body }),
+    });
+    /** @type {any} */
+    let data = null;
+    try { data = await res.json(); } catch { /* corpo vazio */ }
+    if (!res.ok) {
+      const code = data?.code ?? data?.error ?? `HTTP_${res.status}`;
+      throw new RgsError(code, RGS_MESSAGES[/** @type {keyof typeof RGS_MESSAGES} */ (code)] ?? data?.message ?? `Erro ${res.status}`);
+    }
+    return data;
+  }
+
+  return {
+    params,
+    authenticate: () => post('/wallet/authenticate', { language: params.lang }),
+    balance: () => post('/wallet/balance', {}),
+    /**
+     * @param {number} amount aposta BASE em micro-unidades (o RGS multiplica pelo custo do modo)
+     * @param {string} mode nome do modo no index.json
+     */
+    play: (amount, mode) => post('/wallet/play', { amount, mode: mode.toUpperCase() }),
+    endRound: () => post('/wallet/end-round', {}),
+  };
+}
+
+/**
+ * Eventos de uma rodada devolvida pelo RGS.
+ * @param {any} round
+ * @returns {Record<string, any>[]}
+ */
+function eventsOfRound(round) {
+  const events = round?.state ?? round?.events;
+  if (!Array.isArray(events)) throw new RgsError('ERR_VAL', 'Rodada sem eventos.');
+  return events;
+}
+
+  return { rgsParamsFromUrl, RgsError, RGS_MESSAGES, createRgsClient, eventsOfRound };
+};
+
+__mod("freaky/ui/app.js");
+</script>
+</body>
+</html>

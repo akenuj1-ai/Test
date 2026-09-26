@@ -57,4 +57,5 @@ const server = createServer(
 
 server.listen(PORT, () => {
   console.log(`Fortuna Real em http://localhost:${PORT}${INDEX}`);
+  console.log(`Freaky Zoo   em http://localhost:${PORT}/src/freaky/ui/index.html`);
 });

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Freaky Zoo</title>
+  <meta name="description" content="Slot 6x4 com 4.096 ways, camelo que lambe ou cospe, gorila freaky com multiplicador, Festa Freaky, Rave Sigma e ganho máximo de 25.000x. Créditos de demonstração." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%A6%8D%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Luckiest+Guy&display=swap" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🦍</span>
+        <div>
+          <h1>Freaky Zoo</h1>
+          <p class="brand-sub">6×4 · 4.096 ways · RTP <span id="rtp-badge">96,50%</span> · máx 25.000×</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="meter">
+          <span class="meter-label" id="balance-label">Saldo</span>
+          <strong id="balance" class="meter-value">R$ 0,00</strong>
+        </div>
+        <button class="icon-btn" id="btn-rules" title="Regras e prêmios" aria-label="Regras e prêmios">📜</button>
+        <button class="icon-btn" id="btn-fair" title="Verificação justa" aria-label="Verificação justa">🔐</button>
+        <button class="icon-btn" id="btn-stats" title="Estatísticas da sessão" aria-label="Estatísticas da sessão">📊</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="feature-bar" id="feature-bar" hidden>
+        <div class="feature-chip feature-chip--name"><strong id="fs-name">Festa Freaky</strong></div>
+        <div class="feature-chip"><span>Rodada</span><strong id="fs-count">0/10</strong></div>
+        <div class="feature-chip feature-chip--win"><span>Ganho do bônus</span><strong id="fs-win">R$ 0,00</strong></div>
+      </div>
+
+      <div class="board-wrap" id="board-wrap">
+        <div class="board" id="board" role="grid" aria-label="Rolos do jogo"></div>
+        <div class="fx" id="fx" aria-hidden="true"></div>
+        <div class="banner" id="banner" hidden>
+          <p class="banner-kicker" id="banner-kicker"></p>
+          <p class="banner-title" id="banner-title"></p>
+          <p class="banner-sub" id="banner-sub"></p>
+        </div>
+      </div>
+
+      <div class="winline" id="winline" aria-live="polite">Gire para começar a festa.</div>
+    </main>
+
+    <footer class="controls">
+      <div class="control-group">
+        <span class="control-label">Aposta</span>
+        <div class="bet-stepper">
+          <button class="step-btn" id="bet-down" aria-label="Diminuir aposta">−</button>
+          <span class="bet-value" id="bet-value">R$ 1,00</span>
+          <button class="step-btn" id="bet-up" aria-label="Aumentar aposta">+</button>
+        </div>
+      </div>
+
+      <div class="control-group control-group--main">
+        <button class="spin-btn" id="btn-spin">
+          <span class="spin-btn-label" id="spin-label">GIRAR</span>
+          <span class="spin-btn-cost" id="spin-cost">R$ 1,00</span>
+        </button>
+      </div>
+
+      <div class="control-group control-group--right">
+        <button class="ghost-btn" id="btn-hunt" aria-pressed="false" title="Caçada Freaky: custa 3× e o bônus sai ~4× mais">
+          <span>Caçada</span><small>3× · bônus 4×</small>
+        </button>
+        <button class="ghost-btn" id="btn-lingua" aria-pressed="false" title="Língua Garantida: custa 2× e todo giro tem um camelo lambendo">
+          <span>Língua</span><small>2× · garantida</small>
+        </button>
+        <button class="ghost-btn ghost-btn--hot" id="btn-buy"><span>Comprar</span><small>bônus</small></button>
+        <button class="ghost-btn" id="btn-turbo" aria-pressed="false"><span>Turbo</span><small>⚡</small></button>
+        <button class="ghost-btn" id="btn-auto" aria-pressed="false"><span>Auto</span><small id="auto-count">10×</small></button>
+      </div>
+    </footer>
+
+    <p class="disclaimer">
+      Jogo de <strong>demonstração</strong> com créditos fictícios — sem depósito, sem prêmio em dinheiro real.
+      <span class="long">Feito para estudo de matemática de slots.</span>
+      <a href="https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/jogo-responsavel" target="_blank" rel="noopener noreferrer">Jogue com responsabilidade.</a>
+    </p>
+  </div>
+
+  <!-- ======================= modais ======================= -->
+  <div class="modal" id="modal-buy" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Comprar bônus</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body">
+        <div class="buy-grid" id="buy-grid"></div>
+        <p class="note">O preço é o valor esperado do bônus dividido pelo RTP — comprar não é melhor nem pior que esperar o gatilho, só mais volátil.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-rules" hidden>
+    <div class="modal-card modal-card--wide">
+      <header class="modal-head">
+        <h2>Regras e prêmios</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="rules-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-fair" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Verificação justa</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="fair-body"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-stats" hidden>
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>Estatísticas da sessão</h2>
+        <button class="icon-btn" data-close aria-label="Fechar">✕</button>
+      </header>
+      <div class="modal-body" id="stats-body"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

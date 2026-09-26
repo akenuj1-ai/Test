@@ -1,24 +1,62 @@
-# Fortuna Real
+# Slots de estudo: Freaky Zoo e Fortuna Real
 
-Slot 6×5 completo — motor matemático, interface jogável e ferramentas de
+Dois slots completos — motor matemático, interface jogável e ferramentas de
 verificação de RTP. **Zero dependências de runtime**: só Node 20+ e um
 navegador, sem `npm install`, sem bundler.
 
-> ⚠️ **Jogo de demonstração.** Créditos fictícios, sem depósito, sem aposta e
-> sem prêmio em dinheiro real. O objetivo é servir de referência de como a
-> matemática de um slot moderno é construída, calibrada e auditada.
+> ⚠️ **Jogos de demonstração.** Créditos fictícios, sem depósito, sem aposta e
+> sem prêmio em dinheiro real.
+
+```bash
+npm test                  # testes dos dois jogos
+npm run serve             # interfaces em http://localhost:8080
+npm run bundle            # dist/freaky-zoo.html e dist/fortuna-real.html (arquivo único)
+npm run freaky:tune       # RTP do Freaky Zoo, todos os modos
+npm run freaky:stake      # biblioteca de math no formato da Stake Engine
+```
+
+---
+
+## 🦍 Freaky Zoo
+
+6×4, 4.096 ways, volatilidade muito alta, ganho máximo de **25.000×** e saída
+no formato de matemática da **Stake Engine** (books + lookup tables +
+`index.json`, verificados como no upload do RGS).
+
+![Rave Sigma](docs/freaky-rave.png)
+
+| | |
+|---|---|
+| **Elenco** | 🦍 Gorila Freaky (wild) · 🐪 Camelo · 🦁 Leão Sigma · 🐒 Macaco do Chapéu Rosa · 🐢 Tartaruga Pride · A K Q J · 🪩 Globo de Discoteca |
+| **Camelo** | 👅 língua = rolo inteiro wild · 💦 cuspe = todo símbolo alto vira carta |
+| **Gorila Freaky** | wild; nos bônus vem com multiplicador ×2 a ×100 (multiplicadores se multiplicam entre rolos) |
+| **Surto Freaky** | no base, o gorila joga 2 a 5 wilds ×2 na tela |
+| **Festa Freaky** | 3 globos, 10 rodadas, gorilas com multiplicador — compra 100× |
+| **Rave Sigma** | 4+ globos, camelo só lambe e a língua gruda até o fim — compra 500× |
+| **FeatureSpins** | Caçada Freaky (3×, bônus ~4× mais) · Língua Garantida (2×) |
+| **RTP** | 96,50% em todos os 5 modos |
+
+Regras, matemática, calibragem e integração com a Stake Engine:
+**[docs/FREAKY_ZOO.md](docs/FREAKY_ZOO.md)**.
+Prompts para gerar as ilustrações dos ícones:
+**[docs/FREAKY_PROMPTS.md](docs/FREAKY_PROMPTS.md)**.
+
+---
+
+## 👑 Fortuna Real
+
+Slot 6×5 de pagamento por dispersão, com cascatas e orbes multiplicadores. O
+objetivo é servir de referência de como a matemática de um slot moderno é
+construída, calibrada e auditada.
 
 ![Rodadas grátis com multiplicador global acumulado](docs/captura-bonus.png)
 
 ```bash
-npm test        # 115 testes
-npm run serve   # abre a interface em http://localhost:8080
-npm run bundle  # gera dist/fortuna-real.html — arquivo único, roda no celular
 npm run sim     # simulação de Monte Carlo com relatório
 npm run tune    # verificação do RTP com intervalos de confiança
 ```
 
-### Rodando no celular
+#### Rodando no celular
 
 `npm run bundle` empacota os dez módulos ESM em um HTML de ~104 KB sem
 dependência nenhuma. O arquivo abre por `file://`, sobe em qualquer hospedagem
@@ -31,7 +69,7 @@ tela deitada.
 
 ---
 
-## O jogo
+### O jogo
 
 | | |
 |---|---|
@@ -46,7 +84,7 @@ tela deitada.
 | **RTP** | 96,50% (alvo) — medido em todos os modos, ver `docs/MATH.md` |
 | **Temas** | Fortuna Real (pedras e ouro) e Arraiá da Sorte (festa junina) |
 
-### Temas
+#### Temas
 
 ![Tema Arraiá da Sorte durante as rodadas grátis](docs/captura-arraia.png)
 
@@ -69,7 +107,7 @@ Registro da revisão de código, incluindo os bugs encontrados:
 
 ---
 
-## Arquitetura
+### Arquitetura
 
 ```
 src/engine/     motor puro — sem DOM, sem estado global, sem Math.random
@@ -92,7 +130,7 @@ src/ui/         interface (ESM puro, sem bundler)
   themes.js       aparência: nomes, cores e arte por tema
   reveal.js       ritmo da revelação e antecipação — lógica pura, sem DOM
 tools/          servidor estático e verificador de RTP
-test/           115 testes com o runner nativo do Node
+test/           testes com o runner nativo do Node (freaky-*.test.js são do Freaky Zoo)
 ```
 
 O princípio que organiza tudo: **o motor é uma função pura de
@@ -101,14 +139,14 @@ carteira nem o que é um pixel. Por isso a mesma linha de código que roda no
 navegador roda 40 milhões de vezes no simulador, e o RTP medido é o RTP que o
 jogador recebe — não há um "modo simulação" que se comporte diferente.
 
-### Dinheiro é sempre inteiro
+#### Dinheiro é sempre inteiro
 
 Todo valor monetário é um inteiro em centavos, e todo prêmio é um inteiro em
 centésimos da aposta. As apostas são múltiplas de 20 centavos e os prêmios
 múltiplos de 5, o que torna toda conversão exata — sem arredondamento. Um teste
 percorre o produto cartesiano de apostas × prêmios para provar isso.
 
-### Aleatoriedade injetada
+#### Aleatoriedade injetada
 
 Nenhum módulo chama `Math.random`. O gerador entra por parâmetro, o que dá três
 propriedades: rodadas reproduzíveis a partir de uma semente, simulação
@@ -117,7 +155,7 @@ tocar na lógica do jogo.
 
 ---
 
-## Verificação justa (*provably fair*)
+### Verificação justa (*provably fair*)
 
 Cada rodada usa `HMAC-SHA256(sementeServidor, sementeCliente:nonce:bloco)`.
 O hash da semente do servidor é publicado **antes** das rodadas; ao revelá-la,
@@ -127,13 +165,13 @@ pedir a revelação a qualquer momento.
 
 ---
 
-## Comandos
+### Comandos
 
 | Comando | O que faz |
 |---|---|
 | `npm test` | suíte completa (~22 s) |
 | `npm run serve` | servidor estático da interface |
-| `npm run bundle` | gera `dist/fortuna-real.html`, arquivo único que abre com duplo clique |
+| `npm run bundle` | gera `dist/fortuna-real.html` e `dist/freaky-zoo.html`, arquivos únicos que abrem com duplo clique |
 | `npm run sim` | 200.000 rodadas, com histograma de ganhos |
 | `npm run sim -- --spins 2000000 --all` | todos os modos |
 | `npm run sim -- --json` | saída legível por máquina |
@@ -144,7 +182,7 @@ pedir a revelação a qualquer momento.
 
 ---
 
-## Jogo responsável
+### Jogo responsável
 
 Este projeto é material de estudo. Slots reais são jogos de azar com valor
 esperado negativo para o jogador: mesmo a 96,5% de RTP, a expectativa é perder

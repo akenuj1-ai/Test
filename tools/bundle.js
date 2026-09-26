@@ -2,9 +2,12 @@
 /**
  * Empacotador de arquivo único.
  *
- *   node tools/bundle.js
+ *   node tools/bundle.js                 (Fortuna Real)
  *   -> dist/fortuna-real.html   página completa, abre com duplo clique
  *   -> dist/artifact.html       o mesmo conteúdo sem <html>/<head>/<body>
+ *
+ *   node tools/bundle.js --game freaky   (Freaky Zoo)
+ *   -> dist/freaky-zoo.html, dist/freaky-zoo-artifact.html
  *
  * Por que existe: a interface é ESM puro em vários arquivos, o que é bom para
  * ler e testar, mas exige um servidor HTTP. Para mandar o jogo para um celular
@@ -32,10 +35,22 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const SRC = resolve(ROOT, 'src');
-const ENTRY = resolve(SRC, 'ui/app.js');
-const HTML = resolve(SRC, 'ui/index.html');
-const CSS = resolve(SRC, 'ui/styles.css');
 const OUT_DIR = resolve(ROOT, 'dist');
+
+/**
+ * Jogos que o empacotador conhece. `node tools/bundle.js --game freaky`.
+ * @type {Record<string, { ui: string, page: string, artifact: string, title: string }>}
+ */
+const GAMES = {
+  fortuna: { ui: 'ui', page: 'fortuna-real.html', artifact: 'artifact.html', title: 'Fortuna Real' },
+  freaky: { ui: 'freaky/ui', page: 'freaky-zoo.html', artifact: 'freaky-zoo-artifact.html', title: 'Freaky Zoo' },
+};
+const gameArg = process.argv.indexOf('--game');
+const GAME = GAMES[gameArg >= 0 ? process.argv[gameArg + 1] : 'fortuna'];
+if (!GAME) throw new Error(`Jogo desconhecido. Opções: ${Object.keys(GAMES).join(', ')}`);
+const ENTRY = resolve(SRC, GAME.ui, 'app.js');
+const HTML = resolve(SRC, GAME.ui, 'index.html');
+const CSS = resolve(SRC, GAME.ui, 'styles.css');
 
 /**
  * Formas de import/export que este empacotador não aceita.
@@ -179,7 +194,7 @@ __mod(${JSON.stringify(idDe(ENTRY))});
 `;
 
   // Extrai <title>, o conteúdo do <body> e as tags que valem a pena manter.
-  const titulo = /<title>([\s\S]*?)<\/title>/i.exec(html)?.[1] ?? 'Fortuna Real';
+  const titulo = /<title>([\s\S]*?)<\/title>/i.exec(html)?.[1] ?? GAME.title;
   const descricao = /<meta name="description" content="([^"]*)"/i.exec(html)?.[1] ?? '';
   const favicon = /<link rel="icon"[^>]*>/i.exec(html)?.[0] ?? '';
 
@@ -218,14 +233,14 @@ ${conteudo.slice(conteudo.indexOf('\n\n', conteudo.indexOf('</style>')) + 2)}
 `;
 
   await mkdir(OUT_DIR, { recursive: true });
-  await writeFile(resolve(OUT_DIR, 'fortuna-real.html'), paginaCompleta);
-  await writeFile(resolve(OUT_DIR, 'artifact.html'), `${conteudo}\n`);
+  await writeFile(resolve(OUT_DIR, GAME.page), paginaCompleta);
+  await writeFile(resolve(OUT_DIR, GAME.artifact), `${conteudo}\n`);
 
   const kb = (/** @type {string} */ t) => `${(Buffer.byteLength(t) / 1024).toFixed(0)} KB`;
   console.log(`${modulos.size} módulos empacotados:`);
   for (const m of modulos.values()) console.log(`  ${m.id.padEnd(22)} ${m.exports.length} exports`);
-  console.log(`\ndist/fortuna-real.html  ${kb(paginaCompleta)}  (página completa)`);
-  console.log(`dist/artifact.html      ${kb(conteudo)}  (sem html/head/body)`);
+  console.log(`\ndist/${GAME.page}  ${kb(paginaCompleta)}  (página completa)`);
+  console.log(`dist/${GAME.artifact}  ${kb(conteudo)}  (sem html/head/body)`);
 }
 
 await main();

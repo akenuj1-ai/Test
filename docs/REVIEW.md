@@ -179,3 +179,83 @@ função nomeada `fallingColumns`.
    ganho do giro base também conta para o teto, então `E[bônus | disparado]` é
    marginalmente menor que `E[bônus | comprado]`. O efeito é da ordem de
    1 em 59.000 rodadas de bônus e está abaixo do erro de medição, mas existe.
+
+---
+
+# Freaky Zoo — registro de construção
+
+Mesmo método: cada achado fechado por um teste ou por uma medição que falharia
+sem a correção.
+
+### F1. Primeira configuração pagava 760% de RTP — crítico
+
+Tabela de prêmios "de ways" com valores usuais (0,05× a 10× por way). Com só 7
+símbolos pagantes em 4 linhas, cada símbolo aparece em ~0,7 célula por rolo e
+o número esperado de ways longos é alto: o 6-de-um-tipo do Leão sozinho
+respondia por 230% de RTP e o acerto era de 77%.
+
+Correção: símbolos em **pilhas** (acerto de 77% para 28%, sem mudar o valor
+esperado de ways — rolos independentes), contagens de fita mais equilibradas,
+menos gorilas no base e tabela em centésimos da aposta por way. A decisão de
+manter só A, K, Q, J como baixos, e o custo disso (prêmios pequenos por way),
+está explicada em FREAKY_ZOO.md.
+
+### F2. Rave Sigma valia o mesmo que a Festa — alto
+
+Com 1 camelo por rolo, a Rave (500×) pagava em média 66×: rolos grudados são
+poderosos, mas quase nunca apareciam a tempo. Resolvido com 2 camelos por rolo
+na fita FRS; a média foi para ~460× antes do ajuste fino pelo `tilt`.
+
+### F3. Reponderação linear gerava peso negativo — alto
+
+A primeira versão do ajuste de RTP da biblioteca usava a reponderação de
+qui-quadrado mínimo (w·(1 + ε·(x − μ))). Com amostra pequena e cauda pesada,
+o ε necessário deixava negativo o peso das rodadas mais altas. Trocada pela
+inclinação exponencial (entropia mínima), que nunca gera peso negativo, e
+depois por um ajuste em dois passos (média verdadeira de cada balde, depois um
+resíduo global), que reduziu os fatores de peso do base de até 2,0 para 1,6.
+
+### F4. Verificação da biblioteca estourava a memória — médio
+
+A checagem descomprimia o book inteiro numa string. O book da Festa passa de
+512 MB descomprimido — o limite de uma string no V8 — e o script caía com
+`ERR_STRING_TOO_LONG` depois de 3 minutos de trabalho. Agora a verificação lê
+por streaming (zstd → readline). Os eventos também passaram a carregar só a
+diferença da grade, o que cortou o tamanho dos books pela metade.
+
+### F5. Secante oscilava no ruído de Monte Carlo — médio
+
+Cada avaliação de E[bônus] usava uma semente nova; o ruído (±0,4%) era da
+mesma ordem do passo, e a secante da Rave andou 8 iterações sem convergir e
+devolveu um valor nunca medido. Corrigido com números aleatórios comuns
+(mesma semente em todas as avaliações): converge em 3 passos. A medição final
+usa outra semente, para o intervalo de confiança não sair otimista.
+
+### F6. Rolo grudado aparecia como gorila — baixo
+
+Na Rave, o rolo que grudou num giro anterior voltava como `{W, sticky}` sem a
+marca de língua, e a peça desenhava um gorila com o selo "GRUDOU". Encontrado
+nas capturas do Chromium. A peça agora trata `sticky` como língua.
+
+### F7. Cartas com nome duplicado no texto do ganho — baixo
+
+"J J ×6": para cartas o emoji e o nome são a mesma letra. Corrigido no texto.
+
+## Verificado e correto (Freaky Zoo)
+
+- **Interface = motor**: em dezenas de milhares de giros de todos os modos, a
+  grade reconstruída pelos eventos (`board-model.js`) reavaliada pelos ways dá
+  exatamente o `totalWin` do book.
+- **Probabilidades exatas**: chance de globo por rolo conferida por
+  enumeração de todas as paradas; distribuição de globos conferida contra
+  Monte Carlo.
+- **Especiais nunca empilham**: toda parada de toda fita mostra no máximo um
+  globo ou camelo.
+- **Teto**: com teto artificial de 50×, toda rodada que bate trava no valor e
+  termina com `wincap` + `finalWin`.
+- **Contabilidade** em micro-unidades fecha exata em todos os modos e níveis de
+  aposta.
+- **Biblioteca da Stake**: ids, payouts do CSV e dos books, `finalWin`,
+  `uint64` e regras de aprovação conferidos a cada exportação.
+- **Tipos**: `src/freaky/` e `tools/freaky-*` passam em `tsc --strict` com
+  `@types/node`.

@@ -1,7 +1,7 @@
 {
   "name": "fortuna-real",
   "version": "1.0.0",
-  "description": "Motor de slot 6x5 com pagamento por dispersao, tumble, rodadas gratis, compra de bonus, teto de ganho maximo e verificacao de RTP por Monte Carlo.",
+  "description": "Dois slots de estudo: Fortuna Real (6x5, pay anywhere) e Freaky Zoo (6x4, 4096 ways, compativel com a Stake Engine). Motor puro, RTP calibrado e verificado, interface jogavel.",
   "type": "module",
   "private": true,
   "engines": {
@@ -13,8 +13,12 @@
     "sim:full": "node src/sim/cli.js --spins 2000000 --all",
     "tune": "node tools/tune.js",
     "serve": "node tools/serve.js",
-    "bundle": "node tools/bundle.js",
-    "typecheck": "tsc -p jsconfig.json"
+    "bundle": "node tools/bundle.js && node tools/bundle.js --game freaky",
+    "typecheck": "tsc -p jsconfig.json",
+    "freaky:sim": "node tools/freaky-sim.js",
+    "freaky:tune": "node tools/freaky-tune.js",
+    "freaky:stake": "node tools/freaky-stake.js",
+    "freaky:bundle": "node tools/bundle.js --game freaky"
   },
   "license": "MIT"
 }

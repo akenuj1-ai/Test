@@ -1,0 +1,16 @@
+{
+  "name": "vaga-certa",
+  "version": "0.1.0",
+  "description": "Busca de emprego para o Brasil: junta vagas, calcula a chance de cada uma, adapta o currículo e prepara para a entrevista.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "serve": "node tools/serve.js",
+    "bundle": "node tools/bundle.js"
+  },
+  "license": "MIT"
+}

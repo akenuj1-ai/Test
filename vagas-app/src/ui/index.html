@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>VagaCerta</title>
+  <meta name="description" content="Encontre vagas no Brasil com a sua chance real em cada uma, currículo adaptado, preparação para entrevista e alerta de golpe." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%231F4FA3' stroke-width='3'/%3E%3Cpath d='M10 16l4 4 8-9' fill='none' stroke='%231F4FA3' stroke-width='3'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@600;700&display=swap" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topo">
+      <div class="marca">
+        <span class="selo-marca" aria-hidden="true">✓</span>
+        <div>
+          <p class="nome-marca">VagaCerta</p>
+          <p class="sub-marca">Emprego com chance real</p>
+        </div>
+      </div>
+      <div class="topo-acoes">
+        <button type="button" class="botao-leve" id="btn-letra" aria-pressed="false" title="Aumentar o tamanho da letra">A+ Letra grande</button>
+        <span class="pilula-plano" id="pilula-plano">Plano Grátis</span>
+      </div>
+    </header>
+
+    <nav class="abas" aria-label="Seções">
+      <button type="button" class="aba" data-aba="vagas" aria-current="page">Vagas</button>
+      <button type="button" class="aba" data-aba="perfil">Meu perfil</button>
+      <button type="button" class="aba" data-aba="candidaturas">Candidaturas <span class="contador" id="cont-cand">0</span></button>
+      <button type="button" class="aba" data-aba="planos">Planos</button>
+    </nav>
+
+    <main>
+      <!-- VAGAS -->
+      <section id="tela-vagas" class="tela">
+        <div class="aviso-exemplo" id="aviso-exemplo">
+          <strong>Perfil de exemplo:</strong> José, 56 anos, motorista em São Paulo.
+          <button type="button" class="link" data-ir="perfil">Trocar pelo seu perfil</button>
+        </div>
+
+        <form class="filtros" id="form-filtros" autocomplete="off">
+          <div class="campo campo-busca">
+            <label for="f-texto">Cargo, habilidade ou empresa</label>
+            <input id="f-texto" type="search" placeholder="Ex.: motorista, excel, portaria" />
+          </div>
+          <div class="campo">
+            <label for="f-uf">Estado</label>
+            <select id="f-uf"><option value="">Todos</option></select>
+          </div>
+          <div class="campo">
+            <label for="f-contrato">Contrato</label>
+            <select id="f-contrato">
+              <option value="">Todos</option>
+              <option>CLT</option><option>PJ</option><option>Estágio</option><option>Temporário</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="f-ordem">Ordenar por</label>
+            <select id="f-ordem">
+              <option value="chance">Maior chance</option>
+              <option value="recentes">Mais recentes</option>
+              <option value="salario">Maior salário</option>
+            </select>
+          </div>
+          <fieldset class="chips">
+            <legend>Modalidade</legend>
+            <label class="chip"><input type="checkbox" id="f-presencial" value="presencial" /> Presencial</label>
+            <label class="chip"><input type="checkbox" id="f-hibrido" value="hibrido" /> Híbrido</label>
+            <label class="chip"><input type="checkbox" id="f-remoto" value="remoto" /> Remoto</label>
+          </fieldset>
+          <fieldset class="chips">
+            <legend>Mais filtros</legend>
+            <label class="chip"><input type="checkbox" id="f-50" /> Valoriza 50+</label>
+            <label class="chip"><input type="checkbox" id="f-recentes" /> Últimos 3 dias</label>
+            <label class="chip"><input type="checkbox" id="f-golpe" /> Esconder suspeitas</label>
+          </fieldset>
+        </form>
+
+        <p class="resumo-busca" id="resumo-busca" aria-live="polite"></p>
+        <ol class="lista-vagas" id="lista-vagas"></ol>
+      </section>
+
+      <!-- PERFIL -->
+      <section id="tela-perfil" class="tela" hidden>
+        <div class="cabeca-tela">
+          <h1>Meu perfil</h1>
+          <p>Quanto mais completo, mais certa fica a nota de chance. Nada aqui é inventado no currículo: ele só usa o que você escrever.</p>
+        </div>
+        <form id="form-perfil" class="form-perfil" autocomplete="on">
+          <div class="grade">
+            <div class="campo"><label for="p-nome">Nome completo</label><input id="p-nome" name="name" /></div>
+            <div class="campo"><label for="p-cargo">Cargo que procura</label><input id="p-cargo" placeholder="Ex.: Motorista" /></div>
+            <div class="campo"><label for="p-area">Área</label><select id="p-area"></select></div>
+            <div class="campo"><label for="p-cidade">Cidade</label><input id="p-cidade" name="address-level2" /></div>
+            <div class="campo"><label for="p-uf">Estado</label><select id="p-uf"></select></div>
+            <div class="campo"><label for="p-anos">Anos de experiência</label><input id="p-anos" type="number" min="0" max="60" inputmode="numeric" /></div>
+            <div class="campo"><label for="p-esc">Escolaridade</label><select id="p-esc"></select></div>
+            <div class="campo"><label for="p-sal">Salário mínimo desejado (R$/mês)</label><input id="p-sal" type="number" min="0" step="50" inputmode="numeric" placeholder="0 = tanto faz" /></div>
+            <div class="campo">
+              <label for="p-remoto">Trabalho remoto</label>
+              <select id="p-remoto">
+                <option value="tanto-faz">Aceito presencial e remoto</option>
+                <option value="nao">Prefiro presencial</option>
+                <option value="sim">Só remoto</option>
+              </select>
+            </div>
+            <div class="campo"><label for="p-tel">Telefone</label><input id="p-tel" name="tel" inputmode="tel" /></div>
+            <div class="campo"><label for="p-email">E-mail</label><input id="p-email" name="email" type="email" /></div>
+            <label class="chip chip-grande"><input type="checkbox" id="p-cnh" /> Tenho CNH</label>
+          </div>
+          <div class="campo">
+            <label for="p-hab">Habilidades (separe por vírgula)</label>
+            <textarea id="p-hab" rows="2" placeholder="Ex.: direção defensiva, atendimento ao cliente, excel"></textarea>
+          </div>
+          <div class="campo">
+            <label for="p-resumo">Resumo sobre você (opcional)</label>
+            <textarea id="p-resumo" rows="3" placeholder="Duas ou três frases sobre sua experiência e o que você faz bem."></textarea>
+          </div>
+          <div class="experiencias">
+            <div class="linha-titulo">
+              <h2>Experiências</h2>
+              <button type="button" class="botao-leve" id="btn-add-exp">+ Adicionar</button>
+            </div>
+            <ol id="lista-exp" class="lista-exp"></ol>
+          </div>
+          <div class="acoes-form">
+            <button type="submit" class="botao">Salvar perfil e ver vagas</button>
+            <button type="button" class="botao-leve" id="btn-limpar">Começar do zero</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- CANDIDATURAS -->
+      <section id="tela-candidaturas" class="tela" hidden>
+        <div class="cabeca-tela">
+          <h1>Candidaturas</h1>
+          <p>Veja onde cada vaga está e qual o próximo passo.</p>
+        </div>
+        <div id="alerta-retorno"></div>
+        <div id="quadro" class="quadro"></div>
+      </section>
+
+      <!-- PLANOS -->
+      <section id="tela-planos" class="tela" hidden>
+        <div class="cabeca-tela">
+          <h1>Planos</h1>
+          <p>Buscar vagas e ver sua chance é sempre grátis. O Pro é para quem quer acelerar.</p>
+        </div>
+        <div class="planos" id="planos"></div>
+        <p class="nota-rodape">Protótipo: a assinatura aqui é simulada e nenhum pagamento é feito. Pix e cartão entram na próxima versão.</p>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <p id="rodape-fonte">Vagas de exemplo fictícias, para demonstração.</p>
+    </footer>
+  </div>
+
+  <dialog id="detalhe" class="detalhe" aria-labelledby="d-titulo">
+    <div class="detalhe-corpo" id="detalhe-corpo"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

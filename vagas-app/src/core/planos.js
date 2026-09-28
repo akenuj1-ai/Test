@@ -9,13 +9,14 @@
  */
 
 /** @typedef {'curriculo' | 'carta' | 'entrevista' | 'alerta'} Recurso */
-/** @typedef {'gratis' | 'pro'} IdPlano */
+/** @typedef {'gratis' | 'pro' | 'anual'} IdPlano */
 
 /**
  * @typedef {Object} Plano
  * @property {IdPlano} id
  * @property {string} nome
- * @property {number} precoMensal     centavos
+ * @property {number} precoMensal     centavos cobrados por mês (anual: equivalente mensal)
+ * @property {number} [precoAnual]     centavos cobrados de uma vez, só no anual
  * @property {Record<Recurso, number>} limiteDiario  Infinity = ilimitado
  * @property {string[]} inclui
  */
@@ -48,7 +49,32 @@ export const PLANOS = {
       'Pausa grátis quando você for contratado',
     ],
   },
+  anual: {
+    id: 'anual',
+    nome: 'Pro Anual',
+    precoMensal: 1242,
+    precoAnual: 14900,
+    limiteDiario: { curriculo: Infinity, carta: Infinity, entrevista: Infinity, alerta: Infinity },
+    inclui: [
+      'Tudo do Pro',
+      'Pague uma vez e fique tranquilo o ano todo',
+      'Pausa grátis quando você for contratado',
+    ],
+  },
 };
+
+/** Teste grátis do Pro, sem cobrança se cancelar antes. */
+export const DIAS_TESTE = 7;
+
+/** Quanto o anual economiza em relação a 12 meses do Pro mensal (centavos e %). */
+export function economiaAnual() {
+  const cheio = PLANOS.pro.precoMensal * 12;
+  const anual = /** @type {number} */ (PLANOS.anual.precoAnual);
+  return { centavos: cheio - anual, porcento: Math.round(((cheio - anual) / cheio) * 100) };
+}
+
+/** @param {IdPlano} plano */
+export const ehPago = (plano) => plano !== 'gratis';
 
 /** Garantia: devolução integral se pedir nos primeiros dias. */
 export const DIAS_GARANTIA = 7;

@@ -1,25 +1,40 @@
 #!/usr/bin/env node
 /**
- * Servidor do protótipo: entrega a interface e a rota /api/vagas.
+ * Servidor do protótipo: interface, busca de vagas e funil de conversão.
  *
- *   node tools/serve.js
- *   ADZUNA_APP_ID=... ADZUNA_APP_KEY=... node tools/serve.js   # vagas reais
+ *   node tools/serve.js                        # vagas de exemplo
+ *   ADZUNA_APP_ID=.. ADZUNA_APP_KEY=.. \
+ *   JOOBLE_KEY=.. CAREERJET_AFFID=.. \
+ *   PAINEL_CHAVE=segredo node tools/serve.js    # vagas reais + painel protegido
  *
- * Sem as chaves, /api/vagas devolve as vagas de exemplo. Com as chaves,
+ * Rotas:
+ *   GET  /api/vagas?q=&onde=&pagina=   vagas (reais se houver chave, senão exemplo)
+ *   POST /api/eventos                  registra um clique do funil
+ *   GET  /api/funil?chave=             funil de conversão (exige PAINEL_CHAVE)
+ *
+ * Sem chave nenhuma, /api/vagas devolve só as vagas de exemplo. Com chave,
  * devolve só vagas reais: vaga fictícia nunca se mistura com vaga real.
  */
 
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, stat, appendFile, mkdir } from 'node:fs/promises';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { timingSafeEqual } from 'node:crypto';
 import { vagasDeExemplo } from '../src/core/exemplos.js';
 import { buscarAdzuna } from '../src/sources/adzuna.js';
+import { buscarJooble } from '../src/sources/jooble.js';
+import { buscarCareerjet } from '../src/sources/careerjet.js';
+import { criarAgregador } from '../src/sources/agregador.js';
+import { validarEvento, registrar, funil } from '../src/core/metricas.js';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
+const DADOS = resolve(ROOT, 'dados');
+const ARQ_EVENTOS = resolve(DADOS, 'eventos.jsonl');
 const PORT = Number(process.env.PORT ?? 8080);
 const INDEX = '/src/ui/index.html';
-const { ADZUNA_APP_ID, ADZUNA_APP_KEY } = process.env;
+const LIMITE_CORPO = 4 * 1024;
+const env = process.env;
 
 /** @type {Record<string, string>} */
 const TYPES = {
@@ -30,19 +45,80 @@ const TYPES = {
   '.svg': 'image/svg+xml',
 };
 
-/**
- * @param {URL} url
- */
-async function vagas(url) {
-  if (!ADZUNA_APP_ID || !ADZUNA_APP_KEY) return { fonte: 'exemplo', vagas: vagasDeExemplo() };
-  const lista = await buscarAdzuna({
-    what: url.searchParams.get('q') ?? '',
-    where: url.searchParams.get('onde') ?? '',
-    appId: ADZUNA_APP_ID,
-    appKey: ADZUNA_APP_KEY,
-  });
-  return { fonte: 'adzuna', vagas: lista };
+/* --- fontes de vagas -------------------------------------------------- */
+
+/** @type {import('../src/sources/agregador.js').Fonte[]} */
+const fontes = [];
+if (env.ADZUNA_APP_ID && env.ADZUNA_APP_KEY) {
+  const appId = env.ADZUNA_APP_ID;
+  const appKey = env.ADZUNA_APP_KEY;
+  fontes.push({ nome: 'Adzuna', buscar: (p) => buscarAdzuna({ ...p, appId, appKey }) });
 }
+if (env.JOOBLE_KEY) {
+  const chave = env.JOOBLE_KEY;
+  fontes.push({ nome: 'Jooble', buscar: (p) => buscarJooble({ ...p, chave }) });
+}
+if (env.CAREERJET_AFFID) {
+  const affid = env.CAREERJET_AFFID;
+  fontes.push({ nome: 'Careerjet', buscar: (p) => buscarCareerjet({ ...p, affid }) });
+}
+const agregador = criarAgregador({ fontes });
+
+/** @param {URL} url */
+async function vagas(url) {
+  if (fontes.length === 0) return { fonte: 'exemplo', fontes: [], vagas: vagasDeExemplo() };
+  const r = await agregador.buscar({
+    what: (url.searchParams.get('q') ?? '').slice(0, 100),
+    where: (url.searchParams.get('onde') ?? '').slice(0, 60),
+    pagina: Math.min(10, Math.max(1, Number(url.searchParams.get('pagina')) || 1)),
+  });
+  return { fonte: 'ao-vivo', ...r };
+}
+
+/* --- eventos do funil ------------------------------------------------- */
+
+/** @type {import('../src/core/metricas.js').Evento[]} */
+let eventos = [];
+try {
+  const texto = await readFile(ARQ_EVENTOS, 'utf8');
+  for (const linha of texto.split('\n')) if (linha) eventos = registrar(eventos, JSON.parse(linha));
+} catch {
+  // primeiro uso: ainda não há arquivo
+}
+
+/** @param {import('node:http').IncomingMessage} req */
+function lerCorpo(req) {
+  return new Promise((ok, falha) => {
+    let tamanho = 0;
+    /** @type {Buffer[]} */
+    const partes = [];
+    req.on('data', (/** @type {Buffer} */ c) => {
+      tamanho += c.length;
+      if (tamanho > LIMITE_CORPO) { falha(new Error('corpo grande demais')); req.destroy(); return; }
+      partes.push(c);
+    });
+    req.on('end', () => ok(Buffer.concat(partes).toString('utf8')));
+    req.on('error', falha);
+  });
+}
+
+/** @param {string} recebida */
+function chaveDoPainelConfere(recebida) {
+  const certa = env.PAINEL_CHAVE;
+  if (!certa) return false;
+  const a = Buffer.from(recebida);
+  const b = Buffer.from(certa);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
+/* --- servidor ----------------------------------------------------------- */
+
+/**
+ * @param {import('node:http').ServerResponse} res
+ * @param {number} status
+ * @param {unknown} corpo
+ */
+const json = (res, status, corpo) => res.writeHead(status, { 'content-type': TYPES['.json'], 'cache-control': 'no-store' }).end(JSON.stringify(corpo));
 
 const server = createServer(
   /**
@@ -52,13 +128,36 @@ const server = createServer(
   async (req, res) => {
     const url = new URL(req.url ?? '/', 'http://localhost');
 
-    if (url.pathname === '/api/vagas') {
+    if (url.pathname === '/api/vagas' && req.method === 'GET') {
       try {
-        res.writeHead(200, { 'content-type': TYPES['.json'] }).end(JSON.stringify(await vagas(url)));
+        json(res, 200, await vagas(url));
       } catch (erro) {
         console.error(erro);
-        res.writeHead(502, { 'content-type': TYPES['.json'] }).end(JSON.stringify({ erro: 'Fonte de vagas indisponível' }));
+        json(res, 502, { erro: 'Fonte de vagas indisponível' });
       }
+      return;
+    }
+
+    if (url.pathname === '/api/eventos' && req.method === 'POST') {
+      try {
+        const evento = validarEvento(JSON.parse(await lerCorpo(req)), Date.now());
+        if (!evento) { json(res, 400, { erro: 'evento inválido' }); return; }
+        eventos = registrar(eventos, evento);
+        await mkdir(DADOS, { recursive: true });
+        await appendFile(ARQ_EVENTOS, `${JSON.stringify(evento)}\n`);
+        res.writeHead(204).end();
+      } catch {
+        json(res, 400, { erro: 'evento inválido' });
+      }
+      return;
+    }
+
+    if (url.pathname === '/api/funil' && req.method === 'GET') {
+      if (!chaveDoPainelConfere(url.searchParams.get('chave') ?? '')) {
+        json(res, 403, { erro: 'Defina PAINEL_CHAVE no servidor e passe ?chave=' });
+        return;
+      }
+      json(res, 200, { total: eventos.length, funil: funil(eventos) });
       return;
     }
 
@@ -70,10 +169,9 @@ const server = createServer(
     }
 
     try {
-      const path = url.pathname;
-      // impede escapar da raiz via ".." antes de qualquer acesso ao disco
-      const target = resolve(ROOT, `.${normalize(path)}`);
-      if (target !== ROOT && !target.startsWith(ROOT + sep)) {
+      // impede escapar da raiz via ".." e esconde a pasta de dados
+      const target = resolve(ROOT, `.${normalize(url.pathname)}`);
+      if ((target !== ROOT && !target.startsWith(ROOT + sep)) || target.startsWith(DADOS)) {
         res.writeHead(403).end('403');
         return;
       }
@@ -91,6 +189,7 @@ const server = createServer(
 );
 
 server.listen(PORT, () => {
-  const modo = ADZUNA_APP_ID ? 'vagas reais (Adzuna)' : 'vagas de exemplo';
+  const modo = fontes.length ? `vagas reais (${fontes.map((f) => f.nome).join(', ')})` : 'vagas de exemplo';
   console.log(`VagaCerta em http://localhost:${PORT}${INDEX} — ${modo}`);
+  if (!env.PAINEL_CHAVE) console.log('Painel do funil desligado: defina PAINEL_CHAVE para ver /api/funil.');
 });

@@ -5,7 +5,8 @@
  * servir à interface, ao servidor e aos testes.
  */
 
-import { normalizar, palavras } from './text.js';
+import { normalizar } from './text.js';
+import { relevancia } from './relevancia.js';
 import { calcularChance } from './match.js';
 import { alertasDeGolpe } from './golpe.js';
 
@@ -23,7 +24,7 @@ import { alertasDeGolpe } from './golpe.js';
  * @property {number} [diasMax]         publicadas nos últimos N dias
  * @property {boolean} [so50mais]       só empresas que valorizam experiência
  * @property {boolean} [esconderSuspeitas]
- * @property {'chance' | 'recentes' | 'salario'} [ordenar]
+ * @property {'relevancia' | 'chance' | 'recentes' | 'salario'} [ordenar]  padrão: relevância com texto, chance com perfil
  */
 
 /**
@@ -31,6 +32,7 @@ import { alertasDeGolpe } from './golpe.js';
  * @property {Vaga} vaga
  * @property {import('./match.js').Resultado | null} chance  null sem perfil
  * @property {import('./golpe.js').Alerta[]} alertas
+ * @property {number} relevancia     o quanto casa com o texto buscado (0 = não casa)
  */
 
 /**
@@ -49,17 +51,6 @@ export function removerRepetidas(vagas) {
 }
 
 /**
- * @param {Vaga} vaga
- * @param {string} texto
- */
-function casaTexto(vaga, texto) {
-  const termos = palavras(texto);
-  if (termos.length === 0) return true;
-  const alvo = normalizar([vaga.titulo, vaga.empresa, vaga.area, vaga.cidade, ...vaga.requisitos, ...vaga.diferenciais].join(' '));
-  return termos.every((t) => alvo.includes(t));
-}
-
-/**
  * @param {Vaga[]} vagas
  * @param {Filtros} filtros
  * @param {Perfil | null} perfil
@@ -73,7 +64,8 @@ export function buscar(vagas, filtros, perfil, hoje = new Date()) {
   /** @type {ItemBusca[]} */
   const itens = [];
   for (const vaga of removerRepetidas(vagas)) {
-    if (f.texto && !casaTexto(vaga, f.texto)) continue;
+    const rel = f.texto ? relevancia(vaga, f.texto) : 1;
+    if (rel === 0) continue;
     if (f.uf && vaga.uf !== f.uf && vaga.modalidade !== 'remoto') continue;
     if (f.modalidades?.length && !f.modalidades.includes(vaga.modalidade)) continue;
     if (f.contratos?.length && !f.contratos.includes(vaga.contrato)) continue;
@@ -84,10 +76,12 @@ export function buscar(vagas, filtros, perfil, hoje = new Date()) {
     const alertas = alertasDeGolpe(vaga);
     if (f.esconderSuspeitas && alertas.some((a) => a.nivel === 'grave')) continue;
 
-    itens.push({ vaga, chance: perfil ? calcularChance(perfil, vaga) : null, alertas });
+    itens.push({ vaga, chance: perfil ? calcularChance(perfil, vaga) : null, alertas, relevancia: rel });
   }
 
-  const ordem = f.ordenar ?? (perfil ? 'chance' : 'recentes');
+  const ordem = f.ordenar ?? (f.texto?.trim() ? 'relevancia' : perfil ? 'chance' : 'recentes');
+  // relevância pura empataria demais; a chance desempata e dá peso ao perfil
+  const pontuacao = (/** @type {ItemBusca} */ i) => i.relevancia * 100 + (i.chance?.nota ?? 0) * 0.5;
   const recentes = (/** @type {ItemBusca} */ a, /** @type {ItemBusca} */ b) => b.vaga.publicadaEm.localeCompare(a.vaga.publicadaEm);
   const suspeita = (/** @type {ItemBusca} */ i) => (i.alertas.some((a) => a.nivel === 'grave') ? 1 : 0);
 
@@ -95,6 +89,7 @@ export function buscar(vagas, filtros, perfil, hoje = new Date()) {
     // vaga suspeita vai sempre para o fim, qualquer que seja a ordem
     const s = suspeita(a) - suspeita(b);
     if (s !== 0) return s;
+    if (ordem === 'relevancia') return pontuacao(b) - pontuacao(a) || recentes(a, b);
     if (ordem === 'chance') return (b.chance?.nota ?? 0) - (a.chance?.nota ?? 0) || recentes(a, b);
     if (ordem === 'salario') return (b.vaga.salarioMax ?? b.vaga.salarioMin ?? 0) - (a.vaga.salarioMax ?? a.vaga.salarioMin ?? 0) || recentes(a, b);
     return recentes(a, b);

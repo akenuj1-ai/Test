@@ -67,3 +67,13 @@ test('nota é sempre inteira entre 0 e 100 para todo par perfil × vaga', () => 
     assert.ok(Number.isInteger(nota) && nota >= 0 && nota <= 100, `${v.id}: ${nota}`);
   }
 });
+
+test('partes somam a nota quando não há eliminatório', () => {
+  for (const v of vagas) {
+    const r = calcularChance(motorista(), v);
+    if (r.eliminatorio) continue;
+    const soma = Object.values(r.partes).reduce((a, b) => a + b, 0);
+    assert.equal(Math.round(soma), r.nota, v.id);
+    for (const [k, pts] of Object.entries(r.partes)) assert.ok(pts <= PESOS[/** @type {keyof typeof PESOS} */ (k)] + 1e-9, `${v.id} ${k}`);
+  }
+});

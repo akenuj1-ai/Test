@@ -2,29 +2,40 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@500;600;700&display=swap" />
 
 <style>
-/* VagaCerta — identidade inspirada na Carteira de Trabalho:
-   capa azul-marinho, papel frio, carimbo circular para a nota de chance. */
+/* VagaCerta
+   Identidade tirada da Carteira de Trabalho: capa azul-marinho, brasão
+   dourado e o guilhochê (as linhas finas de segurança dos documentos) no
+   topo. O dourado é reservado para as ações que levam ao resultado e à
+   venda: buscar, desbloquear, testar o Pro. */
 
 :root {
-  --papel: #F3F6F8;
+  --papel: #F3F5F9;
   --folha: #FFFFFF;
-  --tinta: #13233F;
-  --tinta-2: #4A5A73;
-  --linha: #D8E0EA;
-  --capa: #1F4FA3;
-  --capa-suave: #E6EDF9;
-  --carimbo-alta: #1E7A4C;
-  --carimbo-media: #9A6300;
-  --carimbo-baixa: #8A94A6;
+  --folha-2: #F7F9FC;
+  --tinta: #0E1A30;
+  --tinta-2: #4A5670;
+  --tinta-3: #6B7690;
+  --linha: #DCE2EC;
+  --capa: #16326B;
+  --capa-2: #0F2552;
+  --acao: #2256D0;
+  --acao-suave: #E7EEFC;
+  --ouro: #F2B544;
+  --ouro-tinta: #3A2600;
+  --alta: #157347;
+  --alta-fundo: #E3F4EA;
+  --media: #9A5B00;
+  --media-fundo: #FFF3DC;
+  --baixa: #7A859A;
   --perigo: #B42318;
   --perigo-fundo: #FDECEA;
-  --atencao-fundo: #FFF4DE;
-  --ok-fundo: #E5F4EC;
-  --sombra: 0 1px 2px rgba(19, 35, 63, .06), 0 6px 20px rgba(19, 35, 63, .06);
-  --raio: 10px;
+  --anel-trilho: #E4E9F2;
+  --sombra: 0 1px 2px rgba(14, 26, 48, .05), 0 8px 24px -8px rgba(14, 26, 48, .12);
+  --sombra-forte: 0 24px 60px -12px rgba(14, 26, 48, .35);
+  --raio: 14px;
   --fonte: 'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --fonte-titulo: 'Familjen Grotesk', 'Atkinson Hyperlegible', system-ui, sans-serif;
   --escala: 1;
@@ -33,341 +44,613 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --papel: #0D1420;
-    --folha: #152033;
-    --tinta: #E4EAF3;
-    --tinta-2: #A4B1C4;
-    --linha: #26344B;
-    --capa: #8BAEF2;
-    --capa-suave: #1B2B48;
-    --carimbo-alta: #5CC28E;
-    --carimbo-media: #E0A93F;
-    --carimbo-baixa: #7C879A;
-    --perigo: #F2877D;
-    --perigo-fundo: #3A1715;
-    --atencao-fundo: #33270F;
-    --ok-fundo: #12301F;
-    --sombra: 0 1px 2px rgba(0, 0, 0, .3);
+    --papel: #0B1220;
+    --folha: #131C2E;
+    --folha-2: #172238;
+    --tinta: #E6ECF6;
+    --tinta-2: #A9B4C8;
+    --tinta-3: #8792A8;
+    --linha: #26324A;
+    --capa: #13295A;
+    --capa-2: #0C1C40;
+    --acao: #7EA4F5;
+    --acao-suave: #1A2A4C;
+    --ouro: #F2B544;
+    --alta: #5BC78F;
+    --alta-fundo: #11301F;
+    --media: #E6AA45;
+    --media-fundo: #33260D;
+    --baixa: #7C879C;
+    --perigo: #F08A80;
+    --perigo-fundo: #3A1614;
+    --anel-trilho: #25314A;
+    --sombra: 0 1px 2px rgba(0, 0, 0, .35);
+    --sombra-forte: 0 24px 60px -12px rgba(0, 0, 0, .6);
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --papel: #0D1420;
-  --folha: #152033;
-  --tinta: #E4EAF3;
-  --tinta-2: #A4B1C4;
-  --linha: #26344B;
-  --capa: #8BAEF2;
-  --capa-suave: #1B2B48;
-  --carimbo-alta: #5CC28E;
-  --carimbo-media: #E0A93F;
-  --carimbo-baixa: #7C879A;
-  --perigo: #F2877D;
-  --perigo-fundo: #3A1715;
-  --atencao-fundo: #33270F;
-  --ok-fundo: #12301F;
-  --sombra: 0 1px 2px rgba(0, 0, 0, .3);
+  --papel: #0B1220;
+  --folha: #131C2E;
+  --folha-2: #172238;
+  --tinta: #E6ECF6;
+  --tinta-2: #A9B4C8;
+  --tinta-3: #8792A8;
+  --linha: #26324A;
+  --capa: #13295A;
+  --capa-2: #0C1C40;
+  --acao: #7EA4F5;
+  --acao-suave: #1A2A4C;
+  --ouro: #F2B544;
+  --alta: #5BC78F;
+  --alta-fundo: #11301F;
+  --media: #E6AA45;
+  --media-fundo: #33260D;
+  --baixa: #7C879C;
+  --perigo: #F08A80;
+  --perigo-fundo: #3A1614;
+  --anel-trilho: #25314A;
+  --sombra: 0 1px 2px rgba(0, 0, 0, .35);
+  --sombra-forte: 0 24px 60px -12px rgba(0, 0, 0, .6);
 }
 
 .letra-grande { --escala: 1.18; }
 
 * { box-sizing: border-box; }
-html { font-size: calc(16px * var(--escala)); }
-body {
-  margin: 0;
-  background: var(--papel);
-  color: var(--tinta);
-  font-family: var(--fonte);
-  line-height: 1.5;
-}
+[hidden] { display: none !important; }
+html { font-size: calc(16px * var(--escala)); -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--papel); color: var(--tinta); font-family: var(--fonte); line-height: 1.5; }
 button, input, select, textarea { font: inherit; color: inherit; }
-:focus-visible { outline: 3px solid var(--capa); outline-offset: 2px; }
-h1, h2, h3 { font-family: var(--fonte-titulo); line-height: 1.2; text-wrap: balance; margin: 0; }
-h1 { font-size: 1.6rem; }
-h2 { font-size: 1.2rem; }
-h3 { font-size: 1.1rem; }
+button { cursor: pointer; }
+svg { width: 1.2em; height: 1.2em; flex: none; }
+:focus-visible { outline: 3px solid var(--acao); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--fonte-titulo); line-height: 1.15; text-wrap: balance; margin: 0; letter-spacing: -.015em; }
+h1 { font-size: clamp(1.6rem, 4.5vw, 2.5rem); }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.08rem; }
 p { margin: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sobretitulo { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 
-.app { max-width: 1040px; margin: 0 auto; padding-inline: 16px; padding-block: 12px 32px; }
+.app { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 8px 40px; }
 
-/* topo */
-.topo { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 8px; }
-.marca { display: flex; align-items: center; gap: 10px; }
-.selo-marca {
-  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
-  border: 3px double var(--capa); color: var(--capa); font-weight: 700; font-size: 1.1rem;
+/* ---------- topo e navegação ---------- */
+.topo {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-block: 10px; background: color-mix(in srgb, var(--papel) 88%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
-.nome-marca { font-family: var(--fonte-titulo); font-weight: 700; font-size: 1.35rem; letter-spacing: -.01em; }
-.sub-marca { color: var(--tinta-2); font-size: .85rem; }
-.topo-acoes { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.marca { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--tinta); }
+.marca-selo { width: 34px; height: 34px; border-radius: 9px; background: var(--capa); color: var(--ouro); display: grid; place-items: center; }
+.marca-selo svg { width: 22px; height: 22px; }
+.marca-nome { font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 600; letter-spacing: -.02em; }
+.marca-nome b { font-weight: 700; color: var(--acao); }
+.topo-acoes { display: flex; align-items: center; gap: 8px; }
+.botao-icone {
+  min-width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--linha); background: var(--folha);
+  font-weight: 700; font-family: var(--fonte-titulo);
+}
+.botao-icone[aria-pressed="true"] { background: var(--acao-suave); border-color: var(--acao); color: var(--acao); }
 .pilula-plano {
-  font-size: .8rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-  padding: 4px 10px; border-radius: 999px; background: var(--capa-suave); color: var(--capa);
+  font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  padding: 5px 10px; border-radius: 999px; background: var(--acao-suave); color: var(--acao); white-space: nowrap;
 }
-.pilula-plano.pro { background: var(--capa); color: var(--folha); }
+.pilula-plano.pro { background: var(--ouro); color: var(--ouro-tinta); }
 
-/* abas */
-.abas {
-  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
-  display: flex; gap: 4px; overflow-x: auto; margin-block: 8px 16px;
-  background: var(--papel); border-bottom: 1px solid var(--linha);
+.nav { display: flex; gap: 4px; }
+.nav-item {
+  position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; min-height: 44px;
+  border: 0; border-radius: 10px; background: none; color: var(--tinta-2); font-weight: 700;
 }
-.aba {
-  background: none; border: 0; border-bottom: 3px solid transparent; padding: 12px 14px;
-  font-weight: 700; color: var(--tinta-2); cursor: pointer; white-space: nowrap; min-height: 48px;
-}
-.aba[aria-current="page"] { color: var(--capa); border-bottom-color: var(--capa); }
-@media (max-width: 480px) {
-  .abas, .sub-abas { gap: 0; }
-  .aba { padding: 10px 7px; font-size: .9rem; }
-}
-.contador {
-  display: inline-block; min-width: 1.4em; padding: 0 5px; border-radius: 999px; font-size: .75rem;
-  background: var(--capa-suave); color: var(--capa); text-align: center; font-variant-numeric: tabular-nums;
+.nav-item:hover { background: var(--folha); }
+.nav-item[aria-current="page"] { background: var(--folha); color: var(--acao); box-shadow: var(--sombra); }
+.nav-pro svg { color: var(--ouro); }
+.bolinha {
+  min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; font-size: .7rem; line-height: 18px; text-align: center;
+  background: var(--acao); color: var(--folha); font-variant-numeric: tabular-nums;
 }
 
-.tela { display: grid; gap: 16px; }
-.cabeca-tela { display: grid; gap: 4px; max-width: 65ch; }
+@media (max-width: 760px) {
+  /* o desfoque cria um bloco de contenção e prenderia o menu fixo no topo */
+  .topo { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--papel); }
+  .nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; justify-content: space-around;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px));
+    background: var(--folha); border-top: 1px solid var(--linha);
+  }
+  .nav-item { flex-direction: column; gap: 2px; padding: 6px 10px; font-size: .75rem; flex: 1; }
+  .nav-item svg { width: 22px; height: 22px; }
+  .nav-item[aria-current="page"] { box-shadow: none; background: var(--acao-suave); }
+  .bolinha { position: absolute; top: 2px; right: calc(50% - 22px); }
+  .app { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+}
+
+.tela { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+.cabeca-tela { display: grid; gap: 6px; max-width: 62ch; padding-top: 8px; }
 .cabeca-tela p { color: var(--tinta-2); }
+.cartao { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 18px; display: grid; gap: 14px; }
 
-/* botões e campos */
+/* ---------- botões e campos ---------- */
 .botao {
-  background: var(--capa); color: var(--folha); border: 0; border-radius: 8px;
-  padding: 12px 18px; font-weight: 700; cursor: pointer; min-height: 48px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--acao); color: #fff; border: 0; border-radius: 10px; padding: 12px 20px; min-height: 48px;
+  font-weight: 700; text-decoration: none; transition: transform .12s ease, filter .12s ease;
 }
+:root[data-theme="dark"] .botao:not(.botao-ouro) { color: #0B1220; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .botao:not(.botao-ouro) { color: #0B1220; } }
 .botao:hover { filter: brightness(1.08); }
-.botao[disabled] { opacity: .5; cursor: not-allowed; }
+.botao:active { transform: translateY(1px); }
+.botao-ouro { background: var(--ouro); color: var(--ouro-tinta); }
+.botao-largo { width: 100%; }
 .botao-leve {
-  background: var(--folha); color: var(--capa); border: 1px solid var(--linha); border-radius: 8px;
-  padding: 8px 12px; font-weight: 700; cursor: pointer; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  background: var(--folha); color: var(--acao); border: 1px solid var(--linha); border-radius: 10px;
+  padding: 10px 14px; min-height: 44px; font-weight: 700; text-decoration: none;
 }
-.botao-leve[aria-pressed="true"] { background: var(--capa-suave); border-color: var(--capa); }
-.link { background: none; border: 0; padding: 0; color: var(--capa); font-weight: 700; text-decoration: underline; cursor: pointer; }
+.botao-leve:hover { border-color: var(--acao); }
+.botao-leve[disabled] { opacity: .55; cursor: default; }
+.link { background: none; border: 0; padding: 0; color: var(--acao); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; display: inline-flex; align-items: center; gap: 6px; }
 
-.campo { display: grid; gap: 4px; min-width: 0; }
-.campo label, legend { font-size: .85rem; font-weight: 700; color: var(--tinta-2); }
-input:not([type="checkbox"]), select, textarea {
-  width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid var(--linha);
-  border-radius: 8px; background: var(--folha);
+.campo { display: grid; gap: 5px; min-width: 0; }
+.campo > span { font-size: .85rem; font-weight: 700; color: var(--tinta-2); }
+input:not([type="checkbox"]):not([type="range"]), select, textarea {
+  width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--linha); border-radius: 10px; background: var(--folha);
 }
+input:focus, select:focus, textarea:focus { border-color: var(--acao); outline: none; box-shadow: 0 0 0 3px var(--acao-suave); }
 textarea { resize: vertical; }
+input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; }
 
-.chips { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.chips legend { width: 100%; margin-bottom: 4px; }
-.chip {
-  display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; min-height: 44px;
-  border: 1px solid var(--linha); border-radius: 999px; background: var(--folha); cursor: pointer; font-weight: 700; font-size: .9rem;
+.interruptor { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; cursor: pointer; min-height: 48px; align-self: end; }
+.interruptor input { appearance: none; width: 46px; height: 28px; border-radius: 999px; background: var(--anel-trilho); position: relative; cursor: pointer; transition: background .15s; margin: 0; }
+.interruptor input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: var(--folha); box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .15s; }
+.interruptor input:checked { background: var(--alta); }
+.interruptor input:checked::after { transform: translateX(18px); }
+
+/* ---------- hero ---------- */
+.hero {
+  position: relative; overflow: hidden; border-radius: 20px; color: #fff;
+  padding: clamp(22px, 5vw, 44px); display: grid; gap: 22px;
+  background:
+    repeating-radial-gradient(circle at 110% -10%, rgba(255,255,255,.06) 0 1px, transparent 1px 9px),
+    repeating-radial-gradient(circle at -10% 120%, rgba(242,181,68,.07) 0 1px, transparent 1px 11px),
+    linear-gradient(135deg, var(--capa) 0%, var(--capa-2) 100%);
 }
-.chip:has(input:checked) { background: var(--capa-suave); border-color: var(--capa); color: var(--capa); }
-.chip input { accent-color: var(--capa); width: 18px; height: 18px; }
-.chip-grande { align-self: end; }
+.hero-texto { display: grid; gap: 10px; max-width: 40rem; }
+.hero .sobretitulo { color: var(--ouro); }
+.hero h1 em { font-style: normal; color: var(--ouro); }
+.hero-sub { color: rgba(255,255,255,.82); font-size: 1.05rem; max-width: 36rem; }
+.busca { display: grid; grid-template-columns: 1fr 190px auto; gap: 8px; background: #fff; padding: 8px; border-radius: 14px; box-shadow: 0 10px 30px -10px rgba(0,0,0,.4); }
+.busca-campo { display: flex; align-items: center; gap: 8px; padding-left: 10px; color: #4A5670; }
+.busca .busca-campo input, .busca .busca-uf select { border: 0; background: transparent; color: #0E1A30; min-height: 50px; color-scheme: light; }
+.busca .busca-campo input:focus, .busca .busca-uf select:focus { box-shadow: none; }
+.busca .busca-campo input::placeholder { color: #6B7690; }
+.busca-uf { border-left: 1px solid #DCE2EC; }
+.busca .botao { min-height: 50px; padding-inline: 22px; }
+@media (max-width: 640px) {
+  .busca { grid-template-columns: 1fr; }
+  .busca-uf { border-left: 0; border-top: 1px solid #DCE2EC; }
+}
+.hero-numeros { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; }
+.hero-numeros li { display: flex; align-items: baseline; gap: 6px; color: rgba(255,255,255,.8); font-size: .92rem; }
+.hero-numeros b { font-family: var(--fonte-titulo); font-size: 1.35rem; color: #fff; font-variant-numeric: tabular-nums; }
+.hero-numeros .ouro b { color: var(--ouro); }
+
+/* ---------- quiz ---------- */
+.quiz { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 18px; display: grid; gap: 16px; box-shadow: var(--sombra); }
+.quiz-topo { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.quiz-sub { color: var(--tinta-2); margin-top: 4px; }
+.quiz-passos { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; padding-top: 8px; }
+.quiz-passos li { width: 26px; height: 6px; border-radius: 3px; background: var(--anel-trilho); }
+.quiz-passos li.ativo { background: var(--acao); }
+.quiz-passo { display: grid; gap: 10px; }
+.quiz-pergunta { font-family: var(--fonte-titulo); font-weight: 600; font-size: 1.1rem; }
+.atalhos { display: flex; flex-wrap: wrap; gap: 8px; }
+.atalho { border: 1px solid var(--linha); background: var(--folha-2); border-radius: 999px; padding: 8px 14px; min-height: 40px; font-weight: 700; color: var(--tinta-2); }
+.atalho:hover, .atalho[aria-pressed="true"] { border-color: var(--acao); color: var(--acao); background: var(--acao-suave); }
+.linha-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: end; }
+.quiz-acoes { display: flex; gap: 8px; justify-content: flex-end; }
+.quiz.concluido { background: var(--alta-fundo); border-color: transparent; box-shadow: none; }
 
 .aviso-exemplo {
-  display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center;
-  padding: 10px 14px; border-radius: var(--raio); background: var(--capa-suave); font-size: .95rem;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 10px 14px; border-radius: 12px;
+  background: var(--acao-suave); font-size: .93rem;
 }
 
-/* filtros */
-.filtros {
-  display: grid; gap: 12px; grid-template-columns: 2fr 1fr 1fr 1fr;
-  background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 14px;
+/* ---------- filtros ---------- */
+.barra-filtros { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+.filtros-rapidos { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.filtros-rapidos::-webkit-scrollbar { display: none; }
+.chip {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; min-height: 42px; white-space: nowrap;
+  border: 1px solid var(--linha); border-radius: 999px; background: var(--folha); font-weight: 700; font-size: .9rem; cursor: pointer; color: var(--tinta-2);
 }
-.filtros .chips { grid-column: span 2; }
-@media (max-width: 760px) {
-  .filtros { grid-template-columns: 1fr 1fr; }
-  .campo-busca { grid-column: 1 / -1; }
-  .filtros .chips { grid-column: 1 / -1; }
-}
-
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip:has(input:checked) { background: var(--tinta); border-color: var(--tinta); color: var(--papel); }
+.chip:has(input:focus-visible) { outline: 3px solid var(--acao); outline-offset: 2px; }
+.linha-resultado { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .resumo-busca { color: var(--tinta-2); font-variant-numeric: tabular-nums; }
-.resumo-busca strong { color: var(--tinta); }
+.resumo-busca b { color: var(--tinta); }
+.ordem { display: flex; align-items: center; gap: 8px; font-size: .88rem; font-weight: 700; color: var(--tinta-2); }
+.ordem select { min-height: 42px; width: auto; padding-block: 6px; }
 
-/* lista de vagas */
+/* ---------- cartões de vaga ---------- */
 .lista-vagas { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .vaga {
-  display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start;
+  position: relative; display: grid; grid-template-columns: 52px 1fr auto; gap: 6px 14px; align-items: start;
   background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 16px; box-shadow: var(--sombra);
+  transition: border-color .15s, transform .15s;
 }
-.vaga.suspeita { border-color: var(--perigo); }
+.vaga:hover { border-color: color-mix(in srgb, var(--acao) 45%, var(--linha)); }
+.vaga.suspeita { border-color: var(--perigo); background: color-mix(in srgb, var(--perigo-fundo) 45%, var(--folha)); }
+.vaga.destaque { border: 2px solid var(--alta); padding: 15px; }
+.faixa-destaque {
+  position: absolute; top: -11px; left: 14px; background: var(--alta); color: #fff; font-size: .72rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px;
+}
+.monograma {
+  width: 52px; height: 52px; border-radius: 12px; display: grid; place-items: center;
+  font-family: var(--fonte-titulo); font-weight: 700; font-size: 1.1rem; color: var(--tinta);
+  background: var(--m, var(--acao-suave));
+}
 .vaga-info { display: grid; gap: 6px; min-width: 0; }
-.vaga-titulo { font-size: 1.1rem; }
-.vaga-meta { color: var(--tinta-2); font-size: .92rem; display: flex; flex-wrap: wrap; gap: 4px 12px; }
-.vaga-salario { font-weight: 700; font-variant-numeric: tabular-nums; }
-.vaga-motivo { font-size: .92rem; }
-.vaga-motivo.falta { color: var(--tinta-2); }
-.vaga-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.vaga-titulo { font-size: 1.12rem; }
+.vaga-titulo button { all: unset; cursor: pointer; }
+.vaga-titulo button:hover { color: var(--acao); }
+.vaga-titulo button:focus-visible { outline: 3px solid var(--acao); outline-offset: 2px; border-radius: 4px; }
+.vaga-meta { color: var(--tinta-2); font-size: .92rem; display: flex; flex-wrap: wrap; gap: 2px 8px; }
+.vaga-meta span + span::before { content: '·'; margin-right: 8px; color: var(--tinta-3); }
+.vaga-salario { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.vaga-salario strong { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 .etiquetas { display: flex; flex-wrap: wrap; gap: 6px; }
-.etiqueta {
-  font-size: .75rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-  padding: 2px 8px; border-radius: 4px; background: var(--capa-suave); color: var(--capa);
+.etiqueta { font-size: .74rem; font-weight: 700; padding: 3px 9px; border-radius: 6px; background: var(--folha-2); color: var(--tinta-2); border: 1px solid var(--linha); }
+.etiqueta.ok { background: var(--alta-fundo); color: var(--alta); border-color: transparent; }
+.etiqueta.nova { background: var(--ouro); color: var(--ouro-tinta); border-color: transparent; }
+.etiqueta.acima { background: var(--alta-fundo); color: var(--alta); border-color: transparent; }
+.vaga-motivo { font-size: .93rem; display: flex; gap: 6px; align-items: start; }
+.vaga-motivo svg { margin-top: 2px; }
+.vaga-motivo.bom svg { color: var(--alta); }
+.vaga-motivo.falta { color: var(--tinta-2); }
+.vaga-motivo.falta svg { color: var(--media); }
+.vaga-acoes { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.vaga-acoes .botao { min-height: 44px; padding-inline: 16px; }
+.botao-quadrado { width: 44px; padding: 0; }
+.botao-quadrado.salvo { color: var(--alta); border-color: var(--alta); }
+.zap { color: #1FA855; }
+@media (max-width: 520px) {
+  .vaga { grid-template-columns: 44px 1fr auto; }
+  .monograma { width: 44px; height: 44px; font-size: .95rem; }
+  .vaga-acoes { grid-column: 1 / -1; }
+  .vaga-acoes .botao { flex: 1; }
 }
-.etiqueta.ok { background: var(--ok-fundo); color: var(--carimbo-alta); }
 
-/* carimbo da nota de chance */
-.carimbo {
-  --cor: var(--carimbo-baixa);
-  width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; align-content: center;
-  border: 3px double var(--cor); color: var(--cor); transform: rotate(-8deg); text-align: center; flex: none;
+/* anel da nota de chance */
+.anel {
+  --v: 0; --cor: var(--baixa);
+  width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: conic-gradient(var(--cor) calc(var(--v) * 1%), var(--anel-trilho) 0);
+  position: relative;
 }
-.carimbo.alta { --cor: var(--carimbo-alta); }
-.carimbo.media { --cor: var(--carimbo-media); }
-.carimbo-num { font-family: var(--fonte-titulo); font-weight: 700; font-size: 1.35rem; line-height: 1; font-variant-numeric: tabular-nums; }
-.carimbo-rot { font-size: .6rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.carimbo.golpe { --cor: var(--perigo); }
-.carimbo.golpe .carimbo-num { font-size: .8rem; letter-spacing: .06em; }
+.anel::before { content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--folha); }
+.anel > span { position: relative; display: grid; justify-items: center; line-height: 1; }
+.anel b { font-family: var(--fonte-titulo); font-size: 1.3rem; font-variant-numeric: tabular-nums; color: var(--tinta); }
+.anel small { font-size: .58rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-3); margin-top: 2px; }
+.anel.alta { --cor: var(--alta); }
+.anel.media { --cor: var(--media); }
+.anel.golpe { --cor: var(--perigo); --v: 100; }
+.anel.golpe svg { position: relative; color: var(--perigo); width: 26px; height: 26px; }
+.anel.grande { width: 84px; height: 84px; }
+.anel.grande::before { inset: 7px; }
+.anel.grande b { font-size: 1.7rem; }
+@media (max-width: 520px) { .anel { width: 56px; height: 56px; } .anel b { font-size: 1.12rem; } }
 
-.alerta { border-radius: 8px; padding: 10px 12px; font-size: .92rem; display: grid; gap: 4px; }
+.alerta { border-radius: 10px; padding: 10px 12px; font-size: .92rem; display: grid; gap: 4px; }
 .alerta.grave { background: var(--perigo-fundo); color: var(--perigo); }
-.alerta.atencao { background: var(--atencao-fundo); }
+.alerta.atencao { background: var(--media-fundo); }
 .alerta ul { margin: 0; padding-left: 1.2em; }
+.alerta-linha { display: flex; gap: 8px; align-items: start; }
 
-@media (max-width: 480px) {
-  .vaga { grid-template-columns: 1fr; }
-  .carimbo { width: 60px; height: 60px; }
+/* bloco de venda no meio da lista */
+.oferta {
+  grid-column: 1 / -1; border-radius: var(--raio); padding: 20px; color: #fff; display: grid; gap: 12px;
+  background:
+    repeating-radial-gradient(circle at 100% 0%, rgba(242,181,68,.10) 0 1px, transparent 1px 10px),
+    linear-gradient(135deg, var(--capa), var(--capa-2));
 }
+.oferta p { color: rgba(255,255,255,.85); max-width: 46ch; }
+.oferta h3 { font-size: 1.25rem; }
+.oferta h3 b { color: var(--ouro); }
+.oferta-acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.oferta small { color: rgba(255,255,255,.7); }
 
-/* detalhe */
-.detalhe {
-  width: min(760px, calc(100% - 24px)); max-height: calc(100% - 24px); padding: 0; border: 0;
-  border-radius: 14px; background: var(--folha); color: var(--tinta); box-shadow: 0 20px 60px rgba(0,0,0,.3);
+.vazio { color: var(--tinta-2); padding: 12px 0; }
+
+/* ---------- folhas (diálogos) ---------- */
+.folha {
+  width: min(780px, calc(100% - 24px)); max-height: calc(100% - 24px); padding: 0; border: 0; border-radius: 18px;
+  background: var(--folha); color: var(--tinta); box-shadow: var(--sombra-forte);
 }
-.detalhe::backdrop { background: rgba(13, 20, 32, .55); }
-.detalhe-corpo { display: grid; gap: 16px; padding: 20px; }
-.detalhe-topo { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: start; }
-.fechar { background: none; border: 1px solid var(--linha); border-radius: 8px; width: 44px; height: 44px; cursor: pointer; font-size: 1.2rem; }
-.sub-abas { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--linha); }
-.sub-abas .aba { padding: 10px 12px; }
-.bloco { display: grid; gap: 10px; }
-.lista-simples { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
-.lista-simples.bons li::marker { content: '✓  '; color: var(--carimbo-alta); }
-.lista-simples.faltas li::marker { content: '→  '; color: var(--carimbo-media); }
-.dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 0; }
-.dados div { background: var(--papel); border-radius: 8px; padding: 10px; }
-.dados dt { font-size: .75rem; font-weight: 700; color: var(--tinta-2); text-transform: uppercase; letter-spacing: .05em; }
-.dados dd { margin: 0; font-weight: 700; }
+.folha-pequena { width: min(460px, calc(100% - 24px)); }
+.folha::backdrop { background: rgba(8, 14, 28, .6); }
+.folha-corpo { display: grid; gap: 16px; padding: 20px; }
+@media (max-width: 640px) {
+  .folha { width: 100%; max-width: 100%; max-height: 92%; margin: auto 0 0; border-radius: 18px 18px 0 0; }
+  .folha-corpo { padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .folha[open] { animation: subir .22s ease-out; }
+  @keyframes subir { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+}
+.folha-topo { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+.fechar { width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--linha); background: var(--folha); font-size: 1.1rem; }
+.abas-folha { display: flex; gap: 4px; overflow-x: auto; background: var(--folha-2); padding: 4px; border-radius: 12px; }
+.abas-folha button { flex: 1; border: 0; background: none; border-radius: 9px; padding: 10px 12px; min-height: 42px; font-weight: 700; color: var(--tinta-2); white-space: nowrap; display: inline-flex; gap: 6px; align-items: center; justify-content: center; }
+.abas-folha button[aria-selected="true"] { background: var(--folha); color: var(--acao); box-shadow: var(--sombra); }
+.abas-folha svg { width: 14px; height: 14px; color: var(--tinta-3); }
+
+.bloco { display: grid; gap: 12px; }
+.lista-simples { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lista-simples li { display: flex; gap: 8px; align-items: start; }
+.lista-simples svg { margin-top: 2px; }
+.lista-simples.bons svg { color: var(--alta); }
+.lista-simples.faltas svg { color: var(--media); }
+
+/* barras da nota por critério */
+.criterios { display: grid; gap: 10px; }
+.criterio { display: grid; grid-template-columns: 8.5rem 1fr 3.4rem; gap: 10px; align-items: center; font-size: .9rem; }
+.criterio-nome { color: var(--tinta-2); font-weight: 700; }
+.criterio-trilho { height: 10px; border-radius: 5px; background: var(--anel-trilho); overflow: hidden; }
+.criterio-barra { height: 100%; border-radius: 0 4px 4px 0; background: var(--acao); }
+.criterio-valor { text-align: right; font-variant-numeric: tabular-nums; color: var(--tinta-2); }
+@media (max-width: 420px) { .criterio { grid-template-columns: 6.8rem 1fr 3rem; } }
+
+.dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 0; }
+.dados div { background: var(--folha-2); border-radius: 10px; padding: 10px 12px; }
+.dados dt { font-size: .72rem; font-weight: 700; color: var(--tinta-3); text-transform: uppercase; letter-spacing: .06em; }
+.dados dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 .texto-gerado {
-  white-space: pre-wrap; background: var(--papel); border: 1px solid var(--linha); border-radius: 8px;
-  padding: 14px; font-family: var(--fonte); font-size: .95rem; max-height: 50vh; overflow: auto; margin: 0;
+  white-space: pre-wrap; background: var(--folha-2); border: 1px solid var(--linha); border-radius: 12px; padding: 16px;
+  font-family: var(--fonte); font-size: .95rem; max-height: 46vh; overflow: auto; margin: 0;
 }
-.perguntas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.perguntas li { background: var(--papel); border-radius: 8px; padding: 12px; display: grid; gap: 4px; }
-.perguntas .dica { color: var(--tinta-2); font-size: .92rem; }
+.perguntas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; counter-reset: q; }
+.perguntas li { background: var(--folha-2); border-radius: 12px; padding: 12px 14px; display: grid; gap: 4px; }
+.perguntas .dica { color: var(--tinta-2); font-size: .93rem; }
 .cota { font-size: .88rem; color: var(--tinta-2); }
-.paywall { background: var(--capa-suave); border-radius: 10px; padding: 16px; display: grid; gap: 10px; justify-items: start; }
+.dica-pro { font-size: .9rem; background: var(--acao-suave); border-radius: 10px; padding: 10px 12px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
 
-/* perfil */
-.form-perfil { display: grid; gap: 16px; background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 16px; }
+/* conteúdo bloqueado: o resultado existe, só não está liberado */
+.bloqueado { position: relative; border-radius: 12px; overflow: hidden; }
+.bloqueado .texto-gerado, .bloqueado .perguntas { filter: blur(5px); user-select: none; pointer-events: none; max-height: 320px; overflow: hidden; }
+.cadeado {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; padding: 20px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--folha) 30%, transparent), color-mix(in srgb, var(--folha) 92%, transparent) 45%);
+}
+.cadeado .icone-cadeado { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--ouro); color: var(--ouro-tinta); }
+.cadeado p { color: var(--tinta-2); max-width: 36ch; }
+
+/* ---------- perfil ---------- */
+.medidor { display: grid; gap: 8px; }
+.medidor-topo { display: flex; justify-content: space-between; gap: 8px; font-weight: 700; flex-wrap: wrap; }
+.medidor-trilho { height: 12px; border-radius: 6px; background: var(--anel-trilho); overflow: hidden; }
+.medidor-barra { height: 100%; border-radius: 6px; background: linear-gradient(90deg, var(--acao), var(--alta)); transition: width .3s; }
+.medidor-dica { color: var(--tinta-2); font-size: .92rem; }
+.form-perfil { gap: 18px; }
 .grade { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .linha-titulo { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .experiencias { display: grid; gap: 10px; }
 .lista-exp { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.exp { display: grid; gap: 8px; grid-template-columns: 1fr 1fr 140px auto; align-items: end; padding: 12px; background: var(--papel); border-radius: 8px; }
+.exp { display: grid; gap: 10px; grid-template-columns: 1fr 1fr 150px auto; align-items: end; padding: 12px; background: var(--folha-2); border-radius: 12px; }
 .exp .campo-desc { grid-column: 1 / -1; }
 @media (max-width: 640px) { .exp { grid-template-columns: 1fr; } }
 .acoes-form { display: flex; flex-wrap: wrap; gap: 10px; }
 
-/* candidaturas */
+/* ---------- candidaturas ---------- */
 .quadro { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (max-width: 800px) { .quadro { grid-template-columns: 1fr; } }
-.coluna { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 12px; display: grid; gap: 10px; align-content: start; }
-.coluna-topo { display: flex; justify-content: space-between; align-items: baseline; }
-.coluna-dica { font-size: .85rem; color: var(--tinta-2); }
-.cartao-cand { border: 1px solid var(--linha); border-radius: 8px; padding: 10px; display: grid; gap: 6px; }
-.cartao-cand select { min-height: 40px; }
-.vazio { color: var(--tinta-2); font-size: .9rem; }
+@media (max-width: 820px) { .quadro { grid-template-columns: 1fr; } }
+.coluna { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 14px; display: grid; gap: 10px; align-content: start; }
+.coluna-topo { display: flex; justify-content: space-between; align-items: center; }
+.coluna-topo .bolinha { background: var(--folha-2); color: var(--tinta-2); border: 1px solid var(--linha); }
+.coluna-dica { font-size: .86rem; color: var(--tinta-2); }
+.cartao-cand { border: 1px solid var(--linha); border-radius: 12px; padding: 12px; display: grid; gap: 8px; background: var(--folha-2); }
+.cartao-cand select { min-height: 42px; }
+.cartao-cand .linha { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* planos */
-.planos { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.plano { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 20px; display: grid; gap: 12px; align-content: start; }
-.plano.destaque { border: 2px solid var(--capa); }
-.preco { font-family: var(--fonte-titulo); font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
-.preco small { font-size: .95rem; color: var(--tinta-2); font-family: var(--fonte); font-weight: 400; }
-.nota-rodape, .rodape { color: var(--tinta-2); font-size: .85rem; }
-.rodape { margin-top: 24px; border-top: 1px solid var(--linha); padding-top: 12px; }
+/* ---------- planos ---------- */
+.pro-hero {
+  border-radius: 20px; padding: clamp(22px, 5vw, 40px); color: #fff; display: grid; gap: 12px; justify-items: start;
+  background:
+    repeating-radial-gradient(circle at 110% -10%, rgba(242,181,68,.09) 0 1px, transparent 1px 10px),
+    linear-gradient(135deg, var(--capa), var(--capa-2));
+}
+.pro-hero .sobretitulo { color: var(--ouro); }
+.pro-hero p:not(.sobretitulo) { color: rgba(255,255,255,.85); max-width: 46ch; }
+.alternador { display: inline-flex; background: rgba(255,255,255,.12); padding: 4px; border-radius: 12px; gap: 4px; margin-top: 6px; }
+.alternador button { border: 0; background: none; color: #fff; padding: 9px 16px; border-radius: 9px; font-weight: 700; min-height: 42px; display: inline-flex; gap: 8px; align-items: center; }
+.alternador button[aria-checked="true"] { background: #fff; color: #0E1A30; }
+.alternador b { background: var(--ouro); color: var(--ouro-tinta); font-size: .72rem; padding: 2px 7px; border-radius: 999px; }
+.planos { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.plano { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 22px; display: grid; gap: 14px; align-content: start; position: relative; }
+.plano.destaque { border: 2px solid var(--ouro); box-shadow: var(--sombra); }
+.plano .faixa-destaque { background: var(--ouro); color: var(--ouro-tinta); }
+.preco { font-family: var(--fonte-titulo); font-size: 2.4rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.preco small { font-size: 1rem; color: var(--tinta-2); font-family: var(--fonte); font-weight: 400; }
+.preco-nota { color: var(--tinta-2); font-size: .9rem; }
+.tabela-rolagem { overflow-x: auto; padding: 0; }
+.comparacao { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.comparacao th, .comparacao td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--linha); }
+.comparacao thead th { font-family: var(--fonte-titulo); font-size: 1rem; }
+.comparacao td:not(:first-child), .comparacao th:not(:first-child) { text-align: center; width: 22%; }
+.comparacao tr:last-child td { border-bottom: 0; }
+.comparacao .sim { color: var(--alta); }
+.comparacao .nao { color: var(--tinta-3); }
+.faq { display: grid; gap: 10px; }
+.faq details { background: var(--folha); border: 1px solid var(--linha); border-radius: 12px; padding: 14px 16px; }
+.faq summary { font-weight: 700; cursor: pointer; }
+.faq details p { margin-top: 8px; color: var(--tinta-2); }
+.garantia { display: flex; gap: 10px; align-items: center; color: var(--tinta-2); font-size: .9rem; }
+.garantia svg { color: var(--alta); width: 22px; height: 22px; }
+
+/* ---------- painel ---------- */
+.funil { display: grid; gap: 12px; }
+.funil-linha { display: grid; grid-template-columns: minmax(9rem, 15rem) 1fr; gap: 12px; align-items: center; }
+.funil-nome { font-size: .9rem; font-weight: 700; color: var(--tinta-2); }
+.funil-trilho { position: relative; height: 28px; border-radius: 6px; background: var(--folha-2); }
+.funil-barra { height: 100%; min-width: 2px; border-radius: 0 4px 4px 0; background: var(--acao); }
+.funil-valor { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: .85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--tinta); white-space: nowrap; }
+.funil-linha:hover .funil-barra { filter: brightness(1.12); }
+@media (max-width: 520px) { .funil-linha { grid-template-columns: 1fr; gap: 4px; } }
+.simulador-campos { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.numeros { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.numero { background: var(--folha-2); border-radius: 12px; padding: 14px; display: grid; gap: 2px; }
+.numero span { font-size: .78rem; font-weight: 700; color: var(--tinta-3); text-transform: uppercase; letter-spacing: .06em; }
+.numero b { font-family: var(--fonte-titulo); font-size: 1.45rem; font-variant-numeric: tabular-nums; }
+.numero.principal { background: var(--capa); color: #fff; }
+.numero.principal span { color: var(--ouro); }
+.meta-milhao { grid-column: 1 / -1; color: var(--tinta-2); font-size: .92rem; }
+
+.nota-rodape { color: var(--tinta-3); font-size: .85rem; }
+.rodape { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--linha); color: var(--tinta-3); font-size: .85rem; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
+.rodape .link { font-size: .85rem; color: var(--tinta-2); }
 
 .toast {
-  position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
-  background: var(--tinta); color: var(--papel); padding: 12px 18px; border-radius: 10px; font-weight: 700;
-  max-width: calc(100% - 32px); z-index: 20; box-shadow: var(--sombra);
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--tinta); color: var(--papel); padding: 12px 18px; border-radius: 12px; font-weight: 700;
+  max-width: calc(100% - 32px); z-index: 50; box-shadow: var(--sombra-forte);
 }
+@media (max-width: 760px) { .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); } }
 
 @media (prefers-reduced-motion: no-preference) {
-  .vaga { transition: transform .15s ease; }
-  .vaga:hover { transform: translateY(-1px); }
+  .lista-vagas > li { animation: aparecer .25s ease-out both; }
+  @keyframes aparecer { from { opacity: .4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 </style>
 
 
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-busca" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-pessoa" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-salvo" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-salvo-cheio" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4-6 4z" fill="currentColor" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-coroa" viewBox="0 0 24 24"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8.8 8.6c.3-.6.6-.6.9-.6h.5c.2 0 .4 0 .6.4l.8 1.9c.1.2 0 .4-.1.6l-.5.6c-.1.2-.2.3 0 .6.6 1 1.6 2 2.8 2.6.3.1.4.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.8.9c.3.1.4.2.4.4 0 .6-.3 1.3-.9 1.6-.5.3-1.4.5-2.9-.1-1.8-.7-3.5-2.2-4.5-3.9-.8-1.3-.9-2.6-.3-3.4z" fill="currentColor"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.2-8 9-4.6-.8-8-4.5-8-9V6z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M8.5 12l2.5 2.5 4.5-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3l10 18H2z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M12 10v5M12 18v.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-cadeado" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-seta" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-grafico" viewBox="0 0 24 24"><path d="M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  </svg>
+
   <div class="app">
     <header class="topo">
-      <div class="marca">
-        <span class="selo-marca" aria-hidden="true">✓</span>
-        <div>
-          <p class="nome-marca">VagaCerta</p>
-          <p class="sub-marca">Emprego com chance real</p>
-        </div>
-      </div>
+      <a class="marca" href="#vagas" data-aba="vagas" aria-label="VagaCerta, início">
+        <span class="marca-selo" aria-hidden="true"><svg><use href="#i-check"/></svg></span>
+        <span class="marca-nome">Vaga<b>Certa</b></span>
+      </a>
+      <nav class="nav" aria-label="Seções">
+        <button type="button" class="nav-item" data-aba="vagas" aria-current="page"><svg><use href="#i-busca"/></svg><span>Vagas</span></button>
+        <button type="button" class="nav-item" data-aba="perfil"><svg><use href="#i-pessoa"/></svg><span>Perfil</span></button>
+        <button type="button" class="nav-item" data-aba="candidaturas"><svg><use href="#i-salvo"/></svg><span>Salvas</span><b class="bolinha" id="cont-cand" hidden>0</b></button>
+        <button type="button" class="nav-item nav-pro" data-aba="planos"><svg><use href="#i-coroa"/></svg><span>Pro</span></button>
+      </nav>
       <div class="topo-acoes">
-        <button type="button" class="botao-leve" id="btn-letra" aria-pressed="false" title="Aumentar o tamanho da letra">A+ Letra grande</button>
-        <span class="pilula-plano" id="pilula-plano">Plano Grátis</span>
+        <button type="button" class="botao-icone" id="btn-letra" aria-pressed="false" title="Letra grande">A<sup>+</sup></button>
+        <span class="pilula-plano" id="pilula-plano">Grátis</span>
       </div>
     </header>
-
-    <nav class="abas" aria-label="Seções">
-      <button type="button" class="aba" data-aba="vagas" aria-current="page">Vagas</button>
-      <button type="button" class="aba" data-aba="perfil">Meu perfil</button>
-      <button type="button" class="aba" data-aba="candidaturas">Candidaturas <span class="contador" id="cont-cand">0</span></button>
-      <button type="button" class="aba" data-aba="planos">Planos</button>
-    </nav>
 
     <main>
       <!-- VAGAS -->
       <section id="tela-vagas" class="tela">
-        <div class="aviso-exemplo" id="aviso-exemplo">
-          <strong>Perfil de exemplo:</strong> José, 56 anos, motorista em São Paulo.
-          <button type="button" class="link" data-ir="perfil">Trocar pelo seu perfil</button>
+        <div class="hero">
+          <div class="hero-texto">
+            <p class="sobretitulo">Emprego com chance real</p>
+            <h1>Descubra em quais vagas você tem <em>chance de verdade</em>.</h1>
+            <p class="hero-sub">Nota de chance em cada vaga, currículo adaptado em 1 toque e alerta de golpe. Grátis para começar.</p>
+          </div>
+          <form class="busca" id="form-busca" role="search" autocomplete="off">
+            <label class="busca-campo">
+              <svg aria-hidden="true"><use href="#i-busca"/></svg>
+              <span class="sr">Cargo, habilidade ou empresa</span>
+              <input id="f-texto" type="search" list="sugestoes" placeholder="Motorista, vendas, portaria…" enterkeyhint="search" />
+            </label>
+            <label class="busca-uf">
+              <span class="sr">Estado</span>
+              <select id="f-uf"><option value="">Todo o Brasil</option></select>
+            </label>
+            <button type="submit" class="botao botao-ouro">Buscar vagas</button>
+            <datalist id="sugestoes"></datalist>
+          </form>
+          <ul class="hero-numeros" id="hero-numeros" aria-label="Resumo das vagas"></ul>
         </div>
 
-        <form class="filtros" id="form-filtros" autocomplete="off">
-          <div class="campo campo-busca">
-            <label for="f-texto">Cargo, habilidade ou empresa</label>
-            <input id="f-texto" type="search" placeholder="Ex.: motorista, excel, portaria" />
+        <section class="quiz" id="quiz" aria-labelledby="quiz-titulo">
+          <div id="quiz-feito" class="quiz-passo" hidden></div>
+          <div id="quiz-perguntas" class="quiz-passo">
+          <div class="quiz-topo">
+            <div>
+              <h2 id="quiz-titulo">Descubra sua chance em 30 segundos</h2>
+              <p class="quiz-sub" id="quiz-sub">Responda 3 perguntas e veja as vagas que combinam com você.</p>
+            </div>
+            <ol class="quiz-passos" aria-label="Progresso"><li class="ativo"></li><li></li><li></li></ol>
           </div>
-          <div class="campo">
-            <label for="f-uf">Estado</label>
-            <select id="f-uf"><option value="">Todos</option></select>
+          <div class="quiz-passo" data-passo="1">
+            <label for="q-cargo" class="quiz-pergunta">Que trabalho você procura?</label>
+            <input id="q-cargo" list="sugestoes" placeholder="Ex.: motorista" />
+            <div class="atalhos" id="q-atalhos"></div>
           </div>
-          <div class="campo">
-            <label for="f-contrato">Contrato</label>
-            <select id="f-contrato">
-              <option value="">Todos</option>
-              <option>CLT</option><option>PJ</option><option>Estágio</option><option>Temporário</option>
-            </select>
+          <div class="quiz-passo" data-passo="2" hidden>
+            <p class="quiz-pergunta">Onde você mora?</p>
+            <div class="linha-campos">
+              <label class="campo"><span>Cidade</span><input id="q-cidade" placeholder="Ex.: São Paulo" /></label>
+              <label class="campo campo-uf"><span>Estado</span><select id="q-uf"></select></label>
+            </div>
           </div>
-          <div class="campo">
-            <label for="f-ordem">Ordenar por</label>
-            <select id="f-ordem">
-              <option value="chance">Maior chance</option>
-              <option value="recentes">Mais recentes</option>
-              <option value="salario">Maior salário</option>
-            </select>
+          <div class="quiz-passo" data-passo="3" hidden>
+            <p class="quiz-pergunta">Só mais um pouco sobre você</p>
+            <div class="linha-campos">
+              <label class="campo"><span>Anos de experiência</span><input id="q-anos" type="number" min="0" max="60" inputmode="numeric" value="0" /></label>
+              <label class="campo"><span>Escolaridade</span><select id="q-esc"></select></label>
+              <label class="interruptor"><input type="checkbox" id="q-cnh" /><span>Tenho CNH</span></label>
+            </div>
           </div>
-          <fieldset class="chips">
-            <legend>Modalidade</legend>
-            <label class="chip"><input type="checkbox" id="f-presencial" value="presencial" /> Presencial</label>
-            <label class="chip"><input type="checkbox" id="f-hibrido" value="hibrido" /> Híbrido</label>
-            <label class="chip"><input type="checkbox" id="f-remoto" value="remoto" /> Remoto</label>
-          </fieldset>
-          <fieldset class="chips">
-            <legend>Mais filtros</legend>
-            <label class="chip"><input type="checkbox" id="f-50" /> Valoriza 50+</label>
-            <label class="chip"><input type="checkbox" id="f-recentes" /> Últimos 3 dias</label>
-            <label class="chip"><input type="checkbox" id="f-golpe" /> Esconder suspeitas</label>
-          </fieldset>
-        </form>
+          <div class="quiz-acoes">
+            <button type="button" class="botao-leve" id="q-voltar" hidden>Voltar</button>
+            <button type="button" class="botao" id="q-avancar">Continuar <svg><use href="#i-seta"/></svg></button>
+          </div>
+          </div>
+        </section>
 
-        <p class="resumo-busca" id="resumo-busca" aria-live="polite"></p>
+        <div class="aviso-exemplo" id="aviso-exemplo">
+          <span>Mostrando as notas para um <b>perfil de exemplo</b> (José, 56 anos, motorista em SP).</span>
+          <button type="button" class="link" data-aba="perfil">Usar meu perfil</button>
+        </div>
+
+        <div class="barra-filtros">
+          <div class="filtros-rapidos" role="group" aria-label="Filtros rápidos">
+            <label class="chip"><input type="checkbox" id="f-perto" /> Perto de mim</label>
+            <label class="chip"><input type="checkbox" id="f-remoto" /> Remoto</label>
+            <label class="chip"><input type="checkbox" id="f-clt" /> CLT</label>
+            <label class="chip"><input type="checkbox" id="f-50" /> Valoriza 50+</label>
+            <label class="chip"><input type="checkbox" id="f-novas" /> Novas</label>
+            <label class="chip"><input type="checkbox" id="f-golpe" checked /> Sem golpes</label>
+          </div>
+          <div class="linha-resultado">
+            <p class="resumo-busca" id="resumo-busca" aria-live="polite"></p>
+            <label class="ordem"><span>Ordenar</span>
+              <select id="f-ordem">
+                <option value="">Melhor para mim</option>
+                <option value="chance">Maior chance</option>
+                <option value="recentes">Mais recentes</option>
+                <option value="salario">Maior salário</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
         <ol class="lista-vagas" id="lista-vagas"></ol>
       </section>
 
@@ -375,38 +658,36 @@ textarea { resize: vertical; }
       <section id="tela-perfil" class="tela" hidden>
         <div class="cabeca-tela">
           <h1>Meu perfil</h1>
-          <p>Quanto mais completo, mais certa fica a nota de chance. Nada aqui é inventado no currículo: ele só usa o que você escrever.</p>
+          <p>Quanto mais completo, mais certa a nota de chance. O currículo só usa o que você escrever aqui.</p>
         </div>
-        <form id="form-perfil" class="form-perfil" autocomplete="on">
+        <div class="medidor" id="medidor-perfil"></div>
+        <form id="form-perfil" class="cartao form-perfil" autocomplete="on">
           <div class="grade">
-            <div class="campo"><label for="p-nome">Nome completo</label><input id="p-nome" name="name" /></div>
-            <div class="campo"><label for="p-cargo">Cargo que procura</label><input id="p-cargo" placeholder="Ex.: Motorista" /></div>
-            <div class="campo"><label for="p-area">Área</label><select id="p-area"></select></div>
-            <div class="campo"><label for="p-cidade">Cidade</label><input id="p-cidade" name="address-level2" /></div>
-            <div class="campo"><label for="p-uf">Estado</label><select id="p-uf"></select></div>
-            <div class="campo"><label for="p-anos">Anos de experiência</label><input id="p-anos" type="number" min="0" max="60" inputmode="numeric" /></div>
-            <div class="campo"><label for="p-esc">Escolaridade</label><select id="p-esc"></select></div>
-            <div class="campo"><label for="p-sal">Salário mínimo desejado (R$/mês)</label><input id="p-sal" type="number" min="0" step="50" inputmode="numeric" placeholder="0 = tanto faz" /></div>
-            <div class="campo">
-              <label for="p-remoto">Trabalho remoto</label>
+            <label class="campo"><span>Nome completo</span><input id="p-nome" name="name" /></label>
+            <label class="campo"><span>Cargo que procura</span><input id="p-cargo" list="sugestoes" placeholder="Ex.: Motorista" /></label>
+            <label class="campo"><span>Área</span><select id="p-area"></select></label>
+            <label class="campo"><span>Cidade</span><input id="p-cidade" name="address-level2" /></label>
+            <label class="campo"><span>Estado</span><select id="p-uf"></select></label>
+            <label class="campo"><span>Anos de experiência</span><input id="p-anos" type="number" min="0" max="60" inputmode="numeric" /></label>
+            <label class="campo"><span>Escolaridade</span><select id="p-esc"></select></label>
+            <label class="campo"><span>Salário mínimo desejado (R$/mês)</span><input id="p-sal" type="number" min="0" step="50" inputmode="numeric" placeholder="0 = tanto faz" /></label>
+            <label class="campo"><span>Trabalho remoto</span>
               <select id="p-remoto">
                 <option value="tanto-faz">Aceito presencial e remoto</option>
                 <option value="nao">Prefiro presencial</option>
                 <option value="sim">Só remoto</option>
               </select>
-            </div>
-            <div class="campo"><label for="p-tel">Telefone</label><input id="p-tel" name="tel" inputmode="tel" /></div>
-            <div class="campo"><label for="p-email">E-mail</label><input id="p-email" name="email" type="email" /></div>
-            <label class="chip chip-grande"><input type="checkbox" id="p-cnh" /> Tenho CNH</label>
+            </label>
+            <label class="campo"><span>Telefone</span><input id="p-tel" name="tel" inputmode="tel" /></label>
+            <label class="campo"><span>E-mail</span><input id="p-email" name="email" type="email" /></label>
+            <label class="interruptor"><input type="checkbox" id="p-cnh" /><span>Tenho CNH</span></label>
           </div>
-          <div class="campo">
-            <label for="p-hab">Habilidades (separe por vírgula)</label>
+          <label class="campo"><span>Habilidades (separe por vírgula)</span>
             <textarea id="p-hab" rows="2" placeholder="Ex.: direção defensiva, atendimento ao cliente, excel"></textarea>
-          </div>
-          <div class="campo">
-            <label for="p-resumo">Resumo sobre você (opcional)</label>
+          </label>
+          <label class="campo"><span>Resumo sobre você</span>
             <textarea id="p-resumo" rows="3" placeholder="Duas ou três frases sobre sua experiência e o que você faz bem."></textarea>
-          </div>
+          </label>
           <div class="experiencias">
             <div class="linha-titulo">
               <h2>Experiências</h2>
@@ -415,7 +696,7 @@ textarea { resize: vertical; }
             <ol id="lista-exp" class="lista-exp"></ol>
           </div>
           <div class="acoes-form">
-            <button type="submit" class="botao">Salvar perfil e ver vagas</button>
+            <button type="submit" class="botao">Salvar e ver minhas vagas</button>
             <button type="button" class="botao-leve" id="btn-limpar">Começar do zero</button>
           </div>
         </form>
@@ -424,8 +705,8 @@ textarea { resize: vertical; }
       <!-- CANDIDATURAS -->
       <section id="tela-candidaturas" class="tela" hidden>
         <div class="cabeca-tela">
-          <h1>Candidaturas</h1>
-          <p>Veja onde cada vaga está e qual o próximo passo.</p>
+          <h1>Minhas candidaturas</h1>
+          <p>Onde cada vaga está e qual o próximo passo.</p>
         </div>
         <div id="alerta-retorno"></div>
         <div id="quadro" class="quadro"></div>
@@ -433,22 +714,61 @@ textarea { resize: vertical; }
 
       <!-- PLANOS -->
       <section id="tela-planos" class="tela" hidden>
-        <div class="cabeca-tela">
-          <h1>Planos</h1>
-          <p>Buscar vagas e ver sua chance é sempre grátis. O Pro é para quem quer acelerar.</p>
+        <div class="pro-hero">
+          <p class="sobretitulo">VagaCerta Pro</p>
+          <h1>Candidate-se melhor, em menos tempo.</h1>
+          <p>Currículo sob medida para cada vaga, carta pronta e treino de entrevista, sem limite. Teste 7 dias sem pagar nada.</p>
+          <div class="alternador" role="radiogroup" aria-label="Forma de pagamento">
+            <button type="button" role="radio" data-ciclo="mensal" aria-checked="false">Mensal</button>
+            <button type="button" role="radio" data-ciclo="anual" aria-checked="true">Anual <b id="selo-economia"></b></button>
+          </div>
         </div>
         <div class="planos" id="planos"></div>
-        <p class="nota-rodape">Protótipo: a assinatura aqui é simulada e nenhum pagamento é feito. Pix e cartão entram na próxima versão.</p>
+        <div class="cartao tabela-rolagem">
+          <table class="comparacao" id="comparacao"></table>
+        </div>
+        <section class="faq" aria-labelledby="faq-titulo">
+          <h2 id="faq-titulo">Perguntas frequentes</h2>
+          <div id="faq"></div>
+        </section>
+        <p class="nota-rodape">Protótipo: a assinatura é simulada e nenhum valor é cobrado. Pix e cartão entram na próxima versão.</p>
+      </section>
+
+      <!-- PAINEL DO DONO -->
+      <section id="tela-painel" class="tela" hidden>
+        <div class="cabeca-tela">
+          <h1>Painel do dono</h1>
+          <p>Onde as pessoas desistem e quanto o app pode render.</p>
+        </div>
+        <section class="cartao">
+          <h2>Funil de conversão</h2>
+          <p class="nota-rodape" id="funil-origem">Cliques feitos neste aparelho. Com o servidor no ar, o funil de todos os visitantes fica em /api/funil.</p>
+          <div id="funil" class="funil"></div>
+        </section>
+        <section class="cartao simulador">
+          <h2>Simulador de receita</h2>
+          <div class="simulador-campos">
+            <label class="campo"><span>Usuários ativos por mês: <b id="s-usuarios-v"></b></span><input type="range" id="s-usuarios" min="1000" max="500000" step="1000" value="100000" /></label>
+            <label class="campo"><span>Quantos assinam: <b id="s-conv-v"></b></span><input type="range" id="s-conv" min="0.5" max="10" step="0.5" value="4" /></label>
+            <label class="campo"><span>Assinantes no plano anual: <b id="s-anual-v"></b></span><input type="range" id="s-anual" min="0" max="100" step="5" value="30" /></label>
+          </div>
+          <div class="numeros" id="s-resultado"></div>
+        </section>
       </section>
     </main>
 
     <footer class="rodape">
       <p id="rodape-fonte">Vagas de exemplo fictícias, para demonstração.</p>
+      <button type="button" class="link" data-aba="painel"><svg aria-hidden="true"><use href="#i-grafico"/></svg> Painel do dono</button>
     </footer>
   </div>
 
-  <dialog id="detalhe" class="detalhe" aria-labelledby="d-titulo">
-    <div class="detalhe-corpo" id="detalhe-corpo"></div>
+  <dialog id="detalhe" class="folha" aria-labelledby="d-titulo">
+    <div class="folha-corpo" id="detalhe-corpo"></div>
+  </dialog>
+
+  <dialog id="checkout" class="folha folha-pequena" aria-labelledby="c-titulo">
+    <div class="folha-corpo" id="checkout-corpo"></div>
   </dialog>
 
   <div class="toast" id="toast" role="status" hidden></div>
@@ -474,29 +794,40 @@ __reg["ui/app.js"] = () => {
 /**
  * Controlador da interface.
  *
- * Nenhuma regra de negócio mora aqui: nota de chance, golpe, currículo,
- * planos e candidaturas vêm de src/core/. A UI só lê o estado, chama o núcleo
- * e desenha.
+ * Nenhuma regra de negócio mora aqui: busca, nota de chance, golpe,
+ * currículo, planos, funil e candidaturas vêm de src/core/. A UI lê o estado,
+ * chama o núcleo, desenha e registra os eventos do funil.
  */
 
 const { vagasDeExemplo } = __mod("core/exemplos.js");
 const { buscar } = __mod("core/busca.js");
+const { sugestoes } = __mod("core/relevancia.js");
+const { PESOS } = __mod("core/match.js");
+const { medianasPorArea, comparacaoSalarial } = __mod("core/mercado.js");
 const { gerarCurriculo, gerarCarta, prepararEntrevista } = __mod("core/curriculo.js");
-const { PLANOS, DIAS_GARANTIA, podeUsar, registrarUso, restantes } = __mod("core/planos.js");
+const { PLANOS, DIAS_GARANTIA, DIAS_TESTE, podeUsar, registrarUso, restantes, economiaAnual, ehPago } = __mod("core/planos.js");
 const { ETAPAS, moverPara, remover, precisamDeRetorno } = __mod("core/candidaturas.js");
 const { ESCOLARIDADES, NOME_ESCOLARIDADE, perfilVazio } = __mod("core/tipos.js");
+const { completude, inferirArea, habilidadesSugeridas } = __mod("core/perfil.js");
+const { funil, registrar, projetarReceita, novaSessao } = __mod("core/metricas.js");
 const { formatarSalario, formatarReais } = __mod("core/text.js");
 const { ler, gravar } = __mod("ui/loja.js");
 
 /** @typedef {import('../core/tipos.js').Vaga} Vaga */
 /** @typedef {import('../core/tipos.js').Perfil} Perfil */
 /** @typedef {import('../core/planos.js').Recurso} Recurso */
+/** @typedef {import('../core/busca.js').ItemBusca} ItemBusca */
 
 const UFS = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 const AREAS = ['Administrativo', 'Alimentação', 'Atendimento', 'Construção Civil', 'Educação', 'Finanças', 'Indústria',
   'Limpeza e Conservação', 'Logística', 'Manutenção', 'Marketing', 'Recursos Humanos', 'Saúde', 'Segurança e Portaria',
   'Tecnologia', 'Varejo', 'Vendas'];
+const ATALHOS_CARGO = ['Motorista', 'Vendedor', 'Limpeza', 'Administrativo', 'Porteiro', 'Cozinha', 'Atendimento', 'Tecnologia'];
 const MODALIDADE = { presencial: 'Presencial', remoto: 'Remoto', hibrido: 'Híbrido' };
+const NOME_CRITERIO = { requisitos: 'Requisitos', cargo: 'Cargo e área', local: 'Local', salario: 'Salário', experiencia: 'Experiência', escolaridade: 'Escolaridade' };
+/** Tons dos monogramas das empresas; misturados com a cor do cartão, funcionam nos dois temas. */
+const TONS = ['#2256D0', '#157347', '#B8740A', '#8E3FB5', '#C0392B', '#0E8A8A'];
+const ABAS = ['vagas', 'perfil', 'candidaturas', 'planos', 'painel'];
 
 /** @returns {Perfil} */
 function perfilExemplo() {
@@ -518,6 +849,21 @@ function perfilExemplo() {
 /* estado                                                              */
 /* ------------------------------------------------------------------ */
 
+/** Página servida pelo servidor do projeto (e não o arquivo único)? */
+const COM_SERVIDOR = /^https?:$/.test(location.protocol) && location.pathname.includes('/src/ui/');
+
+function lerSessao() {
+  try {
+    const s = sessionStorage.getItem('vagacerta:sessao');
+    if (s) return s;
+    const nova = novaSessao();
+    sessionStorage.setItem('vagacerta:sessao', nova);
+    return nova;
+  } catch {
+    return novaSessao();
+  }
+}
+
 const estado = {
   /** @type {Vaga[]} */ vagas: vagasDeExemplo(),
   fonte: 'exemplo',
@@ -526,30 +872,56 @@ const estado = {
   /** @type {import('../core/planos.js').IdPlano} */ plano: ler('plano', 'gratis'),
   /** @type {import('../core/planos.js').Uso} */ uso: ler('uso', {}),
   /** @type {import('../core/candidaturas.js').Candidatura[]} */ candidaturas: ler('candidaturas', []),
+  /** @type {import('../core/metricas.js').Evento[]} */ eventos: ler('eventos', []),
   letraGrande: ler('letraGrande', false),
+  /** @type {'mensal' | 'anual'} */ ciclo: 'anual',
+  sessao: lerSessao(),
+  /** eventos que só contam uma vez por sessão */
+  /** @type {Set<string>} */ jaRegistrados: new Set(),
   /** textos já gerados nesta sessão: reabrir não gasta cota de novo */
   /** @type {Map<string, string>} */ gerados: new Map(),
   /** @type {string | null} */ vagaAberta: null,
   subAba: 'chance',
+  quiz: { passo: 1, cargo: '', area: '', habilidades: /** @type {Set<string>} */ (new Set()), concluido: false },
+  /** @type {Map<string, number>} */ medianas: new Map(),
 };
+estado.medianas = medianasPorArea(estado.vagas);
 
 const $ = (/** @type {string} */ s) => /** @type {HTMLElement} */ (document.querySelector(s));
 const $in = (/** @type {string} */ s) => /** @type {HTMLInputElement} */ (document.querySelector(s));
+const icone = (/** @type {string} */ nome) => `<svg aria-hidden="true"><use href="#i-${nome}"/></svg>`;
 
 /** @param {unknown} t */
 function esc(t) {
   return String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] ?? c));
 }
 
+/** @param {number} centavos */
+const reaisInteiros = (centavos) => (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+/** @param {string} dataIso */
+function diasDesde(dataIso) {
+  if (!dataIso) return Infinity;
+  return Math.max(0, Math.round((Date.now() - new Date(`${dataIso}T12:00:00`).getTime()) / 86_400_000));
+}
 /** @param {string} dataIso */
 function haQuantoTempo(dataIso) {
-  const dias = Math.round((Date.now() - new Date(`${dataIso}T12:00:00`).getTime()) / 86_400_000);
-  if (dias <= 0) return 'hoje';
-  if (dias === 1) return 'ontem';
-  return `há ${dias} dias`;
+  const d = diasDesde(dataIso);
+  if (d === Infinity) return '';
+  return d === 0 ? 'hoje' : d === 1 ? 'ontem' : `há ${d} dias`;
 }
 
-/** @type {number | undefined} */
+/** @param {string} empresa */
+function monograma(empresa) {
+  const partes = empresa.split(/\s+/).filter((p) => p.length > 2 || /^[A-Z]/.test(p));
+  const iniciais = (partes.length > 1 ? partes[0][0] + partes[1][0] : empresa.slice(0, 2)).toUpperCase();
+  let h = 0;
+  for (const c of empresa) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  const tom = TONS[h % TONS.length];
+  return `<span class="monograma" style="--m: color-mix(in srgb, ${tom} 22%, var(--folha))" aria-hidden="true">${esc(iniciais)}</span>`;
+}
+
+/** @type {ReturnType<typeof setTimeout> | undefined} */
 let timerToast;
 /** @param {string} msg */
 function toast(msg) {
@@ -557,7 +929,7 @@ function toast(msg) {
   el.textContent = msg;
   el.hidden = false;
   clearTimeout(timerToast);
-  timerToast = setTimeout(() => { el.hidden = true; }, 2600);
+  timerToast = setTimeout(() => { el.hidden = true; }, 2800);
 }
 
 function salvarTudo() {
@@ -570,19 +942,44 @@ function salvarTudo() {
 }
 
 /* ------------------------------------------------------------------ */
+/* funil: cada passo importante vira um evento                         */
+/* ------------------------------------------------------------------ */
+
+const UMA_VEZ = new Set(['visita', 'ver_oferta']);
+
+/**
+ * @param {string} nome
+ * @param {Record<string, string | number>} [dados]
+ */
+function rastrear(nome, dados = {}) {
+  if (UMA_VEZ.has(nome)) {
+    if (estado.jaRegistrados.has(nome)) return;
+    estado.jaRegistrados.add(nome);
+  }
+  const evento = { nome, sessao: estado.sessao, quando: Date.now(), dados };
+  estado.eventos = registrar(estado.eventos, evento);
+  gravar('eventos', estado.eventos.slice(-1000));
+  if (COM_SERVIDOR) {
+    fetch('/api/eventos', { method: 'POST', body: JSON.stringify(evento), keepalive: true }).catch(() => {});
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* navegação                                                           */
 /* ------------------------------------------------------------------ */
 
 /** @param {string} aba */
 function irPara(aba) {
-  for (const b of document.querySelectorAll('.abas .aba')) {
-    const ativa = /** @type {HTMLElement} */ (b).dataset.aba === aba;
-    if (ativa) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  if (!ABAS.includes(aba)) aba = 'vagas';
+  for (const b of document.querySelectorAll('.nav-item')) {
+    if (/** @type {HTMLElement} */ (b).dataset.aba === aba) b.setAttribute('aria-current', 'page');
+    else b.removeAttribute('aria-current');
   }
   for (const t of document.querySelectorAll('.tela')) /** @type {HTMLElement} */ (t).hidden = t.id !== `tela-${aba}`;
   if (aba === 'perfil') desenharPerfil();
   if (aba === 'candidaturas') desenharCandidaturas();
-  if (aba === 'planos') desenharPlanos();
+  if (aba === 'planos') { desenharPlanos(); rastrear('ver_oferta', { onde: 'planos' }); }
+  if (aba === 'painel') desenharPainel();
   if (aba === 'vagas') desenharVagas();
   window.scrollTo({ top: 0 });
 }
@@ -591,67 +988,237 @@ function irPara(aba) {
 /* vagas                                                               */
 /* ------------------------------------------------------------------ */
 
+/** @returns {import('../core/busca.js').Filtros} */
 function lerFiltros() {
-  const modalidades = /** @type {import('../core/tipos.js').Modalidade[]} */ (
-    ['presencial', 'hibrido', 'remoto'].filter((m) => $in(`#f-${m}`).checked));
-  const contrato = $in('#f-contrato').value;
+  const ufEscolhida = $in('#f-uf').value;
+  const ordem = $in('#f-ordem').value;
   return {
     texto: $in('#f-texto').value,
-    uf: $in('#f-uf').value,
-    contratos: contrato ? [contrato] : [],
-    modalidades,
-    ordenar: /** @type {'chance' | 'recentes' | 'salario'} */ ($in('#f-ordem').value),
+    uf: ufEscolhida || ($in('#f-perto').checked ? estado.perfil.uf : ''),
+    modalidades: $in('#f-remoto').checked ? ['remoto'] : [],
+    contratos: $in('#f-clt').checked ? ['CLT'] : [],
     so50mais: $in('#f-50').checked,
-    diasMax: $in('#f-recentes').checked ? 3 : 0,
+    diasMax: $in('#f-novas').checked ? 3 : 0,
     esconderSuspeitas: $in('#f-golpe').checked,
+    ...(ordem ? { ordenar: /** @type {any} */ (ordem) } : {}),
   };
 }
 
-/** @param {import('../core/match.js').Resultado | null} chance @param {boolean} suspeita */
-function carimbo(chance, suspeita) {
-  if (suspeita) return '<div class="carimbo golpe" aria-label="Vaga suspeita"><span class="carimbo-num">ALERTA</span><span class="carimbo-rot">golpe?</span></div>';
+/** @param {import('../core/match.js').Resultado | null} chance @param {boolean} suspeita @param {boolean} [grande] */
+function anel(chance, suspeita, grande = false) {
+  const g = grande ? ' grande' : '';
+  if (suspeita) return `<div class="anel golpe${g}" role="img" aria-label="Vaga com sinal de golpe">${icone('alerta')}</div>`;
   if (!chance) return '';
-  return `<div class="carimbo ${chance.faixa}" aria-label="Chance ${chance.nota} de 100">
-    <span class="carimbo-num">${chance.nota}</span><span class="carimbo-rot">chance</span></div>`;
+  return `<div class="anel ${chance.faixa}${g}" style="--v:${chance.nota}" role="img" aria-label="Chance ${chance.nota} de 100">
+    <span><b>${chance.nota}</b><small>chance</small></span></div>`;
+}
+
+/** @param {Vaga} v */
+function linkWhatsApp(v) {
+  const local = v.modalidade === 'remoto' ? 'remoto' : `${v.cidade}/${v.uf}`;
+  const texto = `Olha essa vaga: ${v.titulo} na ${v.empresa} (${local}), ${formatarSalario(v.salarioMin, v.salarioMax)}. Vi no VagaCerta, que mostra a chance em cada vaga.${v.url ? ` ${v.url}` : ''}`;
+  return `https://wa.me/?text=${encodeURIComponent(texto)}`;
+}
+
+/** @param {Vaga} v */
+function etiquetaSalario(v) {
+  const dif = comparacaoSalarial(v, estado.medianas);
+  return dif != null && dif >= 10 ? `<span class="etiqueta acima" title="Comparado com a mediana das vagas de ${esc(v.area)} listadas">+${dif}% que a média da área</span>` : '';
+}
+
+/**
+ * @param {ItemBusca} item
+ * @param {boolean} destaque
+ * @param {Set<string>} salvas
+ */
+function cartaoVaga({ vaga: v, chance, alertas }, destaque, salvas) {
+  const suspeita = alertas.some((a) => a.nivel === 'grave');
+  const salva = salvas.has(v.id);
+  let motivo = '';
+  if (suspeita) motivo = `<div class="alerta grave"><span class="alerta-linha">${icone('alerta')}<span><b>Cuidado: sinal de golpe.</b> ${esc(alertas[0].motivo)}</span></span></div>`;
+  else if (chance?.faixa === 'alta' && chance.motivos[0]) motivo = `<p class="vaga-motivo bom">${icone('check')}<span>${esc(chance.motivos[0])}</span></p>`;
+  else if (chance?.faltando[0]) motivo = `<p class="vaga-motivo falta">${icone('seta')}<span>${esc(chance.faltando[0])}</span></p>`;
+
+  return `<li class="vaga${suspeita ? ' suspeita' : ''}${destaque ? ' destaque' : ''}">
+    ${destaque ? '<span class="faixa-destaque">Melhor chance para você</span>' : ''}
+    ${monograma(v.empresa)}
+    <div class="vaga-info">
+      <h3 class="vaga-titulo"><button type="button" data-abrir="${esc(v.id)}">${esc(v.titulo)}</button></h3>
+      <p class="vaga-meta"><span>${esc(v.empresa)}</span><span>${esc(v.modalidade === 'remoto' ? 'Remoto' : `${v.cidade}/${v.uf}`)}</span><span>${esc(haQuantoTempo(v.publicadaEm))}</span></p>
+      <div class="vaga-salario"><strong>${esc(formatarSalario(v.salarioMin, v.salarioMax))}</strong>${etiquetaSalario(v)}</div>
+      <div class="etiquetas">
+        ${diasDesde(v.publicadaEm) <= 1 ? '<span class="etiqueta nova">Nova</span>' : ''}
+        <span class="etiqueta">${esc(v.contrato)}</span>
+        <span class="etiqueta">${MODALIDADE[v.modalidade]}</span>
+        ${v.valorizaExperiencia ? '<span class="etiqueta ok">Valoriza 50+</span>' : ''}
+        ${v.exigeCnh ? '<span class="etiqueta">Exige CNH</span>' : ''}
+      </div>
+      ${motivo}
+    </div>
+    ${anel(chance, suspeita)}
+    <div class="vaga-acoes">
+      <button type="button" class="botao" data-abrir="${esc(v.id)}">Ver minha chance</button>
+      <button type="button" class="botao-leve botao-quadrado${salva ? ' salvo' : ''}" data-salvar="${esc(v.id)}" aria-pressed="${salva}" aria-label="${salva ? 'Vaga salva' : 'Salvar vaga'}" title="${salva ? 'Salva' : 'Salvar'}">${icone(salva ? 'salvo-cheio' : 'salvo')}</button>
+      <a class="botao-leve botao-quadrado zap" href="${linkWhatsApp(v)}" target="_blank" rel="noopener" data-compartilhar="${esc(v.id)}" aria-label="Enviar pelo WhatsApp" title="Enviar pelo WhatsApp">${icone('zap')}</a>
+    </div>
+  </li>`;
+}
+
+/** @param {number} altas */
+function cartaoOferta(altas) {
+  rastrear('ver_oferta', { onde: 'lista' });
+  const titulo = altas > 1
+    ? `Você tem <b>${altas} vagas com chance alta</b>. Mande um currículo sob medida para cada uma.`
+    : 'Mande um <b>currículo sob medida</b> para cada vaga, sem limite.';
+  return `<li class="oferta">
+    <p class="sobretitulo" style="color:var(--ouro)">VagaCerta Pro</p>
+    <h3>${titulo}</h3>
+    <p>Currículo adaptado, carta e treino de entrevista ilimitados, e aviso de vagas novas no WhatsApp.</p>
+    <div class="oferta-acoes">
+      <button type="button" class="botao botao-ouro" data-assinar="lista">Testar ${DIAS_TESTE} dias grátis</button>
+      <small>Depois ${reaisInteiros(/** @type {number} */ (PLANOS.anual.precoAnual))}/ano ou ${formatarReais(PLANOS.pro.precoMensal)}/mês. Cancele quando quiser.</small>
+    </div>
+  </li>`;
+}
+
+function desenharNumerosHero() {
+  const itens = buscar(estado.vagas, {}, estado.perfilDeExemplo ? null : estado.perfil);
+  const limpas = itens.filter((i) => !i.alertas.some((a) => a.nivel === 'grave'));
+  const novas = limpas.filter((i) => diasDesde(i.vaga.publicadaEm) <= 3).length;
+  const golpes = itens.length - limpas.length;
+  const altas = estado.perfilDeExemplo ? 0 : limpas.filter((i) => i.chance?.faixa === 'alta').length;
+  $('#hero-numeros').innerHTML = [
+    `<li><b>${limpas.length}</b> vagas abertas</li>`,
+    `<li><b>${novas}</b> novas nos últimos 3 dias</li>`,
+    altas ? `<li class="ouro"><b>${altas}</b> com chance alta para você</li>` : '',
+    golpes ? `<li><b>${golpes}</b> com sinal de golpe, já marcadas</li>` : '',
+  ].join('');
 }
 
 function desenharVagas() {
   $('#aviso-exemplo').hidden = !estado.perfilDeExemplo;
-  const itens = buscar(estado.vagas, lerFiltros(), estado.perfil);
-  const altas = itens.filter((i) => i.chance?.faixa === 'alta').length;
-  const suspeitas = itens.filter((i) => i.alertas.some((a) => a.nivel === 'grave')).length;
+  $('#quiz').hidden = !estado.perfilDeExemplo && !estado.quiz.concluido;
+  desenharNumerosHero();
+
+  const filtros = lerFiltros();
+  const itens = buscar(estado.vagas, filtros, estado.perfil);
+  const altas = itens.filter((i) => i.chance?.faixa === 'alta' && !i.alertas.some((a) => a.nivel === 'grave')).length;
 
   $('#resumo-busca').innerHTML = itens.length
-    ? `<strong>${itens.length}</strong> vagas · <strong>${altas}</strong> com chance alta para você${suspeitas ? ` · <strong>${suspeitas}</strong> com sinal de golpe` : ''}`
-    : 'Nenhuma vaga com esses filtros. Tente tirar algum filtro ou buscar outra palavra.';
+    ? `<b>${itens.length}</b> ${itens.length === 1 ? 'vaga' : 'vagas'}${altas ? ` · <b>${altas}</b> com chance alta` : ''}`
+    : 'Nenhuma vaga com esses filtros.';
+
+  if (itens.length === 0) {
+    $('#lista-vagas').innerHTML = `<li class="vazio">Tente tirar um filtro ou buscar de outro jeito, como “vendas” em vez de “vendedor externo”.
+      ${filtros.texto ? '<button type="button" class="link" data-limpar-busca>Limpar busca</button>' : ''}</li>`;
+    return;
+  }
 
   const salvas = new Set(estado.candidaturas.map((c) => c.vagaId));
-  $('#lista-vagas').innerHTML = itens.map(({ vaga: v, chance, alertas }) => {
-    const suspeita = alertas.some((a) => a.nivel === 'grave');
-    const destaque = suspeita
-      ? `<div class="alerta grave"><strong>Cuidado: sinais de golpe.</strong> ${esc(alertas[0].motivo)}</div>`
-      : chance?.faltando[0] && chance.faixa !== 'alta'
-        ? `<p class="vaga-motivo falta">→ ${esc(chance.faltando[0])}</p>`
-        : chance?.motivos[0] ? `<p class="vaga-motivo">✓ ${esc(chance.motivos[0])}</p>` : '';
-    return `<li class="vaga${suspeita ? ' suspeita' : ''}">
-      ${carimbo(chance, suspeita)}
-      <div class="vaga-info">
-        <h3 class="vaga-titulo">${esc(v.titulo)}</h3>
-        <p class="vaga-meta"><span>${esc(v.empresa)}</span><span>${esc(v.modalidade === 'remoto' ? 'Remoto' : `${v.cidade}/${v.uf}`)}</span><span>${esc(v.contrato)}</span><span>${haQuantoTempo(v.publicadaEm)}</span></p>
-        <p class="vaga-salario">${esc(formatarSalario(v.salarioMin, v.salarioMax))}</p>
-        <div class="etiquetas">
-          <span class="etiqueta">${MODALIDADE[v.modalidade]}</span>
-          ${v.valorizaExperiencia ? '<span class="etiqueta ok">Valoriza 50+</span>' : ''}
-          ${v.exigeCnh ? '<span class="etiqueta">Exige CNH</span>' : ''}
-        </div>
-        ${destaque}
-        <div class="vaga-acoes">
-          <button type="button" class="botao" data-abrir="${esc(v.id)}">Ver chance e currículo</button>
-          <button type="button" class="botao-leve" data-salvar="${esc(v.id)}" ${salvas.has(v.id) ? 'disabled' : ''}>${salvas.has(v.id) ? 'Salva ✓' : 'Salvar'}</button>
-        </div>
-      </div>
-    </li>`;
-  }).join('');
+  const primeiraLimpa = itens.findIndex((i) => !i.alertas.some((a) => a.nivel === 'grave'));
+  const destacar = primeiraLimpa >= 0 && itens[primeiraLimpa].chance?.faixa === 'alta' && !filtros.ordenar ? primeiraLimpa : -1;
+  const partes = itens.map((item, i) => cartaoVaga(item, i === destacar, salvas));
+  if (!ehPago(estado.plano) && partes.length > 5) partes.splice(4, 0, cartaoOferta(altas));
+  $('#lista-vagas').innerHTML = partes.join('');
+}
+
+function atualizarSugestoes() {
+  const lista = sugestoes(estado.vagas, $in('#f-texto').value || $in('#q-cargo').value, 8);
+  $('#sugestoes').innerHTML = lista.map((s) => `<option value="${esc(s)}"></option>`).join('');
+}
+
+/** Com vagas ao vivo, a busca vai ao servidor; sem, filtra localmente. */
+async function buscarNoServidor() {
+  if (estado.fonte !== 'ao-vivo') return;
+  const q = $in('#f-texto').value.trim();
+  const onde = $in('#f-uf').value;
+  $('#resumo-busca').textContent = 'Buscando vagas em todas as fontes…';
+  try {
+    const resp = await fetch(`/api/vagas?q=${encodeURIComponent(q)}&onde=${encodeURIComponent(onde)}`);
+    if (!resp.ok) throw new Error(String(resp.status));
+    const dados = await resp.json();
+    estado.vagas = dados.vagas;
+    estado.medianas = medianasPorArea(estado.vagas);
+  } catch {
+    toast('Não consegui buscar agora. Mostrando as vagas que já estavam carregadas.');
+  }
+  desenharVagas();
+}
+
+/* ------------------------------------------------------------------ */
+/* quiz de 30 segundos                                                 */
+/* ------------------------------------------------------------------ */
+
+function desenharQuiz() {
+  const q = estado.quiz;
+  const quiz = $('#quiz');
+  quiz.classList.toggle('concluido', q.concluido);
+  $('#quiz-perguntas').hidden = q.concluido;
+  $('#quiz-feito').hidden = !q.concluido;
+  if (q.concluido) {
+    const itens = buscar(estado.vagas, { esconderSuspeitas: true }, estado.perfil);
+    const altas = itens.filter((i) => i.chance?.faixa === 'alta').length;
+    const medias = itens.filter((i) => i.chance?.faixa === 'media').length;
+    const c = completude(estado.perfil);
+    $('#quiz-feito').innerHTML = `<div class="quiz-topo"><div>
+        <h2>Pronto! ${altas ? `${altas} ${altas === 1 ? 'vaga tem' : 'vagas têm'} chance alta para você` : `${medias} vagas têm chance média para você`}.</h2>
+        <p class="quiz-sub">As melhores estão no topo da lista. Seu perfil está ${c.porcento}% completo: ${c.proximo ? `adicione ${esc(c.proximo)} para a nota ficar ainda mais certa.` : 'ótimo!'}</p>
+      </div></div>
+      <div class="quiz-acoes" style="justify-content:flex-start">
+        <button type="button" class="botao" data-rolar-lista>Ver minhas vagas ${icone('seta')}</button>
+        <button type="button" class="botao-leve" data-aba="perfil">Completar perfil</button>
+      </div>`;
+    return;
+  }
+  for (const el of quiz.querySelectorAll('[data-passo]')) /** @type {HTMLElement} */ (el).hidden = Number(/** @type {HTMLElement} */ (el).dataset.passo) !== q.passo;
+  quiz.querySelectorAll('.quiz-passos li').forEach((li, i) => li.classList.toggle('ativo', i < q.passo));
+  $('#q-voltar').hidden = q.passo === 1;
+  $('#q-avancar').innerHTML = q.passo === 3 ? `Ver minhas vagas ${icone('seta')}` : `Continuar ${icone('seta')}`;
+
+  if (q.passo === 1) {
+    $('#q-atalhos').innerHTML = ATALHOS_CARGO.map((c) => `<button type="button" class="atalho" data-atalho="${c}" aria-pressed="${q.cargo === c}">${c}</button>`).join('');
+  }
+  if (q.passo === 3) {
+    const lista = habilidadesSugeridas(q.area, estado.vagas, 9);
+    $('#quiz-sub').textContent = 'Marque o que você sabe fazer. É isso que as empresas mais pedem.';
+    const passo = /** @type {HTMLElement} */ (quiz.querySelector('[data-passo="3"]'));
+    let caixa = passo.querySelector('.atalhos');
+    if (!caixa) { caixa = document.createElement('div'); caixa.className = 'atalhos'; passo.append(caixa); }
+    caixa.innerHTML = lista.map((h) => `<button type="button" class="atalho" data-habilidade="${esc(h)}" aria-pressed="${q.habilidades.has(h)}">${esc(h)}</button>`).join('');
+  }
+}
+
+function avancarQuiz() {
+  const q = estado.quiz;
+  if (q.passo === 1) {
+    q.cargo = $in('#q-cargo').value.trim();
+    if (!q.cargo) { toast('Escreva ou toque no trabalho que você procura.'); $in('#q-cargo').focus(); return; }
+    q.area = inferirArea(q.cargo, estado.vagas);
+    q.passo = 2;
+  } else if (q.passo === 2) {
+    if (!$in('#q-uf').value) { toast('Escolha seu estado.'); $in('#q-uf').focus(); return; }
+    q.passo = 3;
+  } else {
+    estado.perfil = {
+      ...perfilVazio(),
+      cargoDesejado: q.cargo,
+      area: q.area,
+      cidade: $in('#q-cidade').value.trim(),
+      uf: $in('#q-uf').value,
+      temCnh: $in('#q-cnh').checked,
+      anosExperiencia: Math.max(0, Number($in('#q-anos').value) || 0),
+      escolaridade: /** @type {any} */ ($in('#q-esc').value),
+      habilidades: [...q.habilidades],
+    };
+    estado.perfilDeExemplo = false;
+    estado.gerados.clear();
+    q.concluido = true;
+    salvarTudo();
+    rastrear('quiz_concluido', { area: q.area || 'outra' });
+    $in('#f-ordem').value = '';
+    desenharVagas();
+  }
+  desenharQuiz();
 }
 
 /* ------------------------------------------------------------------ */
@@ -668,6 +1235,7 @@ function abrirVaga(id) {
   desenharDetalhe();
   const d = /** @type {HTMLDialogElement} */ ($('#detalhe'));
   if (!d.open) d.showModal();
+  rastrear('abrir_vaga', { vaga: id });
 }
 
 /** @type {Record<string, { rotulo: string, recurso: Recurso | null }>} */
@@ -684,84 +1252,136 @@ function desenharDetalhe() {
   const [item] = buscar([v], {}, estado.perfil);
   const { chance, alertas } = item;
   const suspeita = alertas.some((a) => a.nivel === 'grave');
+  const bloqueia = (/** @type {Recurso | null} */ r) => r && !estado.gerados.has(`${r}:${v.id}`) && !podeUsar(estado.plano, r, estado.uso);
 
   const abas = Object.entries(SUB_ABAS).map(([id, a]) =>
-    `<button type="button" class="aba" data-sub="${id}" ${estado.subAba === id ? 'aria-current="page"' : ''}>${a.rotulo}</button>`).join('');
+    `<button type="button" role="tab" data-sub="${id}" aria-selected="${estado.subAba === id}">${a.rotulo}${bloqueia(a.recurso) ? icone('cadeado') : ''}</button>`).join('');
 
   $('#detalhe-corpo').innerHTML = `
-    <div class="detalhe-topo">
-      ${carimbo(chance, suspeita)}
+    <div class="folha-topo">
+      ${monograma(v.empresa)}
       <div class="vaga-info">
         <h2 id="d-titulo">${esc(v.titulo)}</h2>
-        <p class="vaga-meta"><span>${esc(v.empresa)}</span><span>${esc(v.modalidade === 'remoto' ? 'Remoto' : `${v.cidade}/${v.uf}`)}</span><span>${esc(v.fonte)}</span></p>
+        <p class="vaga-meta"><span>${esc(v.empresa)}</span><span>${esc(v.modalidade === 'remoto' ? 'Remoto' : `${v.cidade}/${v.uf}`)}</span></p>
       </div>
-      <button type="button" class="fechar" data-fechar aria-label="Fechar">✕</button>
+      <button type="button" class="fechar" data-fechar="detalhe" aria-label="Fechar">✕</button>
     </div>
-    ${alertas.length ? `<div class="alerta ${suspeita ? 'grave' : 'atencao'}"><strong>${suspeita ? 'Cuidado: esta vaga tem sinais de golpe.' : 'Atenção a estes pontos:'}</strong>
+    ${alertas.length ? `<div class="alerta ${suspeita ? 'grave' : 'atencao'}"><b>${suspeita ? 'Cuidado: esta vaga tem sinais de golpe.' : 'Atenção a estes pontos:'}</b>
       <ul>${alertas.map((a) => `<li>${esc(a.motivo)}</li>`).join('')}</ul>
       ${suspeita ? '<span>Nunca pague para se candidatar e nunca envie senha ou dados bancários.</span>' : ''}</div>` : ''}
-    <div class="sub-abas" role="tablist">${abas}</div>
-    <div id="sub-conteudo">${conteudoSubAba(v, chance)}</div>`;
+    <div class="abas-folha" role="tablist">${abas}</div>
+    <div id="sub-conteudo">${conteudoSubAba(v, chance, suspeita)}</div>`;
 }
 
 /**
  * @param {Vaga} v
  * @param {import('../core/match.js').Resultado | null} chance
+ * @param {boolean} suspeita
  */
-function conteudoSubAba(v, chance) {
-  if (estado.subAba === 'chance') {
+function abaChance(v, chance, suspeita) {
+  const criterios = chance ? Object.entries(chance.partes).map(([k, pts]) => {
+    const max = PESOS[/** @type {keyof typeof PESOS} */ (k)];
+    return `<div class="criterio" title="${NOME_CRITERIO[/** @type {keyof typeof NOME_CRITERIO} */ (k)]}: ${pts} de ${max} pontos">
+      <span class="criterio-nome">${NOME_CRITERIO[/** @type {keyof typeof NOME_CRITERIO} */ (k)]}</span>
+      <span class="criterio-trilho"><span class="criterio-barra" style="width:${Math.round((pts / max) * 100)}%"></span></span>
+      <span class="criterio-valor">${Math.round(pts)}/${max}</span>
+    </div>`;
+  }).join('') : '';
+
+  return `<div class="bloco">
+    ${chance ? `<div class="folha-topo" style="grid-template-columns:auto 1fr">
+        ${anel(chance, suspeita, true)}
+        <div><h3>${chance.faixa === 'alta' ? 'Você tem chance alta nesta vaga' : chance.faixa === 'media' ? 'Você tem chance média nesta vaga' : 'Sua chance nesta vaga é baixa'}</h3>
+        <p class="cota">${chance.eliminatorio ? 'Um requisito obrigatório não foi atendido; por isso a nota tem teto.' : 'Veja de onde vem cada ponto.'}</p></div>
+      </div>
+      <div class="criterios">${criterios}</div>
+      ${chance.motivos.length ? `<h3>A seu favor</h3><ul class="lista-simples bons">${chance.motivos.map((m) => `<li>${icone('check')}<span>${esc(m)}</span></li>`).join('')}</ul>` : ''}
+      ${chance.faltando.length ? `<h3>O que melhorar</h3><ul class="lista-simples faltas">${chance.faltando.map((m) => `<li>${icone('seta')}<span>${esc(m)}</span></li>`).join('')}</ul>` : ''}` : ''}
+    <dl class="dados">
+      <div><dt>Salário</dt><dd>${esc(formatarSalario(v.salarioMin, v.salarioMax))}</dd></div>
+      <div><dt>Contrato</dt><dd>${esc(v.contrato)}</dd></div>
+      <div><dt>Modalidade</dt><dd>${MODALIDADE[v.modalidade]}</dd></div>
+      <div><dt>Experiência</dt><dd>${v.experienciaMin ? `${v.experienciaMin} ano(s)` : 'Não exige'}</dd></div>
+      <div><dt>Escolaridade</dt><dd>${NOME_ESCOLARIDADE[v.escolaridadeMin]}</dd></div>
+      <div><dt>Publicada</dt><dd>${esc(haQuantoTempo(v.publicadaEm) || '—')}</dd></div>
+    </dl>
+    <p>${esc(v.descricao)}</p>
+    ${v.requisitos.length ? `<p><b>Requisitos:</b> ${esc(v.requisitos.join(', '))}</p>` : ''}
+    ${v.diferenciais.length ? `<p><b>Diferenciais:</b> ${esc(v.diferenciais.join(', '))}</p>` : ''}
+    ${v.beneficios.length ? `<p><b>Benefícios:</b> ${esc(v.beneficios.join(', '))}</p>` : ''}
+    <p class="nota-rodape">Fonte: ${esc(v.fonte)}</p>
+    <div class="vaga-acoes" style="grid-column:auto">
+      ${suspeita ? '' : `<button type="button" class="botao botao-ouro" data-sub="curriculo">Gerar meu currículo para esta vaga</button>`}
+      ${v.url && !suspeita ? `<a class="botao-leve" href="${esc(v.url)}" target="_blank" rel="noopener">Candidatar-se no site ${icone('seta')}</a>` : ''}
+      <button type="button" class="botao-leve" data-salvar="${esc(v.id)}">${icone('salvo')} Salvar</button>
+      <a class="botao-leve zap" href="${linkWhatsApp(v)}" target="_blank" rel="noopener" data-compartilhar="${esc(v.id)}">${icone('zap')} Enviar</a>
+    </div>
+  </div>`;
+}
+
+/** @param {Recurso} recurso @param {Vaga} v */
+function gerarTexto(recurso, v) {
+  return recurso === 'curriculo' ? gerarCurriculo(estado.perfil, v)
+    : recurso === 'carta' ? gerarCarta(estado.perfil, v)
+      : JSON.stringify(prepararEntrevista(estado.perfil, v));
+}
+
+/** @param {Recurso} recurso @param {string} texto */
+function mostrarTexto(recurso, texto) {
+  if (recurso === 'entrevista') {
+    const perguntas = /** @type {import('../core/curriculo.js').Pergunta[]} */ (JSON.parse(texto));
+    return `<ol class="perguntas">${perguntas.map((p) => `<li><b>${esc(p.pergunta)}</b><span class="dica">${esc(p.dica)}</span></li>`).join('')}</ol>`;
+  }
+  return `<pre class="texto-gerado" id="texto-gerado">${esc(texto)}</pre>`;
+}
+
+/**
+ * @param {Vaga} v
+ * @param {import('../core/match.js').Resultado | null} chance
+ * @param {boolean} suspeita
+ */
+function conteudoSubAba(v, chance, suspeita) {
+  if (estado.subAba === 'chance') return abaChance(v, chance, suspeita);
+
+  const recurso = /** @type {Recurso} */ (SUB_ABAS[estado.subAba].recurso);
+  const pronto = estado.gerados.get(`${recurso}:${v.id}`);
+  const nomes = { curriculo: 'currículo', carta: 'carta de apresentação', entrevista: 'treino de entrevista' };
+  const nome = nomes[/** @type {'curriculo' | 'carta' | 'entrevista'} */ (recurso)];
+
+  if (pronto) {
     return `<div class="bloco">
-      ${chance ? `
-        ${chance.motivos.length ? `<h3>A seu favor</h3><ul class="lista-simples bons">${chance.motivos.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>` : ''}
-        ${chance.faltando.length ? `<h3>O que melhorar</h3><ul class="lista-simples faltas">${chance.faltando.map((m) => `<li>${esc(m)}</li>`).join('')}</ul>` : ''}` : ''}
-      <dl class="dados">
-        <div><dt>Salário</dt><dd>${esc(formatarSalario(v.salarioMin, v.salarioMax))}</dd></div>
-        <div><dt>Contrato</dt><dd>${esc(v.contrato)}</dd></div>
-        <div><dt>Modalidade</dt><dd>${MODALIDADE[v.modalidade]}</dd></div>
-        <div><dt>Experiência</dt><dd>${v.experienciaMin ? `${v.experienciaMin} ano(s)` : 'Não exige'}</dd></div>
-        <div><dt>Escolaridade</dt><dd>${NOME_ESCOLARIDADE[v.escolaridadeMin]}</dd></div>
-        <div><dt>Publicada</dt><dd>${haQuantoTempo(v.publicadaEm)}</dd></div>
-      </dl>
-      <p>${esc(v.descricao)}</p>
-      ${v.requisitos.length ? `<p><strong>Requisitos:</strong> ${esc(v.requisitos.join(', '))}</p>` : ''}
-      ${v.diferenciais.length ? `<p><strong>Diferenciais:</strong> ${esc(v.diferenciais.join(', '))}</p>` : ''}
-      ${v.beneficios.length ? `<p><strong>Benefícios:</strong> ${esc(v.beneficios.join(', '))}</p>` : ''}
-      <div class="vaga-acoes">
-        ${v.url ? `<a class="botao" href="${esc(v.url)}" target="_blank" rel="noopener">Candidatar-se no site da vaga</a>` : ''}
-        <button type="button" class="botao-leve" data-salvar="${esc(v.id)}">Salvar em candidaturas</button>
+      ${mostrarTexto(recurso, pronto)}
+      ${recurso !== 'entrevista' ? `<div class="vaga-acoes" style="grid-column:auto"><button type="button" class="botao" data-copiar>Copiar texto</button>
+        ${v.url && !suspeita ? `<a class="botao-leve" href="${esc(v.url)}" target="_blank" rel="noopener">Candidatar-se no site ${icone('seta')}</a>` : ''}</div>` : ''}
+      ${!ehPago(estado.plano) ? `<p class="dica-pro">Gostou? No Pro você gera para todas as vagas, sem limite. <button type="button" class="link" data-assinar="depois-gerar">Testar ${DIAS_TESTE} dias grátis</button></p>` : ''}
+    </div>`;
+  }
+
+  if (!podeUsar(estado.plano, recurso, estado.uso)) {
+    // o resultado é mostrado borrado: a pessoa vê que está pronto e só falta liberar
+    rastrear('ver_oferta', { onde: `bloqueio-${recurso}` });
+    return `<div class="bloqueado">
+      ${mostrarTexto(recurso, gerarTexto(recurso, v))}
+      <div class="cadeado">
+        <span class="icone-cadeado">${icone('cadeado')}</span>
+        <h3>Seu ${nome} para esta vaga está pronto</h3>
+        <p>Você já usou o grátis de hoje. Libere agora e mande para todas as vagas que combinam com você.</p>
+        <button type="button" class="botao botao-ouro" data-assinar="bloqueio">Liberar com ${DIAS_TESTE} dias grátis</button>
+        <p class="cota">ou volte amanhã para mais 1 grátis</p>
       </div>
     </div>`;
   }
 
-  const recurso = /** @type {Recurso} */ (SUB_ABAS[estado.subAba].recurso);
-  const chave = `${recurso}:${v.id}`;
-  const pronto = estado.gerados.get(chave);
-  const nomes = { curriculo: 'currículo adaptado', carta: 'carta de apresentação', entrevista: 'preparação para entrevista' };
-  const nome = nomes[/** @type {'curriculo' | 'carta' | 'entrevista'} */ (recurso)];
-
-  if (!pronto) {
-    if (!podeUsar(estado.plano, recurso, estado.uso)) {
-      return `<div class="paywall">
-        <h3>Você já usou o ${nome} grátis de hoje</h3>
-        <p>Amanhã tem mais um. Ou libere ilimitado com o Pro por ${formatarReais(PLANOS.pro.precoMensal)}/mês, com ${DIAS_GARANTIA} dias de garantia.</p>
-        <button type="button" class="botao" data-assinar>Conhecer o Pro</button>
-      </div>`;
-    }
-    const resta = restantes(estado.plano, recurso, estado.uso);
-    return `<div class="bloco">
-      <p>Vamos montar ${recurso === 'entrevista' ? 'as perguntas mais prováveis desta entrevista, com dicas de resposta' : `seu ${nome} para esta vaga, usando só o que está no seu perfil`}.</p>
-      <p class="cota">${resta === Infinity ? 'Plano Pro: ilimitado.' : `Grátis: resta ${resta} hoje.`}</p>
-      <button type="button" class="botao" data-gerar="${recurso}">Gerar ${nome}</button>
-    </div>`;
-  }
-
-  if (recurso === 'entrevista') {
-    const perguntas = /** @type {import('../core/curriculo.js').Pergunta[]} */ (JSON.parse(pronto));
-    return `<ol class="perguntas">${perguntas.map((p) => `<li><strong>${esc(p.pergunta)}</strong><span class="dica">${esc(p.dica)}</span></li>`).join('')}</ol>`;
-  }
+  const resta = restantes(estado.plano, recurso, estado.uso);
+  const explica = {
+    curriculo: 'Montamos seu currículo destacando primeiro o que esta vaga pede, usando só o que está no seu perfil.',
+    carta: 'Uma carta curta e direta, citando a empresa e os requisitos que você atende.',
+    entrevista: 'As perguntas mais prováveis desta entrevista, com dica de como responder cada uma.',
+  }[/** @type {'curriculo' | 'carta' | 'entrevista'} */ (recurso)];
   return `<div class="bloco">
-    <pre class="texto-gerado" id="texto-gerado">${esc(pronto)}</pre>
-    <div class="vaga-acoes"><button type="button" class="botao" data-copiar>Copiar texto</button></div>
+    <p>${explica}</p>
+    <p class="cota">${resta === Infinity ? 'Plano Pro: ilimitado.' : `Plano grátis: resta ${resta} hoje.`}</p>
+    <button type="button" class="botao botao-ouro" data-gerar="${recurso}">Gerar ${nome}</button>
   </div>`;
 }
 
@@ -769,12 +1389,10 @@ function conteudoSubAba(v, chance) {
 function gerar(recurso) {
   const v = estado.vagaAberta ? vagaPorId(estado.vagaAberta) : null;
   if (!v || !podeUsar(estado.plano, recurso, estado.uso)) return;
-  const texto = recurso === 'curriculo' ? gerarCurriculo(estado.perfil, v)
-    : recurso === 'carta' ? gerarCarta(estado.perfil, v)
-      : JSON.stringify(prepararEntrevista(estado.perfil, v));
-  estado.gerados.set(`${recurso}:${v.id}`, texto);
+  estado.gerados.set(`${recurso}:${v.id}`, gerarTexto(recurso, v));
   estado.uso = registrarUso(recurso, estado.uso);
   salvarTudo();
+  rastrear('gerar', { recurso });
   desenharDetalhe();
 }
 
@@ -794,13 +1412,58 @@ async function copiar() {
 }
 
 /** @param {string} id */
-function salvarVaga(id) {
-  if (!estado.candidaturas.some((c) => c.vagaId === id)) {
+function alternarSalva(id) {
+  if (estado.candidaturas.some((c) => c.vagaId === id)) {
+    estado.candidaturas = remover(estado.candidaturas, id);
+    toast('Vaga removida das salvas');
+  } else {
     estado.candidaturas = moverPara(estado.candidaturas, id, 'salva');
-    salvarTudo();
-    toast('Vaga salva em Candidaturas');
+    rastrear('salvar', { vaga: id });
+    toast('Vaga salva. Acompanhe em “Salvas”.');
   }
+  salvarTudo();
   atualizarContador();
+}
+
+/* ------------------------------------------------------------------ */
+/* assinatura (simulada)                                               */
+/* ------------------------------------------------------------------ */
+
+/** @param {string} origem */
+function abrirCheckout(origem) {
+  rastrear('clique_assinar', { origem, ciclo: estado.ciclo });
+  const anual = estado.ciclo === 'anual';
+  const depois = anual ? `${formatarReais(/** @type {number} */ (PLANOS.anual.precoAnual))} por ano (${formatarReais(PLANOS.anual.precoMensal)}/mês)` : `${formatarReais(PLANOS.pro.precoMensal)} por mês`;
+  $('#checkout-corpo').innerHTML = `
+    <div class="folha-topo" style="grid-template-columns:1fr auto">
+      <div><p class="sobretitulo" style="color:var(--acao)">VagaCerta Pro</p><h2 id="c-titulo">Comece seus ${DIAS_TESTE} dias grátis</h2></div>
+      <button type="button" class="fechar" data-fechar="checkout" aria-label="Fechar">✕</button>
+    </div>
+    <div class="alternador" role="radiogroup" aria-label="Forma de pagamento" style="background:var(--folha-2)">
+      <button type="button" role="radio" data-ciclo="mensal" aria-checked="${!anual}" style="color:var(--tinta)">Mensal</button>
+      <button type="button" role="radio" data-ciclo="anual" aria-checked="${anual}" style="color:var(--tinta)">Anual <b>-${economiaAnual().porcento}%</b></button>
+    </div>
+    <dl class="dados">
+      <div><dt>Hoje</dt><dd>R$ 0,00</dd></div>
+      <div><dt>Depois de ${DIAS_TESTE} dias</dt><dd>${depois}</dd></div>
+    </dl>
+    <ul class="lista-simples bons">${PLANOS.pro.inclui.slice(1).map((i) => `<li>${icone('check')}<span>${esc(i)}</span></li>`).join('')}</ul>
+    <button type="button" class="botao botao-ouro botao-largo" data-confirmar-assinatura>Começar teste grátis</button>
+    <p class="garantia">${icone('escudo')}<span>Cancele quando quiser antes do fim do teste e não paga nada. Depois, ${DIAS_GARANTIA} dias de garantia.</span></p>
+    <p class="nota-rodape">Protótipo: esta assinatura é uma simulação e nenhum valor é cobrado.</p>`;
+  const d = /** @type {HTMLDialogElement} */ ($('#checkout'));
+  if (!d.open) d.showModal();
+}
+
+function confirmarAssinatura() {
+  estado.plano = estado.ciclo === 'anual' ? 'anual' : 'pro';
+  salvarTudo();
+  rastrear('assinou', { plano: estado.plano });
+  /** @type {HTMLDialogElement} */ ($('#checkout')).close();
+  atualizarPilula();
+  toast(`Pro ativado. Aproveite seus ${DIAS_TESTE} dias grátis!`);
+  if (/** @type {HTMLDialogElement} */ ($('#detalhe')).open) desenharDetalhe();
+  if (!$('#tela-planos').hidden) desenharPlanos();
   desenharVagas();
 }
 
@@ -809,20 +1472,25 @@ function salvarVaga(id) {
 /* ------------------------------------------------------------------ */
 
 function preencherSelects() {
-  $('#f-uf').insertAdjacentHTML('beforeend', UFS.map((u) => `<option>${u}</option>`).join(''));
-  $('#p-uf').innerHTML = `<option value="">Selecione</option>${UFS.map((u) => `<option>${u}</option>`).join('')}`;
+  const ufs = UFS.map((u) => `<option>${u}</option>`).join('');
+  $('#f-uf').insertAdjacentHTML('beforeend', ufs);
+  $('#p-uf').innerHTML = `<option value="">Selecione</option>${ufs}`;
+  $('#q-uf').innerHTML = `<option value="">Selecione</option>${ufs}`;
   $('#p-area').innerHTML = `<option value="">Selecione</option>${AREAS.map((a) => `<option>${a}</option>`).join('')}`;
-  $('#p-esc').innerHTML = ESCOLARIDADES.map((e) => `<option value="${e}">${NOME_ESCOLARIDADE[e]}</option>`).join('');
+  const escolaridades = ESCOLARIDADES.map((e) => `<option value="${e}">${NOME_ESCOLARIDADE[e]}</option>`).join('');
+  $('#p-esc').innerHTML = escolaridades;
+  $('#q-esc').innerHTML = escolaridades;
+  $in('#q-esc').value = 'medio';
 }
 
 /** @param {import('../core/tipos.js').Experiencia} e @param {number} i */
 function linhaExp(e, i) {
   return `<li class="exp" data-i="${i}">
-    <div class="campo"><label for="e-cargo-${i}">Cargo</label><input id="e-cargo-${i}" data-c="cargo" value="${esc(e.cargo)}" /></div>
-    <div class="campo"><label for="e-emp-${i}">Empresa</label><input id="e-emp-${i}" data-c="empresa" value="${esc(e.empresa)}" /></div>
-    <div class="campo"><label for="e-per-${i}">Período</label><input id="e-per-${i}" data-c="periodo" value="${esc(e.periodo)}" placeholder="2015 – 2023" /></div>
-    <button type="button" class="botao-leve" data-remover-exp="${i}" aria-label="Remover experiência">Remover</button>
-    <div class="campo campo-desc"><label for="e-desc-${i}">O que você fazia</label><input id="e-desc-${i}" data-c="descricao" value="${esc(e.descricao)}" /></div>
+    <label class="campo"><span>Cargo</span><input id="e-cargo-${i}" data-c="cargo" value="${esc(e.cargo)}" /></label>
+    <label class="campo"><span>Empresa</span><input id="e-emp-${i}" data-c="empresa" value="${esc(e.empresa)}" /></label>
+    <label class="campo"><span>Período</span><input id="e-per-${i}" data-c="periodo" value="${esc(e.periodo)}" placeholder="2015 – 2023" /></label>
+    <button type="button" class="botao-leve" data-remover-exp="${i}">Remover</button>
+    <label class="campo campo-desc"><span>O que você fazia</span><input id="e-desc-${i}" data-c="descricao" value="${esc(e.descricao)}" /></label>
   </li>`;
 }
 
@@ -843,6 +1511,16 @@ function desenharPerfil() {
   /** @type {HTMLTextAreaElement} */ ($('#p-hab')).value = p.habilidades.join(', ');
   /** @type {HTMLTextAreaElement} */ ($('#p-resumo')).value = p.resumo;
   $('#lista-exp').innerHTML = p.experiencias.map(linhaExp).join('');
+  desenharMedidor(p);
+}
+
+/** @param {Perfil} p */
+function desenharMedidor(p) {
+  const c = completude(p);
+  $('#medidor-perfil').innerHTML = `
+    <div class="medidor-topo"><span>Perfil ${c.porcento}% completo</span>${estado.perfilDeExemplo ? '<span class="cota">Este é o perfil de exemplo. Troque pelos seus dados.</span>' : ''}</div>
+    <div class="medidor-trilho" role="progressbar" aria-valuenow="${c.porcento}" aria-valuemin="0" aria-valuemax="100"><div class="medidor-barra" style="width:${c.porcento}%"></div></div>
+    <p class="medidor-dica">${c.proximo ? `Próximo passo: adicione ${esc(c.proximo)}.` : 'Perfil completo. Suas notas de chance estão no máximo de precisão.'}</p>`;
 }
 
 /** @returns {import('../core/tipos.js').Experiencia[]} */
@@ -853,9 +1531,9 @@ function lerExperiencias() {
   });
 }
 
+/** @returns {Perfil} */
 function lerPerfil() {
-  /** @type {Perfil} */
-  const p = {
+  return {
     nome: $in('#p-nome').value.trim(),
     cargoDesejado: $in('#p-cargo').value.trim(),
     area: $in('#p-area').value,
@@ -872,7 +1550,6 @@ function lerPerfil() {
     resumo: /** @type {HTMLTextAreaElement} */ ($('#p-resumo')).value.trim(),
     experiencias: lerExperiencias().filter((e) => e.cargo || e.empresa),
   };
-  return p;
 }
 
 /* ------------------------------------------------------------------ */
@@ -880,39 +1557,46 @@ function lerPerfil() {
 /* ------------------------------------------------------------------ */
 
 function atualizarContador() {
-  $('#cont-cand').textContent = String(estado.candidaturas.length);
+  const el = $('#cont-cand');
+  el.textContent = String(estado.candidaturas.length);
+  el.hidden = estado.candidaturas.length === 0;
 }
 
 function desenharCandidaturas() {
   const cobrar = precisamDeRetorno(estado.candidaturas);
   $('#alerta-retorno').innerHTML = cobrar.length
-    ? `<div class="alerta atencao"><strong>${cobrar.length} candidatura(s) sem resposta há mais de 7 dias.</strong> Mande uma mensagem educada perguntando como está o processo.</div>`
+    ? `<div class="alerta atencao"><b>${cobrar.length} candidatura(s) sem resposta há mais de 7 dias.</b> Mande uma mensagem educada perguntando como está o processo.</div>`
     : '';
 
   if (estado.candidaturas.length === 0) {
-    $('#quadro').innerHTML = '<p class="vazio">Nenhuma vaga salva ainda. Na aba Vagas, toque em “Salvar” nas que interessarem.</p>';
+    $('#quadro').innerHTML = `<div class="cartao" style="grid-column:1/-1;justify-items:start">
+      <h2>Nenhuma vaga salva ainda</h2>
+      <p class="cota">Toque no ícone ${icone('salvo')} de uma vaga para acompanhar aqui cada etapa, do envio até a contratação.</p>
+      <button type="button" class="botao" data-aba="vagas">Ver vagas</button></div>`;
     return;
   }
 
   $('#quadro').innerHTML = ETAPAS.map((etapa) => {
-    const cards = estado.candidaturas.filter((c) => c.etapa === etapa.id).map((c) => {
+    const daEtapa = estado.candidaturas.filter((c) => c.etapa === etapa.id);
+    const cards = daEtapa.map((c) => {
       const v = vagaPorId(c.vagaId);
       if (!v) return '';
       return `<div class="cartao-cand">
-        <strong>${esc(v.titulo)}</strong>
-        <span class="coluna-dica">${esc(v.empresa)} · atualizada ${haQuantoTempo(c.atualizadaEm)}</span>
-        <label class="coluna-dica" for="mv-${esc(v.id)}">Mover para</label>
-        <select id="mv-${esc(v.id)}" data-mover="${esc(v.id)}">${ETAPAS.map((e) => `<option value="${e.id}" ${e.id === c.etapa ? 'selected' : ''}>${esc(e.nome)}</option>`).join('')}</select>
-        <div class="vaga-acoes">
+        <b>${esc(v.titulo)}</b>
+        <span class="coluna-dica">${esc(v.empresa)} · atualizada ${esc(haQuantoTempo(c.atualizadaEm))}</span>
+        <label class="campo"><span>Etapa</span>
+          <select id="mv-${esc(v.id)}" data-mover="${esc(v.id)}">${ETAPAS.map((e) => `<option value="${e.id}" ${e.id === c.etapa ? 'selected' : ''}>${esc(e.nome)}</option>`).join('')}</select>
+        </label>
+        <div class="linha">
           <button type="button" class="botao-leve" data-abrir="${esc(v.id)}">Abrir</button>
           <button type="button" class="botao-leve" data-tirar="${esc(v.id)}">Tirar</button>
         </div>
       </div>`;
     }).join('');
     return `<section class="coluna">
-      <div class="coluna-topo"><h3>${esc(etapa.nome)}</h3><span class="contador">${estado.candidaturas.filter((c) => c.etapa === etapa.id).length}</span></div>
+      <div class="coluna-topo"><h3>${esc(etapa.nome)}</h3><span class="bolinha">${daEtapa.length}</span></div>
       <p class="coluna-dica">${esc(etapa.proximo)}</p>
-      ${cards || '<p class="vazio">—</p>'}
+      ${cards}
     </section>`;
   }).join('');
 }
@@ -921,24 +1605,68 @@ function desenharCandidaturas() {
 /* planos                                                              */
 /* ------------------------------------------------------------------ */
 
+const LINHAS_COMPARACAO = /** @type {[string, string, string][]} */ ([
+  ['Busca em todas as fontes de vagas', 'sim', 'sim'],
+  ['Nota de chance em cada vaga', 'sim', 'sim'],
+  ['Alerta de vaga golpe', 'sim', 'sim'],
+  ['Currículo adaptado à vaga', '1 por dia', 'Ilimitado'],
+  ['Carta de apresentação', '1 por dia', 'Ilimitado'],
+  ['Treino de entrevista', '1 por dia', 'Ilimitado'],
+  ['Aviso de vagas novas no WhatsApp', 'nao', 'sim'],
+  ['Pausa grátis quando for contratado', 'nao', 'sim'],
+]);
+
+const FAQ = /** @type {[string, string][]} */ ([
+  ['Posso cancelar quando quiser?', `Sim, sem multa e sem ligação. No teste de ${DIAS_TESTE} dias, se cancelar antes do fim, você não paga nada.`],
+  ['De onde vêm as vagas?', 'De agregadores com API oficial (Adzuna, Jooble e Careerjet), que juntam vagas de milhares de sites de emprego do Brasil. Confira sempre no site da empresa antes de se candidatar.'],
+  ['A nota de chance garante a contratação?', 'Não. Ela mostra o quanto seu perfil combina com o que a vaga pede e o que você pode melhorar. Quem decide é a empresa.'],
+  ['O currículo inventa experiência?', 'Nunca. Ele só reorganiza e destaca o que você escreveu no perfil, colocando primeiro o que a vaga pede.'],
+  ['Arrumei emprego. E agora?', 'Parabéns! Pause a assinatura sem custo e volte quando precisar.'],
+  ['Onde ficam meus dados?', 'Nesta versão, só no seu aparelho. Nada é enviado para outras empresas.'],
+]);
+
 function desenharPlanos() {
-  $('#planos').innerHTML = Object.values(PLANOS).map((p) => {
-    const atual = estado.plano === p.id;
-    return `<article class="plano ${p.id === 'pro' ? 'destaque' : ''}">
-      <h2>${esc(p.nome)}</h2>
-      <p class="preco">${p.precoMensal ? `${formatarReais(p.precoMensal)} <small>/mês</small>` : 'R$ 0'}</p>
-      <ul class="lista-simples bons">${p.inclui.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>
-      ${p.id === 'pro' ? `<p class="cota">Cancele quando quiser. ${DIAS_GARANTIA} dias de garantia: não gostou, devolvemos tudo.</p>` : ''}
-      ${atual ? '<button type="button" class="botao-leve" disabled>Seu plano atual</button>'
-        : `<button type="button" class="botao" data-plano="${p.id}">${p.id === 'pro' ? 'Assinar o Pro (simulação)' : 'Voltar ao grátis'}</button>`}
+  const anual = estado.ciclo === 'anual';
+  const eco = economiaAnual();
+  $('#selo-economia').textContent = `-${eco.porcento}%`;
+  for (const b of document.querySelectorAll('#tela-planos [data-ciclo]')) b.setAttribute('aria-checked', String(/** @type {HTMLElement} */ (b).dataset.ciclo === estado.ciclo));
+
+  const pago = ehPago(estado.plano);
+  const precoPro = anual
+    ? `<p class="preco">${formatarReais(PLANOS.anual.precoMensal)} <small>/mês</small></p>
+       <p class="preco-nota">Cobrado ${formatarReais(/** @type {number} */ (PLANOS.anual.precoAnual))} por ano. Economia de ${formatarReais(eco.centavos)}.</p>`
+    : `<p class="preco">${formatarReais(PLANOS.pro.precoMensal)} <small>/mês</small></p>
+       <p class="preco-nota">No anual sai ${formatarReais(PLANOS.anual.precoMensal)}/mês.</p>`;
+
+  $('#planos').innerHTML = `
+    <article class="plano">
+      <h2>Grátis</h2>
+      <p class="preco">R$ 0</p>
+      <p class="preco-nota">Para começar a procurar hoje.</p>
+      <ul class="lista-simples bons">${PLANOS.gratis.inclui.map((i) => `<li>${icone('check')}<span>${esc(i)}</span></li>`).join('')}</ul>
+      ${pago ? '<button type="button" class="botao-leve" data-plano-gratis>Voltar ao grátis</button>' : '<button type="button" class="botao-leve" disabled>Seu plano atual</button>'}
+    </article>
+    <article class="plano destaque">
+      <span class="faixa-destaque">Recomendado</span>
+      <h2>Pro</h2>
+      ${precoPro}
+      <ul class="lista-simples bons">${PLANOS.pro.inclui.map((i) => `<li>${icone('check')}<span>${esc(i)}</span></li>`).join('')}</ul>
+      ${pago ? `<button type="button" class="botao" disabled>Você já é Pro</button>`
+        : `<button type="button" class="botao botao-ouro botao-largo" data-assinar="planos">Testar ${DIAS_TESTE} dias grátis</button>`}
+      <p class="garantia">${icone('escudo')}<span>Sem cobrança no teste. Depois, ${DIAS_GARANTIA} dias de garantia.</span></p>
     </article>`;
-  }).join('');
+
+  const celula = (/** @type {string} */ v) => v === 'sim' ? `<td class="sim">${icone('check')}<span class="sr">Sim</span></td>`
+    : v === 'nao' ? '<td class="nao">—<span class="sr">Não</span></td>' : `<td>${esc(v)}</td>`;
+  $('#comparacao').innerHTML = `<thead><tr><th scope="col">O que você recebe</th><th scope="col">Grátis</th><th scope="col">Pro</th></tr></thead>
+    <tbody>${LINHAS_COMPARACAO.map(([n, g, p]) => `<tr><th scope="row" style="font-weight:400">${esc(n)}</th>${celula(g)}${celula(p)}</tr>`).join('')}</tbody>`;
+  $('#faq').innerHTML = FAQ.map(([p, r]) => `<details><summary>${esc(p)}</summary><p>${esc(r)}</p></details>`).join('');
 }
 
 function atualizarPilula() {
   const el = $('#pilula-plano');
-  el.textContent = `Plano ${PLANOS[estado.plano].nome}`;
-  el.classList.toggle('pro', estado.plano === 'pro');
+  el.textContent = ehPago(estado.plano) ? 'Pro' : 'Grátis';
+  el.classList.toggle('pro', ehPago(estado.plano));
 }
 
 function aplicarLetra() {
@@ -947,35 +1675,94 @@ function aplicarLetra() {
 }
 
 /* ------------------------------------------------------------------ */
-/* eventos                                                             */
+/* painel do dono                                                      */
+/* ------------------------------------------------------------------ */
+
+function desenharPainel() {
+  const etapas = funil(estado.eventos);
+  const topo = Math.max(1, etapas[0].sessoes);
+  $('#funil').innerHTML = etapas[0].sessoes === 0
+    ? '<p class="vazio">Ainda não há cliques registrados.</p>'
+    : etapas.map((e) => {
+      const passagem = e.daAnterior == null ? '' : ` · ${String(e.daAnterior).replace('.', ',')}% da etapa anterior`;
+      return `<div class="funil-linha" title="${esc(e.nome)}: ${e.sessoes} sessões${passagem}">
+        <span class="funil-nome">${esc(e.nome)}</span>
+        <span class="funil-trilho"><span class="funil-barra" style="width:${(e.sessoes / topo) * 100}%"></span>
+          <span class="funil-valor">${e.sessoes} (${String(e.doTopo).replace('.', ',')}%)</span></span>
+      </div>`;
+    }).join('');
+  desenharSimulador();
+}
+
+function desenharSimulador() {
+  const usuarios = Number($in('#s-usuarios').value);
+  const conv = Number($in('#s-conv').value) / 100;
+  const fracaoAnual = Number($in('#s-anual').value) / 100;
+  $('#s-usuarios-v').textContent = usuarios.toLocaleString('pt-BR');
+  $('#s-conv-v').textContent = `${String(conv * 100).replace('.', ',')}%`;
+  $('#s-anual-v').textContent = `${Math.round(fracaoAnual * 100)}%`;
+  const r = projetarReceita({ usuarios, conversao: conv, fracaoAnual, precoMensal: PLANOS.pro.precoMensal, precoAnual: /** @type {number} */ (PLANOS.anual.precoAnual) });
+  const porUsuarioAno = usuarios ? r.porAno / usuarios : 0;
+  const paraMilhao = porUsuarioAno ? Math.ceil(100_000_000 / porUsuarioAno) : 0;
+  $('#s-resultado').innerHTML = `
+    <div class="numero"><span>Assinantes</span><b>${r.assinantes.toLocaleString('pt-BR')}</b></div>
+    <div class="numero"><span>Receita por mês</span><b>${reaisInteiros(r.porMes)}</b></div>
+    <div class="numero principal"><span>Receita por ano</span><b>${reaisInteiros(r.porAno)}</b></div>
+    <p class="meta-milhao">${paraMilhao ? `Para chegar a R$ 1 milhão por ano com essa taxa de assinatura, são necessários cerca de <b>${paraMilhao.toLocaleString('pt-BR')}</b> usuários ativos por mês.` : ''} Valores antes de impostos e taxas de pagamento.</p>`;
+}
+
+/* ------------------------------------------------------------------ */
+/* eventos da página                                                   */
 /* ------------------------------------------------------------------ */
 
 document.addEventListener('click', (ev) => {
-  const alvo = /** @type {HTMLElement} */ (ev.target).closest('button, [data-ir]');
+  const alvo = /** @type {HTMLElement} */ (ev.target).closest('button, a');
   if (!(alvo instanceof HTMLElement)) return;
   const d = alvo.dataset;
 
-  if (d.aba) irPara(d.aba);
-  else if (d.ir) irPara(d.ir);
-  else if (d.abrir) abrirVaga(d.abrir);
-  else if (d.salvar) { salvarVaga(d.salvar); if (estado.vagaAberta) desenharDetalhe(); }
-  else if (d.sub) { estado.subAba = d.sub; desenharDetalhe(); }
+  if (d.compartilhar) { rastrear('compartilhar', { vaga: d.compartilhar }); return; }
+  if (d.aba) {
+    ev.preventDefault();
+    for (const id of ['detalhe', 'checkout']) { const dlg = /** @type {HTMLDialogElement} */ ($(`#${id}`)); if (dlg.open) dlg.close(); }
+    irPara(d.aba);
+  } else if (d.abrir) abrirVaga(d.abrir);
+  else if (d.salvar) {
+    alternarSalva(d.salvar);
+    if (/** @type {HTMLDialogElement} */ ($('#detalhe')).open) desenharDetalhe();
+    desenharVagas();
+  } else if (d.sub) { estado.subAba = d.sub; desenharDetalhe(); }
   else if (d.gerar) gerar(/** @type {Recurso} */ (d.gerar));
   else if ('copiar' in d) copiar();
-  else if ('fechar' in d) /** @type {HTMLDialogElement} */ ($('#detalhe')).close();
-  else if ('assinar' in d) { /** @type {HTMLDialogElement} */ ($('#detalhe')).close(); irPara('planos'); }
-  else if (d.plano) {
-    estado.plano = /** @type {any} */ (d.plano);
-    salvarTudo();
-    atualizarPilula();
-    desenharPlanos();
-    toast(estado.plano === 'pro' ? 'Pro ativado (simulação)' : 'Você voltou ao plano grátis');
+  else if (d.fechar) /** @type {HTMLDialogElement} */ ($(`#${d.fechar}`)).close();
+  else if (d.assinar) abrirCheckout(d.assinar);
+  else if (d.ciclo) {
+    estado.ciclo = /** @type {'mensal' | 'anual'} */ (d.ciclo);
+    if (/** @type {HTMLDialogElement} */ ($('#checkout')).open) abrirCheckout('troca-ciclo');
+    if (!$('#tela-planos').hidden) desenharPlanos();
+  } else if ('confirmarAssinatura' in d) confirmarAssinatura();
+  else if ('planoGratis' in d) {
+    estado.plano = 'gratis';
+    salvarTudo(); atualizarPilula(); desenharPlanos();
+    toast('Você voltou ao plano grátis');
   } else if (d.tirar) {
     estado.candidaturas = remover(estado.candidaturas, d.tirar);
     salvarTudo(); atualizarContador(); desenharCandidaturas();
   } else if (d.removerExp) {
-    estado.perfil = { ...estado.perfil, experiencias: lerExperiencias().filter((_, i) => i !== Number(d.removerExp)) };
-    $('#lista-exp').innerHTML = estado.perfil.experiencias.map(linhaExp).join('');
+    const lista = lerExperiencias().filter((_, i) => i !== Number(d.removerExp));
+    $('#lista-exp').innerHTML = lista.map(linhaExp).join('');
+  } else if (d.atalho) {
+    $in('#q-cargo').value = d.atalho;
+    estado.quiz.cargo = d.atalho;
+    avancarQuiz();
+  } else if (d.habilidade) {
+    const h = estado.quiz.habilidades;
+    if (h.has(d.habilidade)) h.delete(d.habilidade); else h.add(d.habilidade);
+    alvo.setAttribute('aria-pressed', String(h.has(d.habilidade)));
+  } else if ('rolarLista' in d) {
+    $('.barra-filtros').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if ('limparBusca' in d) {
+    $in('#f-texto').value = '';
+    desenharVagas();
   }
 });
 
@@ -989,25 +1776,48 @@ document.addEventListener('change', (ev) => {
   }
 });
 
-$('#form-filtros').addEventListener('input', desenharVagas);
-$('#form-filtros').addEventListener('submit', (ev) => ev.preventDefault());
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let timerBusca;
+$in('#f-texto').addEventListener('input', () => {
+  atualizarSugestoes();
+  clearTimeout(timerBusca);
+  timerBusca = setTimeout(() => {
+    desenharVagas();
+    if ($in('#f-texto').value.trim()) rastrear('buscar', { termo: $in('#f-texto').value.trim().slice(0, 40) });
+  }, 180);
+});
+$('#form-busca').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  $in('#f-texto').blur();
+  if (estado.fonte === 'ao-vivo') buscarNoServidor();
+  else desenharVagas();
+  $('.barra-filtros').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+for (const id of ['#f-uf', '#f-ordem', '#f-perto', '#f-remoto', '#f-clt', '#f-50', '#f-novas', '#f-golpe']) {
+  $(id).addEventListener('change', () => { desenharVagas(); rastrear('filtro', { qual: id.slice(3) }); });
+}
+
+$in('#q-cargo').addEventListener('input', atualizarSugestoes);
+$in('#q-cargo').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); avancarQuiz(); } });
+$('#q-avancar').addEventListener('click', avancarQuiz);
+$('#q-voltar').addEventListener('click', () => { estado.quiz.passo = Math.max(1, estado.quiz.passo - 1); desenharQuiz(); });
 
 $('#btn-add-exp').addEventListener('click', () => {
   const lista = [...lerExperiencias(), { cargo: '', empresa: '', periodo: '', descricao: '' }];
   $('#lista-exp').innerHTML = lista.map(linhaExp).join('');
   $in(`#e-cargo-${lista.length - 1}`).focus();
 });
-
 $('#btn-limpar').addEventListener('click', () => {
   estado.perfil = perfilVazio();
   desenharPerfil();
   $in('#p-nome').focus();
 });
-
+$('#form-perfil').addEventListener('input', () => desenharMedidor(lerPerfil()));
 $('#form-perfil').addEventListener('submit', (ev) => {
   ev.preventDefault();
   estado.perfil = lerPerfil();
   estado.perfilDeExemplo = false;
+  estado.quiz.concluido = false;
   estado.gerados.clear();
   salvarTudo();
   toast('Perfil salvo. As notas foram recalculadas.');
@@ -1019,6 +1829,7 @@ $('#btn-letra').addEventListener('click', () => {
   aplicarLetra();
   salvarTudo();
 });
+for (const id of ['#s-usuarios', '#s-conv', '#s-anual']) $(id).addEventListener('input', desenharSimulador);
 
 /* ------------------------------------------------------------------ */
 /* início                                                              */
@@ -1026,19 +1837,21 @@ $('#btn-letra').addEventListener('click', () => {
 
 /** Tenta vagas reais do servidor; sem servidor (arquivo único), fica no exemplo. */
 async function carregarVagas() {
-  if (!/^https?:$/.test(location.protocol) || !location.pathname.includes('/src/ui/')) return;
+  if (!COM_SERVIDOR) return;
   try {
     const resp = await fetch('/api/vagas');
     if (!resp.ok) return;
     const dados = await resp.json();
-    if (Array.isArray(dados.vagas) && dados.vagas.length) {
-      estado.vagas = dados.vagas;
-      estado.fonte = dados.fonte;
-      $('#rodape-fonte').textContent = dados.fonte === 'adzuna'
-        ? 'Vagas reais via Adzuna. Confira sempre no site da empresa antes de se candidatar.'
-        : 'Vagas de exemplo fictícias, para demonstração.';
-      desenharVagas();
+    if (!Array.isArray(dados.vagas) || dados.vagas.length === 0) return;
+    estado.vagas = dados.vagas;
+    estado.fonte = dados.fonte;
+    estado.medianas = medianasPorArea(estado.vagas);
+    if (dados.fonte === 'ao-vivo') {
+      const nomes = (dados.fontes ?? []).filter((/** @type {any} */ f) => f.ok).map((/** @type {any} */ f) => f.nome).join(', ');
+      $('#rodape-fonte').textContent = `Vagas reais via ${nomes || 'agregadores'}. Confira sempre no site da empresa antes de se candidatar.`;
     }
+    desenharVagas();
+    atualizarSugestoes();
   } catch {
     // sem servidor: segue com as vagas de exemplo
   }
@@ -1048,7 +1861,11 @@ preencherSelects();
 aplicarLetra();
 atualizarPilula();
 atualizarContador();
-desenharVagas();
+atualizarSugestoes();
+desenharQuiz();
+rastrear('visita');
+const abaInicial = location.hash.slice(1) === 'pro' ? 'planos' : location.hash.slice(1);
+irPara(ABAS.includes(abaInicial) ? abaInicial : 'vagas');
 carregarVagas();
 
   return {};
@@ -1174,6 +1991,48 @@ const BRUTAS = [
     ['acompanhamento de obras', 'leitura de planta', 'NR-18'], ['autocad', 'CNH categoria B'], 'tecnico', 4,
     ['Plano de saúde', 'Vale-refeição', 'Carro da empresa'], 'Fiscalização de obras de infraestrutura urbana.', 7, true, false],
 
+  ['v33', 'Motoboy Entregador', 'Já Chegou Delivery', 'São Paulo', 'SP', 'presencial', 'CLT', R(2300), R(3100), 'Logística',
+    ['CNH categoria A', 'moto própria', 'conhecer a cidade'], ['aplicativos de rota'], 'fundamental', 1,
+    ['Ajuda de custo para moto', 'Vale-refeição', 'Seguro de vida'], 'Entregas de farmácia na zona oeste. Salário fixo + adicional por entrega.', 0, true, true],
+  ['v34', 'Motorista de Van Escolar', 'Transporte Pequeno Príncipe', 'Guarulhos', 'SP', 'presencial', 'CLT', R(2900), R(3300), 'Logística',
+    ['CNH categoria D', 'curso de transporte escolar', 'direção defensiva'], ['primeiros socorros'], 'medio', 3,
+    ['Vale-refeição', 'Plano de saúde'], 'Rotas escolares manhã e tarde, com monitora a bordo.', 1, true, true],
+  ['v35', 'Conferente de Carga', 'Centro de Distribuição Anhanguera', 'Cajamar', 'SP', 'presencial', 'CLT', R(2400), R(2800), 'Logística',
+    ['conferência de mercadorias', 'controle de estoque', 'carga e descarga'], ['coletor de dados', 'empilhadeira'], 'medio', 1,
+    ['Transporte fretado', 'Refeitório', 'Plano de saúde', 'PLR'], 'Conferência de recebimento e expedição em CD de e-commerce. Turno noturno com adicional.', 2, true, false],
+  ['v36', 'Zelador', 'Condomínio Jardim Europa', 'São Paulo', 'SP', 'presencial', 'CLT', R(2500), R(2500), 'Segurança e Portaria',
+    ['manutenção predial básica', 'organização', 'responsabilidade'], ['piscina', 'jardinagem'], 'fundamental', 3,
+    ['Moradia no condomínio', 'Cesta básica', 'Vale-transporte'], 'Cuidar da rotina do prédio: limpeza das áreas comuns, pequenos reparos e fornecedores.', 5, true, false],
+  ['v37', 'Auxiliar de Cozinha', 'Padaria Pão Dourado', 'São Paulo', 'SP', 'presencial', 'CLT', R(1750), R(1950), 'Alimentação',
+    ['preparo de alimentos', 'boas práticas de manipulação', 'limpeza'], ['confeitaria'], 'fundamental', 0,
+    ['Refeição no local', 'Vale-transporte'], 'Primeiro emprego aceito, com treinamento na loja.', 1, true, false],
+  ['v38', 'Instalador de Internet', 'FibraMax Telecom', 'Osasco', 'SP', 'presencial', 'CLT', R(2600), R(3300), 'Tecnologia',
+    ['instalação de fibra óptica', 'NR-35', 'CNH categoria B'], ['redes', 'NR-10'], 'medio', 1,
+    ['Carro da empresa', 'Vale-refeição', 'Plano de saúde'], 'Instalação e reparo na casa do cliente. Empresa fornece ferramentas e EPI.', 2, true, true],
+  ['v39', 'Operador de Empilhadeira', 'Armazéns Litoral', 'Santos', 'SP', 'presencial', 'CLT', R(2800), R(3200), 'Logística',
+    ['curso de empilhadeira', 'NR-11', 'movimentação de cargas'], ['WMS'], 'fundamental', 2,
+    ['Plano de saúde', 'Refeitório', 'Transporte fretado'], 'Movimentação de contêineres e paletes no porto.', 4, true, false],
+  ['v40', 'Balconista de Farmácia', 'Drogaria Saúde Já', 'Belo Horizonte', 'MG', 'presencial', 'CLT', R(1700), R(2000), 'Varejo',
+    ['atendimento ao cliente', 'vendas', 'organização'], ['experiência em farmácia'], 'medio', 0,
+    ['Vale-transporte', 'Desconto em medicamentos', 'Plano odontológico'], 'Atendimento no balcão e reposição. Treinamento pago nas primeiras semanas.', 1, true, false],
+  ['v41', 'Agente de Atendimento Bilíngue', 'Nuvem Clara Tecnologia', 'Remoto', 'BR', 'remoto', 'CLT', R(3500), R(4500), 'Atendimento',
+    ['inglês avançado', 'atendimento ao cliente', 'boa escrita'], ['espanhol', 'zendesk'], 'medio', 1,
+    ['Plano de saúde', 'Auxílio home office', 'Vale-refeição'], 'Suporte por chat e e-mail para clientes do exterior, 100% de casa.', 2, false, false],
+  ['v42', 'Encarregado de Obras', 'Construtora Alicerce', 'Campinas', 'SP', 'presencial', 'CLT', R(4800), R(5800), 'Construção Civil',
+    ['gestão de equipe', 'leitura de planta', 'acompanhamento de obras', 'NR-18'], ['orçamento de obras'], 'medio', 8,
+    ['Plano de saúde', 'Vale-refeição', 'Carro da empresa'], 'Coordenação de equipes de até 30 pessoas em obra residencial.', 3, true, false],
+  ['v43', 'Técnico em Segurança do Trabalho', 'Usina Vale Verde', 'Ribeirão Preto', 'SP', 'presencial', 'CLT', R(4000), R(4800), 'Indústria',
+    ['registro no MTE', 'NRs', 'treinamentos de segurança'], ['CIPA', 'CNH categoria B'], 'tecnico', 2,
+    ['Plano de saúde', 'Refeitório', 'PLR', 'Transporte fretado'], 'Inspeções de campo, DDS e investigação de incidentes.', 6, true, false],
+  ['v44', 'Diarista Residencial', 'Casa em Ordem Serviços', 'Rio de Janeiro', 'RJ', 'presencial', 'CLT', R(1800), R(2100), 'Limpeza e Conservação',
+    ['limpeza', 'organização', 'passar roupa'], ['cozinhar'], 'fundamental', 1,
+    ['Vale-transporte', 'Vale-alimentação'], 'Limpeza em residências clientes da empresa, com carteira assinada e rota fixa.', 2, true, false],
+  ['v45', 'Vendedor de Loja', 'Magazine Popular', 'Salvador', 'BA', 'presencial', 'CLT', R(1600), R(3500), 'Vendas',
+    ['vendas', 'atendimento ao cliente', 'metas'], ['crediário'], 'medio', 0,
+    ['Comissão', 'Vale-transporte', 'Plano de saúde'], 'Venda de eletrodomésticos e móveis. Fixo + comissão sem teto.', 1, true, false],
+  ['v46', 'Programador Back-end Júnior', 'Cooperativa Agro Forte', 'Londrina', 'PR', 'hibrido', 'CLT', R(4500), R(6000), 'Tecnologia',
+    ['python', 'sql', 'git'], ['django', 'docker'], 'superior', 1,
+    ['Plano de saúde', 'Vale-alimentação', 'Participação nos lucros'], 'Sistemas internos da cooperativa, presencial às terças.', 5, false, false],
   // --- dois exemplos com cara de golpe, para demonstrar o detector ---
   ['g01', 'Digitador em Casa – Ganhe R$ 8.000 por Semana', 'Oportunidade Digital', 'Remoto', 'BR', 'remoto', 'PJ', R(32000), R(40000), 'Administrativo',
     ['saber digitar'], [], 'fundamental', 0,
@@ -1216,7 +2075,8 @@ __reg["core/busca.js"] = () => {
  * servir à interface, ao servidor e aos testes.
  */
 
-const { normalizar, palavras } = __mod("core/text.js");
+const { normalizar } = __mod("core/text.js");
+const { relevancia } = __mod("core/relevancia.js");
 const { calcularChance } = __mod("core/match.js");
 const { alertasDeGolpe } = __mod("core/golpe.js");
 
@@ -1234,7 +2094,7 @@ const { alertasDeGolpe } = __mod("core/golpe.js");
  * @property {number} [diasMax]         publicadas nos últimos N dias
  * @property {boolean} [so50mais]       só empresas que valorizam experiência
  * @property {boolean} [esconderSuspeitas]
- * @property {'chance' | 'recentes' | 'salario'} [ordenar]
+ * @property {'relevancia' | 'chance' | 'recentes' | 'salario'} [ordenar]  padrão: relevância com texto, chance com perfil
  */
 
 /**
@@ -1242,6 +2102,7 @@ const { alertasDeGolpe } = __mod("core/golpe.js");
  * @property {Vaga} vaga
  * @property {import('./match.js').Resultado | null} chance  null sem perfil
  * @property {import('./golpe.js').Alerta[]} alertas
+ * @property {number} relevancia     o quanto casa com o texto buscado (0 = não casa)
  */
 
 /**
@@ -1260,17 +2121,6 @@ function removerRepetidas(vagas) {
 }
 
 /**
- * @param {Vaga} vaga
- * @param {string} texto
- */
-function casaTexto(vaga, texto) {
-  const termos = palavras(texto);
-  if (termos.length === 0) return true;
-  const alvo = normalizar([vaga.titulo, vaga.empresa, vaga.area, vaga.cidade, ...vaga.requisitos, ...vaga.diferenciais].join(' '));
-  return termos.every((t) => alvo.includes(t));
-}
-
-/**
  * @param {Vaga[]} vagas
  * @param {Filtros} filtros
  * @param {Perfil | null} perfil
@@ -1284,7 +2134,8 @@ function buscar(vagas, filtros, perfil, hoje = new Date()) {
   /** @type {ItemBusca[]} */
   const itens = [];
   for (const vaga of removerRepetidas(vagas)) {
-    if (f.texto && !casaTexto(vaga, f.texto)) continue;
+    const rel = f.texto ? relevancia(vaga, f.texto) : 1;
+    if (rel === 0) continue;
     if (f.uf && vaga.uf !== f.uf && vaga.modalidade !== 'remoto') continue;
     if (f.modalidades?.length && !f.modalidades.includes(vaga.modalidade)) continue;
     if (f.contratos?.length && !f.contratos.includes(vaga.contrato)) continue;
@@ -1295,10 +2146,12 @@ function buscar(vagas, filtros, perfil, hoje = new Date()) {
     const alertas = alertasDeGolpe(vaga);
     if (f.esconderSuspeitas && alertas.some((a) => a.nivel === 'grave')) continue;
 
-    itens.push({ vaga, chance: perfil ? calcularChance(perfil, vaga) : null, alertas });
+    itens.push({ vaga, chance: perfil ? calcularChance(perfil, vaga) : null, alertas, relevancia: rel });
   }
 
-  const ordem = f.ordenar ?? (perfil ? 'chance' : 'recentes');
+  const ordem = f.ordenar ?? (f.texto?.trim() ? 'relevancia' : perfil ? 'chance' : 'recentes');
+  // relevância pura empataria demais; a chance desempata e dá peso ao perfil
+  const pontuacao = (/** @type {ItemBusca} */ i) => i.relevancia * 100 + (i.chance?.nota ?? 0) * 0.5;
   const recentes = (/** @type {ItemBusca} */ a, /** @type {ItemBusca} */ b) => b.vaga.publicadaEm.localeCompare(a.vaga.publicadaEm);
   const suspeita = (/** @type {ItemBusca} */ i) => (i.alertas.some((a) => a.nivel === 'grave') ? 1 : 0);
 
@@ -1306,6 +2159,7 @@ function buscar(vagas, filtros, perfil, hoje = new Date()) {
     // vaga suspeita vai sempre para o fim, qualquer que seja a ordem
     const s = suspeita(a) - suspeita(b);
     if (s !== 0) return s;
+    if (ordem === 'relevancia') return pontuacao(b) - pontuacao(a) || recentes(a, b);
     if (ordem === 'chance') return (b.chance?.nota ?? 0) - (a.chance?.nota ?? 0) || recentes(a, b);
     if (ordem === 'salario') return (b.vaga.salarioMax ?? b.vaga.salarioMin ?? 0) - (a.vaga.salarioMax ?? a.vaga.salarioMin ?? 0) || recentes(a, b);
     return recentes(a, b);
@@ -1405,6 +2259,200 @@ function formatarSalario(min, max) {
   return { normalizar, palavras, termosBatem, semelhanca, formatarReais, formatarSalario };
 };
 
+__reg["core/relevancia.js"] = () => {
+/**
+ * Entender o que a pessoa digitou, do jeito que ela digita.
+ *
+ * Quem procura emprego escreve "motorista" e a vaga diz "condutor"; escreve
+ * "adm" e a vaga diz "administrativo"; digita no celular e sai "motorsita".
+ * Busca por palavra exata perde essas vagas. Aqui cada termo casa por:
+ *
+ *   1. palavra igual                       (peso cheio)
+ *   2. sinônimo do mesmo grupo             (quase cheio)
+ *   3. começo de palavra ("eletri" → "eletricista")
+ *   4. erro de digitação (1 letra; 2 em palavras longas)
+ *
+ * e casar no título vale mais que casar nos requisitos.
+ */
+
+const { normalizar, palavras } = __mod("core/text.js");
+
+/** @typedef {import('./tipos.js').Vaga} Vaga */
+
+/** Grupos de palavras que o candidato usa como equivalentes. Tudo normalizado. */
+const GRUPOS = [
+  ['motorista', 'condutor', 'chofer', 'entregador'],
+  ['motoboy', 'motociclista', 'entregador'],
+  ['adm', 'administrativo', 'administrativa', 'escritorio'],
+  ['ti', 'tecnologia', 'informatica', 'desenvolvedor', 'programador', 'dev', 'software'],
+  ['vendedor', 'vendedora', 'vendas', 'comercial', 'consultor', 'consultora'],
+  ['limpeza', 'faxina', 'faxineira', 'faxineiro', 'diarista', 'conservacao', 'zelador'],
+  ['porteiro', 'portaria', 'controlador'],
+  ['enfermagem', 'enfermeiro', 'enfermeira'],
+  ['cozinha', 'cozinheiro', 'cozinheira', 'chef', 'alimentacao'],
+  ['caixa', 'operador', 'operadora', 'pdv'],
+  ['pedreiro', 'obra', 'obras', 'construcao', 'servente', 'alvenaria'],
+  ['remoto', 'remota', 'home', 'teletrabalho', 'distancia'],
+  ['atendente', 'atendimento', 'recepcionista', 'recepcao', 'telemarketing', 'sac'],
+  ['vigilante', 'seguranca', 'vigia'],
+  ['cuidador', 'cuidadora', 'idosos', 'idoso'],
+  ['professor', 'professora', 'educacao', 'ensino', 'docente'],
+  ['mecanico', 'mecanica', 'manutencao'],
+  ['estagio', 'estagiario', 'estagiaria'],
+  ['financeiro', 'financeira', 'financas', 'contabil', 'contador', 'contadora'],
+  ['rh', 'recursos', 'humanos', 'recrutamento'],
+  ['designer', 'design', 'grafico', 'grafica'],
+  ['dados', 'analista', 'bi'],
+  ['estoque', 'almoxarife', 'almoxarifado', 'logistica'],
+];
+
+/** Expressões de várias palavras trocadas pela palavra que a vaga usa. */
+const EXPRESSOES = /** @type {[RegExp, string][]} */ ([
+  [/\bhome office\b/g, 'remoto'],
+  [/\btrabalho de casa\b|\bde casa\b/g, 'remoto'],
+  [/\bcarteira assinada\b|\bregistro em carteira\b/g, 'clt'],
+  [/\bservicos gerais\b/g, 'limpeza'],
+  [/\bprimeiro emprego\b|\bsem experiencia\b/g, 'treinamento'],
+  [/\bjovem aprendiz\b/g, 'aprendiz'],
+]);
+
+/**
+ * Normaliza e troca expressões conhecidas.
+ * @param {string} texto
+ */
+function traduzirExpressoes(texto) {
+  let t = normalizar(texto);
+  for (const [re, troca] of EXPRESSOES) t = t.replace(re, troca);
+  return t;
+}
+
+/** palavra → sinônimos (sem ela mesma) */
+const SINONIMOS = new Map();
+for (const grupo of GRUPOS) {
+  for (const p of grupo) {
+    const atuais = SINONIMOS.get(p) ?? new Set();
+    for (const q of grupo) if (q !== p) atuais.add(q);
+    SINONIMOS.set(p, atuais);
+  }
+}
+
+/** @param {string} palavra */
+function sinonimos(palavra) {
+  return [...(SINONIMOS.get(normalizar(palavra)) ?? [])];
+}
+
+/**
+ * Distância de edição limitada: devolve `limite + 1` assim que passar do
+ * limite, para não gastar tempo comparando palavras muito diferentes.
+ * @param {string} a
+ * @param {string} b
+ * @param {number} limite
+ */
+function distancia(a, b, limite) {
+  if (Math.abs(a.length - b.length) > limite) return limite + 1;
+  /** @type {number[]} */
+  let antes = [];
+  let anterior = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const atual = [i];
+    let menor = i;
+    for (let j = 1; j <= b.length; j++) {
+      const custo = a[i - 1] === b[j - 1] ? 0 : 1;
+      atual[j] = Math.min(anterior[j] + 1, atual[j - 1] + 1, anterior[j - 1] + custo);
+      // troca de duas letras vizinhas ("motorsita") conta como um erro só
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        atual[j] = Math.min(atual[j], antes[j - 2] + 1);
+      }
+      menor = Math.min(menor, atual[j]);
+    }
+    if (menor > limite) return limite + 1;
+    antes = anterior;
+    anterior = atual;
+  }
+  return anterior[b.length];
+}
+
+/** Erros de digitação tolerados para uma palavra deste tamanho. */
+const tolerancia = (/** @type {number} */ n) => (n >= 8 ? 2 : n >= 5 ? 1 : 0);
+
+/**
+ * Quanto um termo casa com um conjunto de palavras (0 a 1).
+ * @param {string} termo normalizado
+ * @param {string[]} alvo palavras normalizadas
+ */
+function casamento(termo, alvo) {
+  if (alvo.includes(termo)) return 1;
+  const sin = SINONIMOS.get(termo);
+  if (sin && alvo.some((p) => sin.has(p))) return 0.85;
+  if (termo.length >= 3 && alvo.some((p) => p.startsWith(termo))) return 0.75;
+  const tol = tolerancia(termo.length);
+  if (!tol) return 0;
+  if (alvo.some((p) => distancia(termo, p, tol) <= tol)) return 0.6;
+  // erro de digitação numa palavra do vocabulário ("faxinera" → "faxineira"),
+  // seguido de sinônimo ("faxineira" → "limpeza")
+  for (const [palavra, grupo] of SINONIMOS) {
+    if (distancia(termo, palavra, tol) <= tol && alvo.some((p) => p === palavra || grupo.has(p))) return 0.5;
+  }
+  return 0;
+}
+
+/** Palavras de uma vaga, separadas pelo peso de onde aparecem. */
+const cacheCampos = new WeakMap();
+/** @param {Vaga} vaga */
+function campos(vaga) {
+  let c = cacheCampos.get(vaga);
+  if (!c) {
+    c = {
+      titulo: palavras(vaga.titulo),
+      meio: palavras(`${vaga.area} ${vaga.requisitos.join(' ')} ${vaga.empresa}`),
+      resto: palavras(`${vaga.diferenciais.join(' ')} ${vaga.cidade} ${vaga.descricao} ${vaga.modalidade} ${vaga.contrato} ${vaga.beneficios.join(' ')}`),
+    };
+    cacheCampos.set(vaga, c);
+  }
+  return c;
+}
+
+/**
+ * Relevância da vaga para a busca: 0 = não casa (algum termo não foi achado
+ * em lugar nenhum). Quanto maior, melhor. Busca vazia = 1 para toda vaga.
+ * @param {Vaga} vaga
+ * @param {string} texto
+ */
+function relevancia(vaga, texto) {
+  const termos = palavras(traduzirExpressoes(texto));
+  if (termos.length === 0) return 1;
+  const c = campos(vaga);
+  let total = 0;
+  for (const t of termos) {
+    const melhor = Math.max(casamento(t, c.titulo) * 3, casamento(t, c.meio) * 1.5, casamento(t, c.resto));
+    if (melhor === 0) return 0;
+    total += melhor;
+  }
+  return total / termos.length;
+}
+
+/**
+ * Sugestões para completar o que está sendo digitado: títulos de vaga e
+ * áreas que existem na lista, os mais frequentes primeiro.
+ * @param {Vaga[]} vagas
+ * @param {string} digitado
+ * @param {number} [limite]
+ */
+function sugestoes(vagas, digitado, limite = 6) {
+  const alvo = normalizar(digitado);
+  /** @type {Map<string, number>} */
+  const contagem = new Map();
+  for (const v of vagas) {
+    for (const s of [v.titulo, v.area]) contagem.set(s, (contagem.get(s) ?? 0) + 1);
+  }
+  const lista = [...contagem.entries()].filter(([s]) => !alvo || normalizar(s).split(' ').some((p) => p.startsWith(alvo)) || normalizar(s).startsWith(alvo));
+  lista.sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'pt-BR'));
+  return lista.slice(0, limite).map(([s]) => s);
+}
+
+  return { traduzirExpressoes, sinonimos, distancia, casamento, relevancia, sugestoes };
+};
+
 __reg["core/match.js"] = () => {
 /**
  * Nota de chance: o quanto uma vaga combina com o perfil, de 0 a 100.
@@ -1434,6 +2482,7 @@ const { ESCOLARIDADES, NOME_ESCOLARIDADE } = __mod("core/tipos.js");
  * @property {string[]} faltando     o que conta contra, em linguagem de ação
  * @property {string[]} requisitosAtendidos
  * @property {boolean} eliminatorio  algum requisito eliminatório não foi atendido
+ * @property {Record<keyof typeof PESOS, number>} partes  pontos de cada critério (antes do teto eliminatório)
  */
 
 const PESOS = /** @type {const} */ ({
@@ -1465,13 +2514,13 @@ function requisitosAtendidos(perfil, requisitos) {
 function calcularChance(perfil, vaga) {
   /** @type {string[]} */ const motivos = [];
   /** @type {string[]} */ const faltando = [];
-  let pontos = 0;
+  const partes = { requisitos: 0, cargo: 0, local: 0, salario: 0, experiencia: 0, escolaridade: 0 };
   let eliminatorio = false;
 
   // --- requisitos -------------------------------------------------------
   const atendidos = requisitosAtendidos(perfil, vaga.requisitos);
   const total = vaga.requisitos.length || 1;
-  pontos += PESOS.requisitos * (atendidos.length / total);
+  partes.requisitos += PESOS.requisitos * (atendidos.length / total);
   if (atendidos.length) motivos.push(`Você tem ${atendidos.length} de ${vaga.requisitos.length} requisitos: ${atendidos.join(', ')}.`);
   for (const req of vaga.requisitos) {
     if (!atendidos.includes(req)) faltando.push(`Requisito: ${req}. Se você tem, coloque no perfil.`);
@@ -1484,7 +2533,7 @@ function calcularChance(perfil, vaga) {
   const simCargo = Math.max(semelhanca(vaga.titulo, alvo), semelhanca(perfil.cargoDesejado, vaga.titulo));
   const mesmaArea = perfil.area !== '' && normalizar(perfil.area) === normalizar(vaga.area);
   const cargoPts = Math.min(1, simCargo + (mesmaArea ? 0.5 : 0));
-  pontos += PESOS.cargo * cargoPts;
+  partes.cargo += PESOS.cargo * cargoPts;
   if (simCargo >= 0.5) motivos.push('O cargo é parecido com o que você procura ou já fez.');
   else if (mesmaArea) motivos.push(`É da sua área (${vaga.area}).`);
 
@@ -1496,17 +2545,17 @@ function calcularChance(perfil, vaga) {
     if (perfil.aceitaRemoto === 'nao') {
       faltando.push('A vaga é remota e você marcou que prefere presencial.');
     } else {
-      pontos += PESOS.local;
+      partes.local += PESOS.local;
       motivos.push('Vaga remota: dá para trabalhar de casa.');
     }
   } else if (perfil.aceitaRemoto === 'sim') {
     eliminatorio = true;
     faltando.push('Você marcou que só aceita trabalho remoto, e esta vaga não é.');
   } else if (mesmaCidade) {
-    pontos += PESOS.local;
+    partes.local += PESOS.local;
     motivos.push(`Fica na sua cidade (${vaga.cidade}).`);
   } else if (mesmoEstado) {
-    pontos += PESOS.local * 0.5;
+    partes.local += PESOS.local * 0.5;
     faltando.push(`Fica em ${vaga.cidade}, fora da sua cidade. Veja o deslocamento.`);
   } else {
     eliminatorio = true;
@@ -1516,23 +2565,23 @@ function calcularChance(perfil, vaga) {
   // --- salário ----------------------------------------------------------
   const teto = vaga.salarioMax ?? vaga.salarioMin;
   if (perfil.salarioMin <= 0) {
-    pontos += PESOS.salario;
+    partes.salario += PESOS.salario;
   } else if (teto == null) {
-    pontos += PESOS.salario * 0.5;
+    partes.salario += PESOS.salario * 0.5;
   } else if (teto >= perfil.salarioMin) {
-    pontos += PESOS.salario;
+    partes.salario += PESOS.salario;
     motivos.push('O salário atende o que você pediu.');
   } else {
-    pontos += PESOS.salario * Math.max(0, teto / perfil.salarioMin - 0.5) * 2 * 0.5;
+    partes.salario += PESOS.salario * Math.max(0, teto / perfil.salarioMin - 0.5) * 2 * 0.5;
     faltando.push(`Paga até ${formatarReais(teto)}, abaixo dos ${formatarReais(perfil.salarioMin)} que você pediu.`);
   }
 
   // --- experiência ------------------------------------------------------
   if (vaga.experienciaMin <= 0 || perfil.anosExperiencia >= vaga.experienciaMin) {
-    pontos += PESOS.experiencia;
+    partes.experiencia += PESOS.experiencia;
     if (vaga.experienciaMin > 0) motivos.push(`Pede ${vaga.experienciaMin} ano(s) de experiência e você tem ${perfil.anosExperiencia}.`);
   } else {
-    pontos += PESOS.experiencia * (perfil.anosExperiencia / vaga.experienciaMin);
+    partes.experiencia += PESOS.experiencia * (perfil.anosExperiencia / vaga.experienciaMin);
     faltando.push(`Pede ${vaga.experienciaMin} ano(s) de experiência; você informou ${perfil.anosExperiencia}.`);
   }
   if (vaga.valorizaExperiencia && perfil.anosExperiencia >= 10) {
@@ -1541,7 +2590,7 @@ function calcularChance(perfil, vaga) {
 
   // --- escolaridade -----------------------------------------------------
   if (ESCOLARIDADES.indexOf(perfil.escolaridade) >= ESCOLARIDADES.indexOf(vaga.escolaridadeMin)) {
-    pontos += PESOS.escolaridade;
+    partes.escolaridade += PESOS.escolaridade;
   } else {
     faltando.push(`Pede ${NOME_ESCOLARIDADE[vaga.escolaridadeMin].toLowerCase()}.`);
   }
@@ -1552,7 +2601,8 @@ function calcularChance(perfil, vaga) {
     faltando.unshift('Exige CNH, e você marcou que não tem.');
   }
 
-  let nota = Math.round(pontos);
+  for (const k of /** @type {(keyof typeof partes)[]} */ (Object.keys(partes))) partes[k] = Math.round(partes[k] * 10) / 10;
+  let nota = Math.round(Object.values(partes).reduce((a, b) => a + b, 0));
   if (eliminatorio) nota = Math.min(nota, TETO_ELIMINATORIO);
   nota = Math.max(0, Math.min(100, nota));
 
@@ -1563,6 +2613,7 @@ function calcularChance(perfil, vaga) {
     faltando,
     requisitosAtendidos: atendidos,
     eliminatorio,
+    partes,
   };
 }
 
@@ -1726,6 +2777,64 @@ function ehSuspeita(vaga) {
 }
 
   return { alertasDeGolpe, ehSuspeita };
+};
+
+__reg["core/mercado.js"] = () => {
+/**
+ * Comparação de salário com o mercado — calculada só com as vagas que o app
+ * tem na mão, nunca com número inventado. Por isso o texto sempre diz
+ * "entre as vagas da área" e a comparação só aparece com amostra mínima.
+ */
+
+/** @typedef {import('./tipos.js').Vaga} Vaga */
+
+/** Menos vagas que isto numa área e a média não diz nada. */
+const AMOSTRA_MINIMA = 3;
+
+/** @param {Vaga} v */
+function salarioMedioDaVaga(v) {
+  if (v.salarioMin == null && v.salarioMax == null) return null;
+  return ((v.salarioMin ?? /** @type {number} */ (v.salarioMax)) + (v.salarioMax ?? /** @type {number} */ (v.salarioMin))) / 2;
+}
+
+/**
+ * Mediana salarial por área, só das áreas com amostra suficiente.
+ * @param {Vaga[]} vagas
+ * @returns {Map<string, number>} centavos por mês
+ */
+function medianasPorArea(vagas) {
+  /** @type {Map<string, number[]>} */
+  const porArea = new Map();
+  for (const v of vagas) {
+    const s = salarioMedioDaVaga(v);
+    if (s == null) continue;
+    porArea.set(v.area, [...(porArea.get(v.area) ?? []), s]);
+  }
+  /** @type {Map<string, number>} */
+  const r = new Map();
+  for (const [area, lista] of porArea) {
+    if (lista.length < AMOSTRA_MINIMA) continue;
+    const o = [...lista].sort((a, b) => a - b);
+    const m = o.length >> 1;
+    r.set(area, o.length % 2 ? o[m] : (o[m - 1] + o[m]) / 2);
+  }
+  return r;
+}
+
+/**
+ * Diferença percentual do salário da vaga para a mediana da área, ou null
+ * quando não dá para comparar. Ex.: 18 = paga 18% acima.
+ * @param {Vaga} vaga
+ * @param {Map<string, number>} medianas
+ */
+function comparacaoSalarial(vaga, medianas) {
+  const s = salarioMedioDaVaga(vaga);
+  const m = medianas.get(vaga.area);
+  if (s == null || !m) return null;
+  return Math.round(((s - m) / m) * 100);
+}
+
+  return { AMOSTRA_MINIMA, salarioMedioDaVaga, medianasPorArea, comparacaoSalarial };
 };
 
 __reg["core/curriculo.js"] = () => {
@@ -1947,13 +3056,14 @@ __reg["core/planos.js"] = () => {
  */
 
 /** @typedef {'curriculo' | 'carta' | 'entrevista' | 'alerta'} Recurso */
-/** @typedef {'gratis' | 'pro'} IdPlano */
+/** @typedef {'gratis' | 'pro' | 'anual'} IdPlano */
 
 /**
  * @typedef {Object} Plano
  * @property {IdPlano} id
  * @property {string} nome
- * @property {number} precoMensal     centavos
+ * @property {number} precoMensal     centavos cobrados por mês (anual: equivalente mensal)
+ * @property {number} [precoAnual]     centavos cobrados de uma vez, só no anual
  * @property {Record<Recurso, number>} limiteDiario  Infinity = ilimitado
  * @property {string[]} inclui
  */
@@ -1986,7 +3096,32 @@ const PLANOS = {
       'Pausa grátis quando você for contratado',
     ],
   },
+  anual: {
+    id: 'anual',
+    nome: 'Pro Anual',
+    precoMensal: 1242,
+    precoAnual: 14900,
+    limiteDiario: { curriculo: Infinity, carta: Infinity, entrevista: Infinity, alerta: Infinity },
+    inclui: [
+      'Tudo do Pro',
+      'Pague uma vez e fique tranquilo o ano todo',
+      'Pausa grátis quando você for contratado',
+    ],
+  },
 };
+
+/** Teste grátis do Pro, sem cobrança se cancelar antes. */
+const DIAS_TESTE = 7;
+
+/** Quanto o anual economiza em relação a 12 meses do Pro mensal (centavos e %). */
+function economiaAnual() {
+  const cheio = PLANOS.pro.precoMensal * 12;
+  const anual = /** @type {number} */ (PLANOS.anual.precoAnual);
+  return { centavos: cheio - anual, porcento: Math.round(((cheio - anual) / cheio) * 100) };
+}
+
+/** @param {IdPlano} plano */
+const ehPago = (plano) => plano !== 'gratis';
 
 /** Garantia: devolução integral se pedir nos primeiros dias. */
 const DIAS_GARANTIA = 7;
@@ -2036,7 +3171,7 @@ function registrarUso(recurso, uso, hoje = new Date()) {
   return { [dia]: { ...atual, [recurso]: (atual[recurso] ?? 0) + 1 } };
 }
 
-  return { PLANOS, DIAS_GARANTIA, diaDe, restantes, podeUsar, registrarUso };
+  return { PLANOS, DIAS_TESTE, economiaAnual, ehPago, DIAS_GARANTIA, diaDe, restantes, podeUsar, registrarUso };
 };
 
 __reg["core/candidaturas.js"] = () => {
@@ -2113,6 +3248,226 @@ function precisamDeRetorno(lista, hoje = new Date()) {
 }
 
   return { ETAPAS, moverPara, remover, resumoPorEtapa, precisamDeRetorno };
+};
+
+__reg["core/perfil.js"] = () => {
+/**
+ * Ajudas para o perfil: o quanto está completo e a área deduzida do cargo.
+ *
+ * Perfil completo = nota de chance mais certa = mais candidaturas boas. A
+ * barra de "perfil X% completo" dá à pessoa um motivo concreto para preencher.
+ */
+
+const { relevancia } = __mod("core/relevancia.js");
+
+/** @typedef {import('./tipos.js').Perfil} Perfil */
+/** @typedef {import('./tipos.js').Vaga} Vaga */
+
+/** [peso, está preenchido?, o que falta dizer] */
+const ITENS = /** @type {[number, (p: Perfil) => boolean, string][]} */ ([
+  [15, (p) => p.cargoDesejado.trim() !== '', 'o cargo que você procura'],
+  [15, (p) => p.cidade.trim() !== '' && p.uf !== '', 'sua cidade e estado'],
+  [20, (p) => p.habilidades.length >= 3, 'pelo menos 3 habilidades'],
+  [15, (p) => p.experiencias.length > 0, 'uma experiência de trabalho'],
+  [10, (p) => p.nome.trim() !== '', 'seu nome'],
+  [10, (p) => p.telefone.trim() !== '' || p.email.trim() !== '', 'um telefone ou e-mail'],
+  [5, (p) => p.area !== '', 'sua área'],
+  [5, (p) => p.resumo.trim().length >= 30, 'um resumo sobre você'],
+  [5, (p) => p.anosExperiencia > 0, 'seus anos de experiência'],
+]);
+
+/**
+ * @param {Perfil} perfil
+ * @returns {{ porcento: number, proximo: string | null }}
+ */
+function completude(perfil) {
+  let total = 0;
+  /** @type {string | null} */
+  let proximo = null;
+  for (const [peso, ok, falta] of ITENS) {
+    if (ok(perfil)) total += peso;
+    else proximo ??= falta;
+  }
+  return { porcento: total, proximo };
+}
+
+/**
+ * Área mais comum entre as vagas que casam com o cargo digitado, ou ''.
+ * Usada no cadastro rápido, onde a pessoa só diz o que procura.
+ * @param {string} cargo
+ * @param {Vaga[]} vagas
+ */
+function inferirArea(cargo, vagas) {
+  if (!cargo.trim()) return '';
+  /** @type {Map<string, number>} */
+  const pontos = new Map();
+  for (const v of vagas) {
+    const r = relevancia(v, cargo);
+    if (r > 0) pontos.set(v.area, (pontos.get(v.area) ?? 0) + r);
+  }
+  let melhor = '';
+  let max = 0;
+  for (const [area, p] of pontos) if (p > max) { max = p; melhor = area; }
+  return melhor;
+}
+
+/**
+ * Habilidades mais pedidas nas vagas de uma área, para a pessoa só marcar
+ * as que tem. CNH fica de fora: tem campo próprio.
+ * @param {string} area
+ * @param {Vaga[]} vagas
+ * @param {number} [limite]
+ */
+function habilidadesSugeridas(area, vagas, limite = 10) {
+  /** @type {Map<string, { nome: string, n: number }>} */
+  const contagem = new Map();
+  for (const v of vagas) {
+    if (area && v.area !== area) continue;
+    for (const h of [...v.requisitos, ...v.diferenciais]) {
+      if (/\bcnh\b/i.test(h)) continue;
+      const chave = h.toLowerCase();
+      const atual = contagem.get(chave) ?? { nome: h, n: 0 };
+      atual.n += 1;
+      contagem.set(chave, atual);
+    }
+  }
+  return [...contagem.values()]
+    .sort((a, b) => b.n - a.n || a.nome.localeCompare(b.nome, 'pt-BR'))
+    .slice(0, limite)
+    .map((x) => x.nome);
+}
+
+  return { completude, inferirArea, habilidadesSugeridas };
+};
+
+__reg["core/metricas.js"] = () => {
+/**
+ * Funil de conversão: de quem chega até quem paga.
+ *
+ * Vender mais começa por saber onde as pessoas desistem. Cada ação
+ * importante vira um evento; o funil conta quantas sessões diferentes
+ * chegaram a cada etapa e a taxa de passagem entre elas.
+ */
+
+/**
+ * @typedef {Object} Evento
+ * @property {string} nome
+ * @property {string} sessao
+ * @property {number} quando   ms desde 1970
+ * @property {Record<string, string | number>} [dados]
+ */
+
+/** Etapas do funil, em ordem. Cada uma é um nome de evento. */
+const ETAPAS_FUNIL = /** @type {const} */ ([
+  { evento: 'visita', nome: 'Visitaram' },
+  { evento: 'abrir_vaga', nome: 'Abriram uma vaga' },
+  { evento: 'gerar', nome: 'Geraram currículo, carta ou entrevista' },
+  { evento: 'ver_oferta', nome: 'Viram a oferta do Pro' },
+  { evento: 'clique_assinar', nome: 'Clicaram em assinar' },
+  { evento: 'assinou', nome: 'Assinaram' },
+]);
+
+/** Eventos aceitos; qualquer outro nome é descartado. */
+const EVENTOS_VALIDOS = new Set([
+  ...ETAPAS_FUNIL.map((e) => e.evento),
+  'buscar', 'salvar', 'compartilhar', 'quiz_concluido', 'filtro',
+]);
+
+/** Guarda no máximo isto; os mais antigos saem primeiro. */
+const LIMITE_EVENTOS = 5000;
+
+/**
+ * Valida e normaliza um evento vindo de fora (navegador).
+ * @param {any} bruto
+ * @param {number} agora
+ * @returns {Evento | null}
+ */
+function validarEvento(bruto, agora) {
+  if (!bruto || typeof bruto !== 'object') return null;
+  const nome = String(bruto.nome ?? '');
+  const sessao = String(bruto.sessao ?? '');
+  if (!EVENTOS_VALIDOS.has(nome) || !/^[a-z0-9]{6,40}$/i.test(sessao)) return null;
+  /** @type {Record<string, string | number>} */
+  const dados = {};
+  if (bruto.dados && typeof bruto.dados === 'object') {
+    for (const [k, v] of Object.entries(bruto.dados).slice(0, 8)) {
+      if (typeof v === 'number' && Number.isFinite(v)) dados[k.slice(0, 30)] = v;
+      else if (typeof v === 'string') dados[k.slice(0, 30)] = v.slice(0, 80);
+    }
+  }
+  return { nome, sessao, quando: agora, dados };
+}
+
+/**
+ * Acrescenta um evento, respeitando o limite.
+ * @param {Evento[]} lista
+ * @param {Evento} evento
+ */
+function registrar(lista, evento) {
+  const nova = [...lista, evento];
+  return nova.length > LIMITE_EVENTOS ? nova.slice(-LIMITE_EVENTOS) : nova;
+}
+
+/**
+ * @typedef {Object} EtapaCalculada
+ * @property {string} evento
+ * @property {string} nome
+ * @property {number} sessoes        sessões que chegaram aqui
+ * @property {number} doTopo         % em relação à primeira etapa
+ * @property {number | null} daAnterior  % em relação à etapa anterior
+ */
+
+/**
+ * Funil por sessões únicas. Uma sessão só conta numa etapa se também passou
+ * por todas as anteriores — assim a taxa nunca passa de 100%.
+ * @param {Evento[]} eventos
+ * @returns {EtapaCalculada[]}
+ */
+function funil(eventos) {
+  /** @type {Map<string, Set<string>>} */
+  const porSessao = new Map();
+  for (const e of eventos) {
+    const s = porSessao.get(e.sessao) ?? new Set();
+    s.add(e.nome);
+    porSessao.set(e.sessao, s);
+  }
+  const contagens = ETAPAS_FUNIL.map((_, i) => {
+    let n = 0;
+    for (const feitos of porSessao.values()) {
+      if (ETAPAS_FUNIL.slice(0, i + 1).every((et) => feitos.has(et.evento))) n++;
+    }
+    return n;
+  });
+  const topo = contagens[0];
+  return ETAPAS_FUNIL.map((et, i) => ({
+    evento: et.evento,
+    nome: et.nome,
+    sessoes: contagens[i],
+    doTopo: topo ? Math.round((contagens[i] / topo) * 1000) / 10 : 0,
+    daAnterior: i === 0 ? null : contagens[i - 1] ? Math.round((contagens[i] / contagens[i - 1]) * 1000) / 10 : 0,
+  }));
+}
+
+/**
+ * Receita projetada: quanto rende uma base de usuários com uma taxa de
+ * assinatura e uma divisão entre mensal e anual. Tudo em centavos.
+ * @param {{ usuarios: number, conversao: number, fracaoAnual: number, precoMensal: number, precoAnual: number }} p
+ *   conversao e fracaoAnual de 0 a 1
+ */
+function projetarReceita({ usuarios, conversao, fracaoAnual, precoMensal, precoAnual }) {
+  const assinantes = Math.round(usuarios * conversao);
+  const anuais = Math.round(assinantes * fracaoAnual);
+  const mensais = assinantes - anuais;
+  const porMes = mensais * precoMensal + Math.round((anuais * precoAnual) / 12);
+  return { assinantes, mensais, anuais, porMes, porAno: porMes * 12 };
+}
+
+/** Id de sessão aleatório, sem dados pessoais. */
+function novaSessao() {
+  return Array.from({ length: 16 }, () => Math.floor(Math.random() * 36).toString(36)).join('');
+}
+
+  return { ETAPAS_FUNIL, EVENTOS_VALIDOS, LIMITE_EVENTOS, validarEvento, registrar, funil, projetarReceita, novaSessao };
 };
 
 __reg["ui/loja.js"] = () => {

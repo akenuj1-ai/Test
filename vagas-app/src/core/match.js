@@ -26,6 +26,7 @@ import { ESCOLARIDADES, NOME_ESCOLARIDADE } from './tipos.js';
  * @property {string[]} faltando     o que conta contra, em linguagem de ação
  * @property {string[]} requisitosAtendidos
  * @property {boolean} eliminatorio  algum requisito eliminatório não foi atendido
+ * @property {Record<keyof typeof PESOS, number>} partes  pontos de cada critério (antes do teto eliminatório)
  */
 
 export const PESOS = /** @type {const} */ ({
@@ -57,13 +58,13 @@ export function requisitosAtendidos(perfil, requisitos) {
 export function calcularChance(perfil, vaga) {
   /** @type {string[]} */ const motivos = [];
   /** @type {string[]} */ const faltando = [];
-  let pontos = 0;
+  const partes = { requisitos: 0, cargo: 0, local: 0, salario: 0, experiencia: 0, escolaridade: 0 };
   let eliminatorio = false;
 
   // --- requisitos -------------------------------------------------------
   const atendidos = requisitosAtendidos(perfil, vaga.requisitos);
   const total = vaga.requisitos.length || 1;
-  pontos += PESOS.requisitos * (atendidos.length / total);
+  partes.requisitos += PESOS.requisitos * (atendidos.length / total);
   if (atendidos.length) motivos.push(`Você tem ${atendidos.length} de ${vaga.requisitos.length} requisitos: ${atendidos.join(', ')}.`);
   for (const req of vaga.requisitos) {
     if (!atendidos.includes(req)) faltando.push(`Requisito: ${req}. Se você tem, coloque no perfil.`);
@@ -76,7 +77,7 @@ export function calcularChance(perfil, vaga) {
   const simCargo = Math.max(semelhanca(vaga.titulo, alvo), semelhanca(perfil.cargoDesejado, vaga.titulo));
   const mesmaArea = perfil.area !== '' && normalizar(perfil.area) === normalizar(vaga.area);
   const cargoPts = Math.min(1, simCargo + (mesmaArea ? 0.5 : 0));
-  pontos += PESOS.cargo * cargoPts;
+  partes.cargo += PESOS.cargo * cargoPts;
   if (simCargo >= 0.5) motivos.push('O cargo é parecido com o que você procura ou já fez.');
   else if (mesmaArea) motivos.push(`É da sua área (${vaga.area}).`);
 
@@ -88,17 +89,17 @@ export function calcularChance(perfil, vaga) {
     if (perfil.aceitaRemoto === 'nao') {
       faltando.push('A vaga é remota e você marcou que prefere presencial.');
     } else {
-      pontos += PESOS.local;
+      partes.local += PESOS.local;
       motivos.push('Vaga remota: dá para trabalhar de casa.');
     }
   } else if (perfil.aceitaRemoto === 'sim') {
     eliminatorio = true;
     faltando.push('Você marcou que só aceita trabalho remoto, e esta vaga não é.');
   } else if (mesmaCidade) {
-    pontos += PESOS.local;
+    partes.local += PESOS.local;
     motivos.push(`Fica na sua cidade (${vaga.cidade}).`);
   } else if (mesmoEstado) {
-    pontos += PESOS.local * 0.5;
+    partes.local += PESOS.local * 0.5;
     faltando.push(`Fica em ${vaga.cidade}, fora da sua cidade. Veja o deslocamento.`);
   } else {
     eliminatorio = true;
@@ -108,23 +109,23 @@ export function calcularChance(perfil, vaga) {
   // --- salário ----------------------------------------------------------
   const teto = vaga.salarioMax ?? vaga.salarioMin;
   if (perfil.salarioMin <= 0) {
-    pontos += PESOS.salario;
+    partes.salario += PESOS.salario;
   } else if (teto == null) {
-    pontos += PESOS.salario * 0.5;
+    partes.salario += PESOS.salario * 0.5;
   } else if (teto >= perfil.salarioMin) {
-    pontos += PESOS.salario;
+    partes.salario += PESOS.salario;
     motivos.push('O salário atende o que você pediu.');
   } else {
-    pontos += PESOS.salario * Math.max(0, teto / perfil.salarioMin - 0.5) * 2 * 0.5;
+    partes.salario += PESOS.salario * Math.max(0, teto / perfil.salarioMin - 0.5) * 2 * 0.5;
     faltando.push(`Paga até ${formatarReais(teto)}, abaixo dos ${formatarReais(perfil.salarioMin)} que você pediu.`);
   }
 
   // --- experiência ------------------------------------------------------
   if (vaga.experienciaMin <= 0 || perfil.anosExperiencia >= vaga.experienciaMin) {
-    pontos += PESOS.experiencia;
+    partes.experiencia += PESOS.experiencia;
     if (vaga.experienciaMin > 0) motivos.push(`Pede ${vaga.experienciaMin} ano(s) de experiência e você tem ${perfil.anosExperiencia}.`);
   } else {
-    pontos += PESOS.experiencia * (perfil.anosExperiencia / vaga.experienciaMin);
+    partes.experiencia += PESOS.experiencia * (perfil.anosExperiencia / vaga.experienciaMin);
     faltando.push(`Pede ${vaga.experienciaMin} ano(s) de experiência; você informou ${perfil.anosExperiencia}.`);
   }
   if (vaga.valorizaExperiencia && perfil.anosExperiencia >= 10) {
@@ -133,7 +134,7 @@ export function calcularChance(perfil, vaga) {
 
   // --- escolaridade -----------------------------------------------------
   if (ESCOLARIDADES.indexOf(perfil.escolaridade) >= ESCOLARIDADES.indexOf(vaga.escolaridadeMin)) {
-    pontos += PESOS.escolaridade;
+    partes.escolaridade += PESOS.escolaridade;
   } else {
     faltando.push(`Pede ${NOME_ESCOLARIDADE[vaga.escolaridadeMin].toLowerCase()}.`);
   }
@@ -144,7 +145,8 @@ export function calcularChance(perfil, vaga) {
     faltando.unshift('Exige CNH, e você marcou que não tem.');
   }
 
-  let nota = Math.round(pontos);
+  for (const k of /** @type {(keyof typeof partes)[]} */ (Object.keys(partes))) partes[k] = Math.round(partes[k] * 10) / 10;
+  let nota = Math.round(Object.values(partes).reduce((a, b) => a + b, 0));
   if (eliminatorio) nota = Math.min(nota, TETO_ELIMINATORIO);
   nota = Math.max(0, Math.min(100, nota));
 
@@ -155,5 +157,6 @@ export function calcularChance(perfil, vaga) {
     faltando,
     requisitosAtendidos: atendidos,
     eliminatorio,
+    partes,
   };
 }

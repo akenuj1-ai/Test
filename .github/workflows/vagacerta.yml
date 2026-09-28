@@ -1,0 +1,28 @@
+name: VagaCerta
+
+on:
+  push:
+    paths: ['vagas-app/**', '.github/workflows/vagacerta.yml']
+  pull_request:
+    paths: ['vagas-app/**', '.github/workflows/vagacerta.yml']
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vagas-app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Arquivo único empacota
+        run: npm run bundle
+      - name: Imagem Docker constrói e responde
+        run: |
+          docker build -t vagacerta .
+          docker run -d -p 8080:8080 --name vc vagacerta
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8080/api/saude && exit 0; sleep 1; done
+          docker logs vc; exit 1

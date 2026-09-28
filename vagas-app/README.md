@@ -1,16 +1,29 @@
+<p align="center"><img src="src/ui/marca/logo.svg" alt="VagaCerta" height="64"></p>
+
 # VagaCerta
 
 Busca de emprego para o Brasil que não só lista vagas: diz **qual a sua chance
 real em cada uma e por quê**, adapta o currículo para a vaga, prepara para a
-entrevista e **avisa quando a vaga tem cara de golpe**.
+entrevista, **avisa quando a vaga tem cara de golpe** e manda vagas novas no
+WhatsApp.
 
-Protótipo funcionando, **sem dependências**: só Node 20+ e um navegador.
+Um só código para **site, app instalável (PWA), Android e iPhone**. Sem
+dependências: só Node 20+.
 
 ```bash
-npm test        # 69 testes
-npm run serve   # abre em http://localhost:8080/src/ui/index.html
-npm run bundle  # gera dist/vagacerta.html — arquivo único, abre no celular
+npm test          # 83 testes
+npm start         # http://localhost:8080
+npm run bundle    # dist/vagacerta.html — arquivo único, abre no celular
+npm run alertas   # mostra os alertas de WhatsApp que seriam enviados
 ```
+
+| Celular | Computador |
+|---|---|
+| <img src="src/ui/marca/tela-celular.png" width="260"> | <img src="src/ui/marca/tela-computador.png" width="520"> |
+
+- **Marca**: [docs/MARCA.md](docs/MARCA.md)
+- **API**: [docs/API.md](docs/API.md)
+- **Como colocar no ar e nas lojas**: [docs/DISTRIBUICAO.md](docs/DISTRIBUICAO.md)
 
 ### Vagas reais
 
@@ -25,7 +38,7 @@ buscando em todas as fontes ao mesmo tempo, sem repetir vaga:
 | Careerjet | `CAREERJET_AFFID` | https://www.careerjet.com.br/partners/api/ |
 
 ```bash
-JOOBLE_KEY=... ADZUNA_APP_ID=... ADZUNA_APP_KEY=... PAINEL_CHAVE=segredo npm run serve
+JOOBLE_KEY=... ADZUNA_APP_ID=... ADZUNA_APP_KEY=... PAINEL_CHAVE=segredo npm start
 ```
 
 Se uma fonte cair ou demorar mais de 6 s, as outras continuam. Buscas iguais
@@ -54,6 +67,8 @@ o link **Painel do dono** no rodapé mostra o funil deste aparelho e um
 | Achar a vaga do jeito que escreve | Só palavra exata | Entende **sinônimos** (“faxineira” acha “limpeza”), **erro de digitação** (“motorsita”) e expressões (“home office”, “carteira assinada”) |
 | Saber se o salário é bom | Nada | Selo **“+X% que a média da área”**, calculado com as vagas reais listadas |
 | Começar rápido | Cadastro longo | **Quiz de 30 segundos**: 3 perguntas e já vê suas vagas com nota |
+| Não perder vaga nova | E-mail que ninguém lê | **Alerta no WhatsApp** com as vagas novas da busca salva |
+| Usar como app | Baixar app pesado | **Instala pelo site** em 1 toque, abre sem internet |
 
 ## Como ganha dinheiro
 
@@ -107,6 +122,16 @@ prefeituras), não só do código.
 
 Os dados do usuário ficam só no navegador dele (localStorage).
 
+## Telas
+
+- **Celular**: menu embaixo, detalhe da vaga em folha que sobe, botões de
+  48 px, letra grande opcional.
+- **Computador** (a partir de 1100 px): quiz ao lado do topo e lista com o
+  detalhe fixo ao lado, sem janela por cima.
+- **App instalado**: ícone próprio, atalhos (Vagas, Salvas, Pro), abre sem
+  barra de navegador e sem internet.
+- **Modo escuro** seguindo o aparelho.
+
 ## Próximos passos para virar negócio
 
 1. **Pagamento de verdade**: Mercado Pago ou Stripe, com Pix e cartão.
@@ -115,7 +140,8 @@ Os dados do usuário ficam só no navegador dele (localStorage).
    (obrigatório para guardar currículos).
 4. **Parcerias diretas com empresas** para anunciar vagas (outra fonte de
    receita). Raspar LinkedIn/Indeed viola os termos deles e é bloqueado.
-5. **Alertas no WhatsApp** (API oficial do WhatsApp Business).
+5. **Aprovar o modelo de mensagem** de alerta no painel da Meta (o envio
+   já está pronto em `tools/enviar-alertas.js`).
 6. **Redação com IA**: um modelo de linguagem melhora o texto do currículo,
    mantendo a regra de nunca inventar experiência.
 7. **Currículo em PDF** bonito para baixar.
@@ -123,9 +149,12 @@ Os dados do usuário ficam só no navegador dele (localStorage).
 ## Estrutura
 
 ```
-src/core/      regras do negócio, puras e testadas (sem DOM)
-src/sources/   fontes de vagas reais; cada uma converte para o formato Vaga
-src/ui/        interface: HTML, CSS e o controlador
-tools/         servidor local e empacotador de arquivo único
-test/          testes (node:test)
+src/core/         regras do negócio, puras e testadas (sem DOM)
+src/sources/      fontes de vagas reais (Adzuna, Jooble, Careerjet) + agregador
+src/servidor/     servidor HTTP, rotas da API, limite de requisições
+src/integracoes/  WhatsApp Cloud API
+src/ui/           interface, PWA (manifesto, service worker) e marca/
+tools/            subir o servidor, enviar alertas, empacotar, gerar marca
+test/             testes (node:test), inclusive do servidor no ar
+Dockerfile        imagem de produção
 ```

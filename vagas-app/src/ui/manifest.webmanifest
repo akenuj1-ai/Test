@@ -1,0 +1,31 @@
+{
+  "id": "/",
+  "name": "VagaCerta — vagas com chance real",
+  "short_name": "VagaCerta",
+  "description": "Descubra em quais vagas você tem chance de verdade. Nota de chance, currículo adaptado, treino de entrevista e alerta de golpe.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/?origem=app",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#F3F5F9",
+  "theme_color": "#16326B",
+  "categories": ["business", "productivity", "education"],
+  "icons": [
+    { "src": "/marca/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/marca/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/marca/icone-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/marca/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Buscar vagas", "short_name": "Vagas", "url": "/?origem=atalho#vagas", "icons": [{ "src": "/marca/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Minhas candidaturas", "short_name": "Salvas", "url": "/?origem=atalho#candidaturas", "icons": [{ "src": "/marca/icone-192.png", "sizes": "192x192" }] },
+    { "name": "Plano Pro", "short_name": "Pro", "url": "/?origem=atalho#pro", "icons": [{ "src": "/marca/icone-192.png", "sizes": "192x192" }] }
+  ],
+  "screenshots": [
+    { "src": "/marca/tela-celular.png", "sizes": "780x1688", "type": "image/png", "form_factor": "narrow", "label": "Vagas com a sua nota de chance" },
+    { "src": "/marca/tela-computador.png", "sizes": "1440x900", "type": "image/png", "form_factor": "wide", "label": "Lista e detalhe da vaga lado a lado" }
+  ]
+}

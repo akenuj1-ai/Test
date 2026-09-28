@@ -105,7 +105,7 @@ p { margin: 0; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .sobretitulo { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 
-.app { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 8px 40px; }
+.app { max-width: 1240px; margin: 0 auto; padding-inline: 16px; padding-block: 8px 40px; }
 
 /* ---------- topo e navegação ---------- */
 .topo {
@@ -115,8 +115,7 @@ p { margin: 0; }
   backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
 }
 .marca { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--tinta); }
-.marca-selo { width: 34px; height: 34px; border-radius: 9px; background: var(--capa); color: var(--ouro); display: grid; place-items: center; }
-.marca-selo svg { width: 22px; height: 22px; }
+.marca-simbolo { width: 36px; height: 36px; border-radius: 9px; }
 .marca-nome { font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 600; letter-spacing: -.02em; }
 .marca-nome b { font-weight: 700; color: var(--acao); }
 .topo-acoes { display: flex; align-items: center; gap: 8px; }
@@ -130,6 +129,8 @@ p { margin: 0; }
   padding: 5px 10px; border-radius: 999px; background: var(--acao-suave); color: var(--acao); white-space: nowrap;
 }
 .pilula-plano.pro { background: var(--ouro); color: var(--ouro-tinta); }
+.botao-instalar { min-height: 44px; padding-inline: 12px; }
+@media (max-width: 480px) { .botao-instalar span { display: none; } .botao-instalar { width: 44px; padding: 0; } }
 
 .nav { display: flex; gap: 4px; }
 .nav-item {
@@ -221,6 +222,10 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
 .busca-uf { border-left: 1px solid #DCE2EC; }
 .busca .botao { min-height: 50px; padding-inline: 22px; }
 @media (max-width: 640px) {
+  .hero { gap: 16px; }
+  .hero-numeros { gap: 4px 16px; }
+  .hero-numeros li { font-size: .85rem; }
+  .hero-numeros b { font-size: 1.15rem; }
   .busca { grid-template-columns: 1fr; }
   .busca-uf { border-left: 0; border-top: 1px solid #DCE2EC; }
 }
@@ -228,6 +233,17 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
 .hero-numeros li { display: flex; align-items: baseline; gap: 6px; color: rgba(255,255,255,.8); font-size: .92rem; }
 .hero-numeros b { font-family: var(--fonte-titulo); font-size: 1.35rem; color: #fff; font-variant-numeric: tabular-nums; }
 .hero-numeros .ouro b { color: var(--ouro); }
+
+/* no computador, o quiz fica ao lado do topo e as vagas sobem na tela */
+@media (min-width: 1100px) {
+  #tela-vagas { grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); }
+  #tela-vagas > * { grid-column: 1 / -1; }
+  #tela-vagas > .hero { grid-column: 1; }
+  #tela-vagas > .quiz { grid-column: 2; align-self: stretch; align-content: start; }
+  #tela-vagas:has(> .quiz[hidden]) > .hero { grid-column: 1 / -1; }
+  .hero .busca { grid-template-columns: 1fr 170px auto; }
+  .quiz .linha-campos { grid-template-columns: 1fr; }
+}
 
 /* ---------- quiz ---------- */
 .quiz { background: var(--folha); border: 1px solid var(--linha); border-radius: var(--raio); padding: 18px; display: grid; gap: 16px; box-shadow: var(--sombra); }
@@ -267,6 +283,29 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
 .resumo-busca b { color: var(--tinta); }
 .ordem { display: flex; align-items: center; gap: 8px; font-size: .88rem; font-weight: 700; color: var(--tinta-2); }
 .ordem select { min-height: 42px; width: auto; padding-block: 6px; }
+
+/* ---------- lista + detalhe (computador) ---------- */
+.vagas-corpo { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+.coluna-lista { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.painel-vaga { display: none; }
+@media (min-width: 1100px) {
+  .vagas-corpo { grid-template-columns: minmax(0, 1fr) minmax(420px, 480px); align-items: start; }
+  .painel-vaga {
+    display: block; position: sticky; top: calc(76px + env(safe-area-inset-top, 0px));
+    max-height: calc(100vh - 92px); overflow: auto; overscroll-behavior: contain;
+    background: var(--folha); border: 1px solid var(--linha); border-radius: 18px; box-shadow: var(--sombra);
+  }
+  .painel-vaga .folha-corpo { padding: 22px; }
+  .painel-vaga [data-fechar] { display: none; }
+  .painel-vaga .folha-topo { grid-template-columns: auto 1fr; }
+}
+.painel-vazio { padding: 40px 24px; text-align: center; color: var(--tinta-2); display: grid; gap: 10px; justify-items: center; }
+.painel-vazio svg { width: 56px; height: 56px; border-radius: 14px; }
+.vaga.selecionada { border-color: var(--acao); box-shadow: 0 0 0 3px var(--acao-suave), var(--sombra); }
+
+.resultado-acoes { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.botao-alerta { min-height: 42px; font-size: .9rem; }
+.botao-alerta svg { color: var(--ouro); }
 
 /* ---------- cartões de vaga ---------- */
 .lista-vagas { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
@@ -317,6 +356,17 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
   .vaga-acoes { grid-column: 1 / -1; }
   .vaga-acoes .botao { flex: 1; }
 }
+
+/* coluna da nota: anel + carimbo */
+.vaga-nota { display: grid; justify-items: center; gap: 8px; }
+.carimbo {
+  font-family: var(--fonte-titulo); font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--alta); border: 2px solid var(--alta); outline: 1px solid var(--alta); outline-offset: 2px;
+  border-radius: 4px; padding: 2px 6px; transform: rotate(-7deg); white-space: nowrap; opacity: .92;
+  mix-blend-mode: multiply;
+}
+:root[data-theme="dark"] .carimbo { mix-blend-mode: normal; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .carimbo { mix-blend-mode: normal; } }
 
 /* anel da nota de chance */
 .anel {
@@ -389,12 +439,31 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
 .lista-simples.bons svg { color: var(--alta); }
 .lista-simples.faltas svg { color: var(--media); }
 
+/* ficha da vaga no estilo da página "Contrato de Trabalho" da carteira */
+.ficha {
+  border: 1px solid var(--linha); border-radius: 12px; padding: 16px 18px 12px; display: grid; gap: 10px;
+  background:
+    repeating-linear-gradient(135deg, color-mix(in srgb, var(--acao) 4%, transparent) 0 1px, transparent 1px 7px),
+    var(--folha-2);
+}
+.ficha-titulo {
+  display: flex; align-items: center; gap: 10px; font-family: var(--fonte-titulo); font-size: .74rem; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--tinta-2);
+}
+.ficha-titulo::before, .ficha-titulo::after { content: ''; flex: 1; height: 1px; background: var(--linha); }
+.ficha dl { margin: 0; display: grid; gap: 6px; }
+.ficha dl div { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.ficha dt { font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tinta-3); white-space: nowrap; }
+.ficha dt::after { content: ''; }
+.ficha .pontilhado { flex: 1; border-bottom: 1.5px dotted var(--linha); transform: translateY(-3px); min-width: 12px; }
+.ficha dd { margin: 0; font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+
 /* barras da nota por critério */
 .criterios { display: grid; gap: 10px; }
 .criterio { display: grid; grid-template-columns: 8.5rem 1fr 3.4rem; gap: 10px; align-items: center; font-size: .9rem; }
 .criterio-nome { color: var(--tinta-2); font-weight: 700; }
-.criterio-trilho { height: 10px; border-radius: 5px; background: var(--anel-trilho); overflow: hidden; }
-.criterio-barra { height: 100%; border-radius: 0 4px 4px 0; background: var(--acao); }
+.criterio-trilho { display: block; height: 10px; border-radius: 5px; background: var(--anel-trilho); overflow: hidden; }
+.criterio-barra { display: block; height: 100%; border-radius: 0 4px 4px 0; background: var(--acao); }
 .criterio-valor { text-align: right; font-variant-numeric: tabular-nums; color: var(--tinta-2); }
 @media (max-width: 420px) { .criterio { grid-template-columns: 6.8rem 1fr 3rem; } }
 
@@ -488,8 +557,8 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
 .funil { display: grid; gap: 12px; }
 .funil-linha { display: grid; grid-template-columns: minmax(9rem, 15rem) 1fr; gap: 12px; align-items: center; }
 .funil-nome { font-size: .9rem; font-weight: 700; color: var(--tinta-2); }
-.funil-trilho { position: relative; height: 28px; border-radius: 6px; background: var(--folha-2); }
-.funil-barra { height: 100%; min-width: 2px; border-radius: 0 4px 4px 0; background: var(--acao); }
+.funil-trilho { display: block; position: relative; height: 28px; border-radius: 6px; background: var(--folha-2); }
+.funil-barra { display: block; height: 100%; min-width: 2px; border-radius: 0 4px 4px 0; background: var(--acao); }
 .funil-valor { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font-size: .85rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--tinta); white-space: nowrap; }
 .funil-linha:hover .funil-barra { filter: brightness(1.12); }
 @media (max-width: 520px) { .funil-linha { grid-template-columns: 1fr; gap: 4px; } }
@@ -505,6 +574,14 @@ input[type="range"] { width: 100%; accent-color: var(--acao); min-height: 32px; 
 .nota-rodape { color: var(--tinta-3); font-size: .85rem; }
 .rodape { margin-top: 28px; padding-top: 14px; border-top: 1px solid var(--linha); color: var(--tinta-3); font-size: .85rem; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; }
 .rodape .link { font-size: .85rem; color: var(--tinta-2); }
+.rodape-marca { display: flex; gap: 10px; align-items: center; }
+.rodape-marca .marca-simbolo { width: 32px; height: 32px; border-radius: 8px; }
+.rodape-nome { font-family: var(--fonte-titulo); font-weight: 700; color: var(--tinta); font-size: 1rem; }
+.rodape-links { display: flex; gap: 16px; flex-wrap: wrap; }
+.passos-ios { margin: 0; padding-left: 1.3em; display: grid; gap: 8px; }
+.passos-ios svg { vertical-align: -3px; color: var(--acao); }
+.lista-alertas { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lista-alertas li { display: flex; justify-content: space-between; align-items: center; gap: 10px; background: var(--folha-2); border-radius: 10px; padding: 10px 12px; flex-wrap: wrap; }
 
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);

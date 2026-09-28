@@ -17,6 +17,7 @@ import { ETAPAS, moverPara, remover, precisamDeRetorno } from '../core/candidatu
 import { ESCOLARIDADES, NOME_ESCOLARIDADE, perfilVazio } from '../core/tipos.js';
 import { completude, inferirArea, habilidadesSugeridas } from '../core/perfil.js';
 import { funil, registrar, projetarReceita, novaSessao } from '../core/metricas.js';
+import { normalizarCelular } from '../core/alertas.js';
 import { formatarSalario, formatarReais } from '../core/text.js';
 import { ler, gravar } from './loja.js';
 
@@ -56,8 +57,13 @@ function perfilExemplo() {
 /* estado                                                              */
 /* ------------------------------------------------------------------ */
 
-/** Página servida pelo servidor do projeto (e não o arquivo único)? */
-const COM_SERVIDOR = /^https?:$/.test(location.protocol) && location.pathname.includes('/src/ui/');
+/**
+ * Página servida pelo servidor do projeto (e não o arquivo único)? Só a
+ * página servida tem manifesto; o empacotador não o leva.
+ */
+const COM_SERVIDOR = /^https?:$/.test(location.protocol) && document.querySelector('link[rel="manifest"]') !== null;
+/** Computador: lista e detalhe lado a lado, sem folha por cima. */
+const telaLarga = window.matchMedia('(min-width: 1100px)');
 
 function lerSessao() {
   try {
@@ -81,6 +87,8 @@ const estado = {
   /** @type {import('../core/candidaturas.js').Candidatura[]} */ candidaturas: ler('candidaturas', []),
   /** @type {import('../core/metricas.js').Evento[]} */ eventos: ler('eventos', []),
   letraGrande: ler('letraGrande', false),
+  /** @type {{ id: string, telefone: string, texto: string, uf: string }[]} */ alertas: ler('alertas', []),
+  /** @type {any} */ pedidoInstalacao: null,
   /** @type {'mensal' | 'anual'} */ ciclo: 'anual',
   sessao: lerSessao(),
   /** eventos que só contam uma vez por sessão */
@@ -246,7 +254,9 @@ function cartaoVaga({ vaga: v, chance, alertas }, destaque, salvas) {
   else if (chance?.faixa === 'alta' && chance.motivos[0]) motivo = `<p class="vaga-motivo bom">${icone('check')}<span>${esc(chance.motivos[0])}</span></p>`;
   else if (chance?.faltando[0]) motivo = `<p class="vaga-motivo falta">${icone('seta')}<span>${esc(chance.faltando[0])}</span></p>`;
 
-  return `<li class="vaga${suspeita ? ' suspeita' : ''}${destaque ? ' destaque' : ''}">
+  const alta = !suspeita && chance?.faixa === 'alta';
+  const selecionada = telaLarga.matches && estado.vagaAberta === v.id;
+  return `<li class="vaga${suspeita ? ' suspeita' : ''}${destaque ? ' destaque' : ''}${selecionada ? ' selecionada' : ''}" data-id="${esc(v.id)}">
     ${destaque ? '<span class="faixa-destaque">Melhor chance para você</span>' : ''}
     ${monograma(v.empresa)}
     <div class="vaga-info">
@@ -262,7 +272,7 @@ function cartaoVaga({ vaga: v, chance, alertas }, destaque, salvas) {
       </div>
       ${motivo}
     </div>
-    ${anel(chance, suspeita)}
+    <div class="vaga-nota">${anel(chance, suspeita)}${alta ? '<span class="carimbo">Chance alta</span>' : ''}</div>
     <div class="vaga-acoes">
       <button type="button" class="botao" data-abrir="${esc(v.id)}">Ver minha chance</button>
       <button type="button" class="botao-leve botao-quadrado${salva ? ' salvo' : ''}" data-salvar="${esc(v.id)}" aria-pressed="${salva}" aria-label="${salva ? 'Vaga salva' : 'Salvar vaga'}" title="${salva ? 'Salva' : 'Salvar'}">${icone(salva ? 'salvo-cheio' : 'salvo')}</button>
@@ -316,6 +326,10 @@ function desenharVagas() {
     : 'Nenhuma vaga com esses filtros.';
 
   if (itens.length === 0) {
+    if (telaLarga.matches) {
+      estado.vagaAberta = null;
+      $('#painel-vaga').innerHTML = `<div class="painel-vazio">${'<svg aria-hidden="true"><use href="#i-marca"/></svg>'}<p>Nenhuma vaga para mostrar com esses filtros.</p></div>`;
+    }
     $('#lista-vagas').innerHTML = `<li class="vazio">Tente tirar um filtro ou buscar de outro jeito, como “vendas” em vez de “vendedor externo”.
       ${filtros.texto ? '<button type="button" class="link" data-limpar-busca>Limpar busca</button>' : ''}</li>`;
     return;
@@ -326,7 +340,16 @@ function desenharVagas() {
   const destacar = primeiraLimpa >= 0 && itens[primeiraLimpa].chance?.faixa === 'alta' && !filtros.ordenar ? primeiraLimpa : -1;
   const partes = itens.map((item, i) => cartaoVaga(item, i === destacar, salvas));
   if (!ehPago(estado.plano) && partes.length > 5) partes.splice(4, 0, cartaoOferta(altas));
+
+  // no computador o painel ao lado nunca fica vazio: mostra a melhor vaga
+  if (telaLarga.matches && !itens.some((i) => i.vaga.id === estado.vagaAberta)) {
+    estado.vagaAberta = itens[primeiraLimpa >= 0 ? primeiraLimpa : 0].vaga.id;
+    estado.subAba = 'chance';
+    partes.splice(0, partes.length, ...itens.map((item, i) => cartaoVaga(item, i === destacar, salvas)));
+    if (!ehPago(estado.plano) && partes.length > 5) partes.splice(4, 0, cartaoOferta(altas));
+  }
   $('#lista-vagas').innerHTML = partes.join('');
+  if (telaLarga.matches) desenharDetalhe();
 }
 
 function atualizarSugestoes() {
@@ -439,10 +462,26 @@ const vagaPorId = (id) => estado.vagas.find((v) => v.id === id);
 function abrirVaga(id) {
   estado.vagaAberta = id;
   estado.subAba = 'chance';
-  desenharDetalhe();
-  const d = /** @type {HTMLDialogElement} */ ($('#detalhe'));
-  if (!d.open) d.showModal();
+  if (telaLarga.matches) {
+    for (const li of document.querySelectorAll('.lista-vagas .vaga')) li.classList.toggle('selecionada', /** @type {HTMLElement} */ (li).dataset.id === id);
+    desenharDetalhe();
+    $('#painel-vaga').scrollTop = 0;
+  } else {
+    desenharDetalhe();
+    const d = /** @type {HTMLDialogElement} */ ($('#detalhe'));
+    if (!d.open) d.showModal();
+  }
   rastrear('abrir_vaga', { vaga: id });
+}
+
+/** Onde o detalhe aparece: painel ao lado (computador) ou folha (celular). */
+function alvoDetalhe() {
+  if (telaLarga.matches) {
+    $('#detalhe-corpo').innerHTML = '';
+    return $('#painel-vaga');
+  }
+  $('#painel-vaga').innerHTML = '';
+  return $('#detalhe-corpo');
 }
 
 /** @type {Record<string, { rotulo: string, recurso: Recurso | null }>} */
@@ -464,7 +503,7 @@ function desenharDetalhe() {
   const abas = Object.entries(SUB_ABAS).map(([id, a]) =>
     `<button type="button" role="tab" data-sub="${id}" aria-selected="${estado.subAba === id}">${a.rotulo}${bloqueia(a.recurso) ? icone('cadeado') : ''}</button>`).join('');
 
-  $('#detalhe-corpo').innerHTML = `
+  alvoDetalhe().innerHTML = `<div class="folha-corpo">
     <div class="folha-topo">
       ${monograma(v.empresa)}
       <div class="vaga-info">
@@ -477,7 +516,7 @@ function desenharDetalhe() {
       <ul>${alertas.map((a) => `<li>${esc(a.motivo)}</li>`).join('')}</ul>
       ${suspeita ? '<span>Nunca pague para se candidatar e nunca envie senha ou dados bancários.</span>' : ''}</div>` : ''}
     <div class="abas-folha" role="tablist">${abas}</div>
-    <div id="sub-conteudo">${conteudoSubAba(v, chance, suspeita)}</div>`;
+    <div id="sub-conteudo">${conteudoSubAba(v, chance, suspeita)}</div></div>`;
 }
 
 /**
@@ -504,14 +543,20 @@ function abaChance(v, chance, suspeita) {
       <div class="criterios">${criterios}</div>
       ${chance.motivos.length ? `<h3>A seu favor</h3><ul class="lista-simples bons">${chance.motivos.map((m) => `<li>${icone('check')}<span>${esc(m)}</span></li>`).join('')}</ul>` : ''}
       ${chance.faltando.length ? `<h3>O que melhorar</h3><ul class="lista-simples faltas">${chance.faltando.map((m) => `<li>${icone('seta')}<span>${esc(m)}</span></li>`).join('')}</ul>` : ''}` : ''}
-    <dl class="dados">
-      <div><dt>Salário</dt><dd>${esc(formatarSalario(v.salarioMin, v.salarioMax))}</dd></div>
-      <div><dt>Contrato</dt><dd>${esc(v.contrato)}</dd></div>
-      <div><dt>Modalidade</dt><dd>${MODALIDADE[v.modalidade]}</dd></div>
-      <div><dt>Experiência</dt><dd>${v.experienciaMin ? `${v.experienciaMin} ano(s)` : 'Não exige'}</dd></div>
-      <div><dt>Escolaridade</dt><dd>${NOME_ESCOLARIDADE[v.escolaridadeMin]}</dd></div>
-      <div><dt>Publicada</dt><dd>${esc(haQuantoTempo(v.publicadaEm) || '—')}</dd></div>
-    </dl>
+    <section class="ficha" aria-label="Dados da vaga">
+      <p class="ficha-titulo">Contrato de trabalho</p>
+      <dl>${[
+        ['Empregador', v.empresa],
+        ['Cargo', v.titulo],
+        ['Remuneração', formatarSalario(v.salarioMin, v.salarioMax)],
+        ['Regime', v.contrato],
+        ['Local', v.modalidade === 'remoto' ? 'Remoto' : `${v.cidade}/${v.uf}`],
+        ['Modalidade', MODALIDADE[v.modalidade]],
+        ['Experiência', v.experienciaMin ? `${v.experienciaMin} ano(s)` : 'Não exige'],
+        ['Escolaridade', NOME_ESCOLARIDADE[v.escolaridadeMin]],
+        ['Publicada', haQuantoTempo(v.publicadaEm) || '—'],
+      ].map(([k, val]) => `<div><dt>${k}</dt><span class="pontilhado" aria-hidden="true"></span><dd>${esc(val)}</dd></div>`).join('')}</dl>
+    </section>
     <p>${esc(v.descricao)}</p>
     ${v.requisitos.length ? `<p><b>Requisitos:</b> ${esc(v.requisitos.join(', '))}</p>` : ''}
     ${v.diferenciais.length ? `<p><b>Diferenciais:</b> ${esc(v.diferenciais.join(', '))}</p>` : ''}
@@ -675,6 +720,109 @@ function confirmarAssinatura() {
 }
 
 /* ------------------------------------------------------------------ */
+/* alertas de vagas novas no WhatsApp (Pro)                            */
+/* ------------------------------------------------------------------ */
+
+/** @param {string} tel 5511987654321 */
+const formatarCelular = (tel) => tel.replace(/^55(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+
+function abrirAlerta() {
+  if (!ehPago(estado.plano)) {
+    abrirCheckout('alerta');
+    return;
+  }
+  const texto = $in('#f-texto').value.trim() || estado.perfil.cargoDesejado;
+  const uf = $in('#f-uf').value || estado.perfil.uf;
+  $('#aviso-corpo').innerHTML = `
+    <div class="folha-topo" style="grid-template-columns:1fr auto">
+      <div><p class="sobretitulo" style="color:var(--acao)">Alerta de vagas</p><h2 id="a-titulo">Receba vagas novas no WhatsApp</h2></div>
+      <button type="button" class="fechar" data-fechar="aviso" aria-label="Fechar">✕</button>
+    </div>
+    <form id="form-alerta" class="bloco" novalidate>
+      <label class="campo"><span>O que buscar</span><input id="a-texto" value="${esc(texto)}" placeholder="Ex.: motorista" /></label>
+      <label class="campo"><span>Estado</span><select id="a-uf"><option value="">Todo o Brasil</option>${UFS.map((u) => `<option ${u === uf ? 'selected' : ''}>${u}</option>`).join('')}</select></label>
+      <label class="campo"><span>Seu WhatsApp</span><input id="a-tel" inputmode="tel" autocomplete="tel" placeholder="(11) 98765-4321" value="${esc(estado.perfil.telefone)}" /></label>
+      <p class="cota" id="a-erro" role="alert"></p>
+      <button type="submit" class="botao botao-ouro botao-largo">${icone('sino')} Criar alerta</button>
+      <p class="nota-rodape">Mandamos no máximo uma mensagem por dia, só quando houver vaga nova. Responda SAIR para parar.</p>
+    </form>`;
+  const d = /** @type {HTMLDialogElement} */ ($('#aviso'));
+  if (!d.open) d.showModal();
+  $('#form-alerta').addEventListener('submit', salvarAlerta);
+}
+
+/** @param {Event} ev */
+async function salvarAlerta(ev) {
+  ev.preventDefault();
+  const telefone = normalizarCelular($in('#a-tel').value);
+  const texto = $in('#a-texto').value.trim();
+  const uf = $in('#a-uf').value;
+  if (!telefone) { $('#a-erro').textContent = 'Confira o celular: precisa ter DDD e 9 dígitos, como (11) 98765-4321.'; return; }
+  if (!texto && !uf) { $('#a-erro').textContent = 'Diga o que buscar ou escolha um estado.'; return; }
+  let id = `local-${Date.now().toString(36)}`;
+  if (COM_SERVIDOR) {
+    try {
+      const resp = await fetch('/api/alertas', { method: 'POST', body: JSON.stringify({ telefone, texto, uf }) });
+      const dados = await resp.json();
+      if (!resp.ok) { $('#a-erro').textContent = dados.erro ?? 'Não deu certo agora. Tente de novo.'; return; }
+      id = dados.id;
+    } catch {
+      $('#a-erro').textContent = 'Sem conexão. Tente de novo quando a internet voltar.';
+      return;
+    }
+  }
+  if (!estado.alertas.some((a) => a.id === id)) estado.alertas = [...estado.alertas, { id, telefone, texto, uf }];
+  gravar('alertas', estado.alertas);
+  /** @type {HTMLDialogElement} */ ($('#aviso')).close();
+  toast(COM_SERVIDOR ? 'Alerta criado. Avisaremos no seu WhatsApp.' : 'Alerta salvo (simulação neste protótipo).');
+}
+
+/* ------------------------------------------------------------------ */
+/* instalar o app (PWA)                                                */
+/* ------------------------------------------------------------------ */
+
+const ehIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const jaInstalado = window.matchMedia('(display-mode: standalone)').matches || /** @type {any} */ (navigator).standalone === true;
+
+function mostrarBotoesInstalar() {
+  const pode = COM_SERVIDOR && !jaInstalado && (estado.pedidoInstalacao !== null || ehIOS);
+  $('#btn-instalar').hidden = !pode;
+  $('#link-instalar').hidden = !pode;
+}
+
+async function instalar() {
+  if (estado.pedidoInstalacao) {
+    estado.pedidoInstalacao.prompt();
+    const { outcome } = await estado.pedidoInstalacao.userChoice;
+    estado.pedidoInstalacao = null;
+    mostrarBotoesInstalar();
+    if (outcome === 'accepted') toast('VagaCerta instalado! Procure o ícone na sua tela.');
+    return;
+  }
+  // iPhone não tem botão de instalar: explica o caminho do Safari
+  $('#aviso-corpo').innerHTML = `
+    <div class="folha-topo" style="grid-template-columns:auto 1fr auto">
+      <svg class="marca-simbolo" aria-hidden="true" style="width:48px;height:48px"><use href="#i-marca"/></svg>
+      <div><h2 id="a-titulo">Instale o VagaCerta no iPhone</h2><p class="cota">Leva 10 segundos e abre como aplicativo.</p></div>
+      <button type="button" class="fechar" data-fechar="aviso" aria-label="Fechar">✕</button>
+    </div>
+    <ol class="passos-ios">
+      <li>No Safari, toque em <b>Compartilhar</b> ${icone('ios-compartilhar')} na barra de baixo.</li>
+      <li>Role e toque em <b>Adicionar à Tela de Início</b>.</li>
+      <li>Toque em <b>Adicionar</b>. Pronto!</li>
+    </ol>`;
+  const d = /** @type {HTMLDialogElement} */ ($('#aviso'));
+  if (!d.open) d.showModal();
+}
+
+window.addEventListener('beforeinstallprompt', (ev) => {
+  ev.preventDefault();
+  estado.pedidoInstalacao = ev;
+  mostrarBotoesInstalar();
+});
+window.addEventListener('appinstalled', () => { estado.pedidoInstalacao = null; mostrarBotoesInstalar(); rastrear('filtro', { qual: 'instalou' }); });
+
+/* ------------------------------------------------------------------ */
 /* perfil                                                              */
 /* ------------------------------------------------------------------ */
 
@@ -773,6 +921,12 @@ function desenharCandidaturas() {
   const cobrar = precisamDeRetorno(estado.candidaturas);
   $('#alerta-retorno').innerHTML = cobrar.length
     ? `<div class="alerta atencao"><b>${cobrar.length} candidatura(s) sem resposta há mais de 7 dias.</b> Mande uma mensagem educada perguntando como está o processo.</div>`
+    : '';
+
+  $('#meus-alertas').innerHTML = estado.alertas.length
+    ? `<section class="cartao"><h2>Seus alertas no WhatsApp</h2><ul class="lista-alertas">${estado.alertas.map((a) =>
+      `<li><span>${icone('sino')} <b>${esc(a.texto || 'Todas as vagas')}</b>${a.uf ? ` em ${esc(a.uf)}` : ''} · ${esc(formatarCelular(a.telefone))}</span>
+       <button type="button" class="botao-leve" data-remover-alerta="${esc(a.id)}">Parar</button></li>`).join('')}</ul></section>`
     : '';
 
   if (estado.candidaturas.length === 0) {
@@ -930,7 +1084,7 @@ document.addEventListener('click', (ev) => {
   if (d.compartilhar) { rastrear('compartilhar', { vaga: d.compartilhar }); return; }
   if (d.aba) {
     ev.preventDefault();
-    for (const id of ['detalhe', 'checkout']) { const dlg = /** @type {HTMLDialogElement} */ ($(`#${id}`)); if (dlg.open) dlg.close(); }
+    for (const id of ['detalhe', 'checkout', 'aviso']) { const dlg = /** @type {HTMLDialogElement} */ ($(`#${id}`)); if (dlg.open) dlg.close(); }
     irPara(d.aba);
   } else if (d.abrir) abrirVaga(d.abrir);
   else if (d.salvar) {
@@ -940,6 +1094,13 @@ document.addEventListener('click', (ev) => {
   } else if (d.sub) { estado.subAba = d.sub; desenharDetalhe(); }
   else if (d.gerar) gerar(/** @type {Recurso} */ (d.gerar));
   else if ('copiar' in d) copiar();
+  else if ('criarAlerta' in d) abrirAlerta();
+  else if (d.removerAlerta) {
+    estado.alertas = estado.alertas.filter((a) => a.id !== d.removerAlerta);
+    gravar('alertas', estado.alertas);
+    desenharCandidaturas();
+    toast('Alerta removido.');
+  }
   else if (d.fechar) /** @type {HTMLDialogElement} */ ($(`#${d.fechar}`)).close();
   else if (d.assinar) abrirCheckout(d.assinar);
   else if (d.ciclo) {
@@ -1064,7 +1225,22 @@ async function carregarVagas() {
   }
 }
 
+$('#btn-instalar').addEventListener('click', instalar);
+$('#link-instalar').addEventListener('click', instalar);
+
+// trocar entre celular e computador: o detalhe muda de lugar
+telaLarga.addEventListener('change', () => {
+  const d = /** @type {HTMLDialogElement} */ ($('#detalhe'));
+  if (telaLarga.matches && d.open) d.close();
+  if (!$('#tela-vagas').hidden) desenharVagas();
+});
+
+if (COM_SERVIDOR && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js').catch(() => {}); });
+}
+
 preencherSelects();
+mostrarBotoesInstalar();
 aplicarLetra();
 atualizarPilula();
 atualizarContador();
